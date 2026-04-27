@@ -12,10 +12,10 @@ use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
     $this->runMigrations();
-    $this->service = new ContextService();
-    $this->user    = new FakeUser(id: 1);
+    $this->service = new ContextService;
+    $this->user = new FakeUser(id: 1);
 
-    $this->context = new FakeContext();
+    $this->context = new FakeContext;
     $this->context->setAttribute('id', 5);
 });
 
@@ -29,10 +29,10 @@ it('returns permissions for user role in context', function (): void {
     $role->givePermissionTo($perm);
 
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
 
     expect($this->service->resolveFor($this->user, $this->context)->contains('orders-read'))->toBeTrue();
@@ -66,15 +66,15 @@ it('does not return permissions from different user_id (V4)', function (): void 
 
 it('applies forced_on override to effective permissions', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
     $parent->givePermissionTo($perm);
 
     RolePermissionOverride::create([
         'parent_role_id' => $parent->id,
-        'child_role_id'  => $child->id,
-        'permission_id'  => $perm->id,
-        'type'           => RolePermissionOverride::TYPE_FORCED_ON,
+        'child_role_id' => $child->id,
+        'permission_id' => $perm->id,
+        'type' => RolePermissionOverride::TYPE_FORCED_ON,
     ]);
 
     UserRoleContext::create([
@@ -87,15 +87,15 @@ it('applies forced_on override to effective permissions', function (): void {
 
 it('applies forced_off override to remove permission', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
     $child->givePermissionTo($perm);
 
     RolePermissionOverride::create([
         'parent_role_id' => $parent->id,
-        'child_role_id'  => $child->id,
-        'permission_id'  => $perm->id,
-        'type'           => RolePermissionOverride::TYPE_FORCED_OFF,
+        'child_role_id' => $child->id,
+        'permission_id' => $perm->id,
+        'type' => RolePermissionOverride::TYPE_FORCED_OFF,
     ]);
 
     UserRoleContext::create([

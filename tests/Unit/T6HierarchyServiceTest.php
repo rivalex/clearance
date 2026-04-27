@@ -12,14 +12,14 @@ use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
     $this->runMigrations();
-    $this->service = new HierarchyService();
+    $this->service = new HierarchyService;
 });
 
 // --- createRelation (V3) ---
 
 it('creates a parent→child hierarchy relation', function (): void {
-    $parent    = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child     = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
     $hierarchy = $this->service->createRelation($parent, $child);
 
     expect($hierarchy)->toBeInstanceOf(RoleHierarchy::class)
@@ -40,7 +40,7 @@ it('rejects creating relation when intended parent is already a child (V3)', fun
 
 it('rejects creating relation when intended child is already a parent (V3)', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
     $senior = Role::create(['name' => 'senior',  'guard_name' => 'web']);
 
     $this->service->createRelation($parent, $child); // parent is now a parent
@@ -53,8 +53,8 @@ it('rejects creating relation when intended child is already a parent (V3)', fun
 
 it('deletes relation and cascades all overrides', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
     $parent->givePermissionTo($perm);
 
     $hierarchy = $this->service->createRelation($parent, $child);
@@ -69,20 +69,20 @@ it('deletes relation and cascades all overrides', function (): void {
 
 it('adds forced_on when parent has permission (V2)', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
     $parent->givePermissionTo($perm);
 
     $hierarchy = $this->service->createRelation($parent, $child);
-    $override  = $this->service->addOverride($hierarchy, $perm, RolePermissionOverride::TYPE_FORCED_ON);
+    $override = $this->service->addOverride($hierarchy, $perm, RolePermissionOverride::TYPE_FORCED_ON);
 
     expect($override->isForcedOn())->toBeTrue();
 });
 
 it('rejects forced_on when parent lacks permission (V2)', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
 
     $hierarchy = $this->service->createRelation($parent, $child);
 
@@ -92,11 +92,11 @@ it('rejects forced_on when parent lacks permission (V2)', function (): void {
 
 it('adds forced_off without requiring parent permission', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
 
     $hierarchy = $this->service->createRelation($parent, $child);
-    $override  = $this->service->addOverride($hierarchy, $perm, RolePermissionOverride::TYPE_FORCED_OFF);
+    $override = $this->service->addOverride($hierarchy, $perm, RolePermissionOverride::TYPE_FORCED_OFF);
 
     expect($override->isForcedOff())->toBeTrue();
 });
@@ -105,8 +105,8 @@ it('adds forced_off without requiring parent permission', function (): void {
 
 it('removes forced_on overrides when parent loses permission (V9)', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
     $parent->givePermissionTo($perm);
 
     $hierarchy = $this->service->createRelation($parent, $child);
@@ -120,8 +120,8 @@ it('removes forced_on overrides when parent loses permission (V9)', function ():
 
 it('cleanup does not touch forced_off overrides (V9)', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
 
     $hierarchy = $this->service->createRelation($parent, $child);
     $this->service->addOverride($hierarchy, $perm, RolePermissionOverride::TYPE_FORCED_OFF);
@@ -134,7 +134,7 @@ it('cleanup does not touch forced_off overrides (V9)', function (): void {
 
 it('isParent and isChild return correct values', function (): void {
     $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
     $this->service->createRelation($parent, $child);
 
     expect($this->service->isParent($parent))->toBeTrue()

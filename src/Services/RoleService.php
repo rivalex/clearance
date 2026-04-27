@@ -20,7 +20,7 @@ class RoleService
     public function create(string $name, string $guardName): Role
     {
         return Role::create([
-            'name'       => $name,
+            'name' => $name,
             'guard_name' => $guardName,
         ]);
     }
@@ -48,6 +48,7 @@ class RoleService
      * Only permissions sharing the role's guard_name are accepted.
      *
      * @param  array<int, Permission>  $permissions
+     *
      * @throws InvalidArgumentException when a permission guard does not match the role guard
      */
     public function syncPermissions(Role $role, array $permissions): void
@@ -56,7 +57,7 @@ class RoleService
             if ($permission->guard_name !== $role->guard_name) {
                 throw new InvalidArgumentException(
                     "Permission '{$permission->name}' guard '{$permission->guard_name}' "
-                    . "does not match role guard '{$role->guard_name}'.",
+                    ."does not match role guard '{$role->guard_name}'.",
                 );
             }
         }

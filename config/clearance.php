@@ -45,7 +45,7 @@ return [
     | Toggle optional Clearance modules.
     */
     'modules' => [
-        'users'     => false,
+        'users' => false,
         'hierarchy' => true,
     ],
 
@@ -56,7 +56,7 @@ return [
     | Enforce gruppo-azione format for all permission names.
     */
     'enforce_naming_convention' => true,
-    'naming_separator'          => '-',
+    'naming_separator' => '-',
 
     /*
     |--------------------------------------------------------------------------

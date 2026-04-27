@@ -18,10 +18,13 @@ use Spatie\Permission\Models\Role;
  */
 class RoleForm extends Component
 {
-    public string $name        = '';
-    public string $guardName   = '';
-    public bool   $isSystem    = false;
-    public bool   $isProtected = false;
+    public string $name = '';
+
+    public string $guardName = '';
+
+    public bool $isSystem = false;
+
+    public bool $isProtected = false;
 
     /** @var array<int, string> */
     public array $availableGuards = [];
@@ -39,21 +42,21 @@ class RoleForm extends Component
     public function mount(GuardService $guardService, ?int $roleId = null): void
     {
         $this->availableGuards = array_keys($guardService->all());
-        $this->guardName       = config('auth.defaults.guard', 'web');
-        $this->roleId          = $roleId;
+        $this->guardName = config('auth.defaults.guard', 'web');
+        $this->roleId = $roleId;
 
         if ($roleId !== null) {
             /** @var Role|null $role */
             $role = Role::find($roleId);
 
             if ($role !== null) {
-                $this->name      = $role->name;
+                $this->name = $role->name;
                 $this->guardName = $role->guard_name;
 
                 $meta = RoleMeta::where('role_id', $role->id)->first();
 
                 if ($meta !== null) {
-                    $this->isSystem    = (bool) $meta->is_system;
+                    $this->isSystem = (bool) $meta->is_system;
                     $this->isProtected = (bool) $meta->is_protected;
                 }
 
@@ -134,7 +137,7 @@ class RoleForm extends Component
     /**
      * Load permission checkboxes scoped to the given guard.
      *
-     * @param array<int, string> $selected
+     * @param  array<int, string>  $selected
      */
     private function loadPermissions(string $guard, array $selected): void
     {
@@ -142,8 +145,8 @@ class RoleForm extends Component
             ->orderBy('name')
             ->get()
             ->map(fn (Permission $p) => [
-                'id'       => $p->id,
-                'name'     => $p->name,
+                'id' => $p->id,
+                'name' => $p->name,
                 'selected' => in_array($p->name, $selected, true),
             ])
             ->all();

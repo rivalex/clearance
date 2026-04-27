@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 use Rivalex\Clearance\Services\PermissionService;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -41,13 +42,13 @@ class ClearanceInstallCommand extends Command
 
         $this->info('Publishing Clearance config...');
         $this->callSilently('vendor:publish', [
-            '--tag'      => 'clearance-config',
+            '--tag' => 'clearance-config',
             '--provider' => 'Rivalex\\Clearance\\ClearanceServiceProvider',
         ]);
 
         $this->info('Publishing Clearance migrations...');
         $this->callSilently('vendor:publish', [
-            '--tag'      => 'clearance-migrations',
+            '--tag' => 'clearance-migrations',
             '--provider' => 'Rivalex\\Clearance\\ClearanceServiceProvider',
         ]);
 
@@ -59,7 +60,7 @@ class ClearanceInstallCommand extends Command
         }
 
         $permissionName = config('clearance.access_permission', 'clearance-access');
-        $guard          = config('auth.defaults.guard', 'web');
+        $guard = config('auth.defaults.guard', 'web');
 
         /** @var Permission $permission */
         $permission = Permission::firstOrCreate(
@@ -90,7 +91,7 @@ class ClearanceInstallCommand extends Command
         $userModelClass = config('clearance.user_model')
             ?? config('auth.providers.users.model', 'App\\Models\\User');
 
-        /** @var \Illuminate\Database\Eloquent\Model|null $user */
+        /** @var Model|null $user */
         $user = $userModelClass::find($userId);
 
         if ($user === null) {

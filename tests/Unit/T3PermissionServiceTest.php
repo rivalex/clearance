@@ -67,14 +67,14 @@ it('throws when creating permission with invalid name', function (): void {
 
 it('renames a permission', function (): void {
     $permission = $this->service->create('orders-create', 'web');
-    $renamed    = $this->service->rename($permission, 'orders-store');
+    $renamed = $this->service->rename($permission, 'orders-store');
 
     expect($renamed->name)->toBe('orders-store');
 });
 
 it('deletes a permission', function (): void {
     $permission = $this->service->create('orders-create', 'web');
-    $id         = $permission->id;
+    $id = $permission->id;
 
     $this->service->delete($permission);
 
@@ -90,7 +90,7 @@ it('groupFor extracts group prefix', function (): void {
 
 it('assigns and revokes permission via service', function (): void {
     $permission = $this->service->create('orders-read', 'web');
-    $role       = Role::create(['name' => 'manager', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'manager', 'guard_name' => 'web']);
 
     $this->service->assignToRole($role, $permission);
     expect($role->fresh()->hasPermissionTo($permission))->toBeTrue();

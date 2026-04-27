@@ -20,9 +20,9 @@ class ContextService
      */
     public function resolveFor(Authenticatable $user, Model $context): Collection
     {
-        $userId      = $user->getAuthIdentifier();
+        $userId = $user->getAuthIdentifier();
         $contextType = get_class($context);
-        $contextId   = $context->getKey();
+        $contextId = $context->getKey();
 
         $userContexts = UserRoleContext::where('user_id', $userId)
             ->where('context_type', $contextType)
@@ -33,7 +33,7 @@ class ContextService
         $effective = collect();
 
         foreach ($userContexts as $userContext) {
-            $role  = $userContext->role;
+            $role = $userContext->role;
             $perms = $role->permissions->pluck('name');
 
             $overrides = RolePermissionOverride::where('child_role_id', $role->id)

@@ -18,10 +18,11 @@ use Spatie\Permission\Models\Role;
 #[Layout('clearance::layouts.app')]
 class RoleManager extends Component
 {
-    public bool $showForm  = false;
+    public bool $showForm = false;
+
     public ?int $editingId = null;
 
-    /** @var array<int, array{role: \Spatie\Permission\Models\Role, meta: \Rivalex\Clearance\Models\RoleMeta|null}> */
+    /** @var array<int, array{role: Role, meta: RoleMeta|null}> */
     public array $roleData = [];
 
     /**
@@ -38,7 +39,7 @@ class RoleManager extends Component
     public function create(): void
     {
         $this->editingId = null;
-        $this->showForm  = true;
+        $this->showForm = true;
     }
 
     /**
@@ -47,7 +48,7 @@ class RoleManager extends Component
     public function edit(int $id): void
     {
         $this->editingId = $id;
-        $this->showForm  = true;
+        $this->showForm = true;
     }
 
     /**
@@ -70,7 +71,7 @@ class RoleManager extends Component
      */
     public function closeForm(): void
     {
-        $this->showForm  = false;
+        $this->showForm = false;
         $this->editingId = null;
     }
 
@@ -80,7 +81,7 @@ class RoleManager extends Component
     #[On('role-saved')]
     public function onRoleSaved(): void
     {
-        $this->showForm  = false;
+        $this->showForm = false;
         $this->editingId = null;
         $this->loadRoles();
     }

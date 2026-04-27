@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Tests;
 
+use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Rivalex\Clearance\ClearanceServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
@@ -13,7 +14,7 @@ class TestCase extends Orchestra
     /**
      * Get package providers.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      * @return array<int, class-string>
      */
     protected function getPackageProviders($app): array
@@ -27,7 +28,7 @@ class TestCase extends Orchestra
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      */
     public function getEnvironmentSetUp($app): void
     {

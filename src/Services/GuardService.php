@@ -21,7 +21,7 @@ class GuardService
     public function all(): array
     {
         $authGuards = $this->config->get('auth.guards', []);
-        $override   = $this->config->get('clearance.guards', []);
+        $override = $this->config->get('clearance.guards', []);
 
         if (! empty($override)) {
             return array_filter(

@@ -15,12 +15,12 @@ class RoleMeta extends Model
     protected $fillable = ['role_id', 'is_system', 'is_protected'];
 
     protected $attributes = [
-        'is_system'    => false,
+        'is_system' => false,
         'is_protected' => false,
     ];
 
     protected $casts = [
-        'is_system'    => 'boolean',
+        'is_system' => 'boolean',
         'is_protected' => 'boolean',
     ];
 

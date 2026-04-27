@@ -18,21 +18,26 @@ use Spatie\Permission\Models\Role;
 #[Layout('clearance::layouts.app')]
 class UserRoleManager extends Component
 {
-    /** @var array<int, \Rivalex\Clearance\Models\UserRoleContext> */
+    /** @var array<int, UserRoleContext> */
     public array $assignments = [];
 
-    /** @var array<int, \Spatie\Permission\Models\Role> */
+    /** @var array<int, Role> */
     public array $availableRoles = [];
 
     /** Null = full admin view; set = manager scoped to own context (V4). */
     public ?string $scopeContextType = null;
-    public mixed   $scopeContextId   = null;
 
-    public bool   $showAssignForm    = false;
-    public mixed  $assignUserId      = null;
-    public ?int   $assignRoleId      = null;
+    public mixed $scopeContextId = null;
+
+    public bool $showAssignForm = false;
+
+    public mixed $assignUserId = null;
+
+    public ?int $assignRoleId = null;
+
     public string $assignContextType = '';
-    public mixed  $assignContextId   = null;
+
+    public mixed $assignContextId = null;
 
     public ?string $errorMessage = null;
 
@@ -69,10 +74,10 @@ class UserRoleManager extends Component
         }
 
         UserRoleContext::firstOrCreate([
-            'user_id'      => $this->assignUserId,
+            'user_id' => $this->assignUserId,
             'context_type' => $this->assignContextType,
-            'context_id'   => $this->assignContextId,
-            'role_id'      => $this->assignRoleId,
+            'context_id' => $this->assignContextId,
+            'role_id' => $this->assignRoleId,
         ]);
 
         $this->showAssignForm = false;
@@ -125,10 +130,10 @@ class UserRoleManager extends Component
         $ownContext = UserRoleContext::where('user_id', $user->getAuthIdentifier())->first();
 
         if ($ownContext !== null) {
-            $this->scopeContextType  = $ownContext->context_type;
-            $this->scopeContextId    = $ownContext->context_id;
+            $this->scopeContextType = $ownContext->context_type;
+            $this->scopeContextId = $ownContext->context_id;
             $this->assignContextType = $ownContext->context_type;
-            $this->assignContextId   = $ownContext->context_id;
+            $this->assignContextId = $ownContext->context_id;
         }
     }
 
@@ -139,10 +144,10 @@ class UserRoleManager extends Component
         // V4: server-side scope — managers only see their context
         if ($this->scopeContextType !== null) {
             $query->where('context_type', $this->scopeContextType)
-                  ->where('context_id', $this->scopeContextId);
+                ->where('context_id', $this->scopeContextId);
         }
 
-        $this->assignments    = $query->orderBy('user_id')->get()->all();
+        $this->assignments = $query->orderBy('user_id')->get()->all();
         $this->availableRoles = Role::orderBy('name')->get()->all();
     }
 
@@ -153,7 +158,7 @@ class UserRoleManager extends Component
 
         if ($this->scopeContextType === null) {
             $this->assignContextType = '';
-            $this->assignContextId   = null;
+            $this->assignContextId = null;
         }
     }
 }

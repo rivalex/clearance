@@ -32,10 +32,10 @@ class PermissionService
         );
 
         // Must be lowercase alphanumeric groups joined by separator, min 2 parts
-        if (! preg_match('/^[a-z][a-z0-9]*(' . $sep . '[a-z][a-z0-9]*)+$/', $name)) {
+        if (! preg_match('/^[a-z][a-z0-9]*('.$sep.'[a-z][a-z0-9]*)+$/', $name)) {
             throw new ClearanceNamingException(
                 "Permission name '{$name}' must follow format gruppo-azione: "
-                . 'lowercase, no spaces or dots, at least one separator, no bare action.',
+                .'lowercase, no spaces or dots, at least one separator, no bare action.',
             );
         }
     }
@@ -48,7 +48,7 @@ class PermissionService
         $this->validate($name);
 
         return Permission::create([
-            'name'       => $name,
+            'name' => $name,
             'guard_name' => $guardName,
         ]);
     }

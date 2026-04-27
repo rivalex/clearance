@@ -17,10 +17,11 @@ use Spatie\Permission\Models\Permission;
 #[Layout('clearance::layouts.app')]
 class PermissionManager extends Component
 {
-    public bool $showForm  = false;
+    public bool $showForm = false;
+
     public ?int $editingId = null;
 
-    /** @var array<int, \Spatie\Permission\Models\Permission> */
+    /** @var array<int, Permission> */
     public array $permissions = [];
 
     /**
@@ -37,7 +38,7 @@ class PermissionManager extends Component
     public function create(): void
     {
         $this->editingId = null;
-        $this->showForm  = true;
+        $this->showForm = true;
     }
 
     /**
@@ -46,7 +47,7 @@ class PermissionManager extends Component
     public function edit(int $id): void
     {
         $this->editingId = $id;
-        $this->showForm  = true;
+        $this->showForm = true;
     }
 
     /**
@@ -69,7 +70,7 @@ class PermissionManager extends Component
      */
     public function closeForm(): void
     {
-        $this->showForm  = false;
+        $this->showForm = false;
         $this->editingId = null;
     }
 
@@ -79,7 +80,7 @@ class PermissionManager extends Component
     #[On('permission-saved')]
     public function onPermissionSaved(): void
     {
-        $this->showForm  = false;
+        $this->showForm = false;
         $this->editingId = null;
         $this->loadPermissions();
     }

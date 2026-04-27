@@ -36,7 +36,7 @@ class HierarchyService
 
         return RoleHierarchy::create([
             'parent_role_id' => $parent->id,
-            'child_role_id'  => $child->id,
+            'child_role_id' => $child->id,
         ]);
     }
 
@@ -68,7 +68,7 @@ class HierarchyService
             if (! $parent->hasPermissionTo($permission)) {
                 throw new ClearanceInvalidOverrideException(
                     "Cannot force on '{$permission->name}': "
-                    . "parent role '{$parent->name}' does not have this permission (V2).",
+                    ."parent role '{$parent->name}' does not have this permission (V2).",
                 );
             }
         }
@@ -80,7 +80,7 @@ class HierarchyService
             ],
             [
                 'parent_role_id' => $hierarchy->parent_role_id,
-                'type'           => $type,
+                'type' => $type,
             ],
         );
     }

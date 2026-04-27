@@ -11,7 +11,8 @@ use Spatie\Permission\Models\Role;
 
 class RolePermissionOverride extends Model
 {
-    public const TYPE_FORCED_ON  = 'forced_on';
+    public const TYPE_FORCED_ON = 'forced_on';
+
     public const TYPE_FORCED_OFF = 'forced_off';
 
     protected $table = 'clearance_role_permission_overrides';

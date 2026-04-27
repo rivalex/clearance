@@ -17,7 +17,8 @@ use Spatie\Permission\Models\Permission;
  */
 class PermissionForm extends Component
 {
-    public string $name      = '';
+    public string $name = '';
+
     public string $guardName = '';
 
     /** @var array<int, string> */
@@ -33,15 +34,15 @@ class PermissionForm extends Component
     public function mount(GuardService $guardService, ?int $permissionId = null): void
     {
         $this->availableGuards = array_keys($guardService->all());
-        $this->guardName       = config('auth.defaults.guard', 'web');
-        $this->permissionId    = $permissionId;
+        $this->guardName = config('auth.defaults.guard', 'web');
+        $this->permissionId = $permissionId;
 
         if ($permissionId !== null) {
             /** @var Permission|null $permission */
             $permission = Permission::find($permissionId);
 
             if ($permission !== null) {
-                $this->name      = $permission->name;
+                $this->name = $permission->name;
                 $this->guardName = $permission->guard_name;
             }
         }

@@ -6,8 +6,8 @@ use Rivalex\Clearance\Services\GuardService;
 
 beforeEach(function (): void {
     config()->set('auth.guards', [
-        'web'   => ['driver' => 'session', 'provider' => 'users'],
-        'api'   => ['driver' => 'token',   'provider' => 'users'],
+        'web' => ['driver' => 'session', 'provider' => 'users'],
+        'api' => ['driver' => 'token',   'provider' => 'users'],
         'admin' => ['driver' => 'session', 'provider' => 'admins'],
     ]);
 

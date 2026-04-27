@@ -21,28 +21,35 @@ use Spatie\Permission\Models\Role;
 #[Layout('clearance::layouts.app')]
 class HierarchyManager extends Component
 {
-    /** @var array<int, \Rivalex\Clearance\Models\RoleHierarchy> */
+    /** @var array<int, RoleHierarchy> */
     public array $hierarchies = [];
 
-    /** @var array<int, \Spatie\Permission\Models\Role> */
+    /** @var array<int, Role> */
     public array $orphanRoles = [];
 
-    /** @var array<int, \Spatie\Permission\Models\Role> */
+    /** @var array<int, Role> */
     public array $allRoles = [];
 
-    /** @var array<int, \Spatie\Permission\Models\Permission> */
+    /** @var array<int, Permission> */
     public array $allPermissions = [];
 
-    public ?int    $drilldownId     = null;
-    public bool    $showAddRelation = false;
-    public ?int    $newParentId     = null;
-    public ?int    $newChildId      = null;
-    public ?string $errorMessage    = null;
+    public ?int $drilldownId = null;
 
-    public bool   $showOverrideForm    = false;
-    public ?int   $overrideHierarchyId = null;
-    public ?int   $overridePermissionId = null;
-    public string $overrideType        = 'forced_on';
+    public bool $showAddRelation = false;
+
+    public ?int $newParentId = null;
+
+    public ?int $newChildId = null;
+
+    public ?string $errorMessage = null;
+
+    public bool $showOverrideForm = false;
+
+    public ?int $overrideHierarchyId = null;
+
+    public ?int $overridePermissionId = null;
+
+    public string $overrideType = 'forced_on';
 
     /**
      * Load hierarchy state on mount.
@@ -60,7 +67,7 @@ class HierarchyManager extends Component
         $this->errorMessage = null;
 
         $parent = $this->newParentId ? Role::find($this->newParentId) : null;
-        $child  = $this->newChildId  ? Role::find($this->newChildId)  : null;
+        $child = $this->newChildId ? Role::find($this->newChildId) : null;
 
         if ($parent === null || $child === null) {
             $this->errorMessage = 'Select both parent and child roles.';
@@ -77,8 +84,8 @@ class HierarchyManager extends Component
         }
 
         $this->showAddRelation = false;
-        $this->newParentId     = null;
-        $this->newChildId      = null;
+        $this->newParentId = null;
+        $this->newChildId = null;
         $this->loadData();
     }
 
@@ -105,7 +112,7 @@ class HierarchyManager extends Component
      */
     public function drilldown(int $id): void
     {
-        $this->drilldownId      = ($this->drilldownId === $id) ? null : $id;
+        $this->drilldownId = ($this->drilldownId === $id) ? null : $id;
         $this->showOverrideForm = false;
     }
 
@@ -114,10 +121,10 @@ class HierarchyManager extends Component
      */
     public function openOverrideForm(int $hierarchyId): void
     {
-        $this->overrideHierarchyId  = $hierarchyId;
+        $this->overrideHierarchyId = $hierarchyId;
         $this->overridePermissionId = null;
-        $this->overrideType         = 'forced_on';
-        $this->showOverrideForm     = true;
+        $this->overrideType = 'forced_on';
+        $this->showOverrideForm = true;
     }
 
     /**
@@ -127,7 +134,7 @@ class HierarchyManager extends Component
     {
         $this->errorMessage = null;
 
-        $hierarchy  = $this->overrideHierarchyId  ? RoleHierarchy::find($this->overrideHierarchyId)  : null;
+        $hierarchy = $this->overrideHierarchyId ? RoleHierarchy::find($this->overrideHierarchyId) : null;
         $permission = $this->overridePermissionId ? Permission::find($this->overridePermissionId) : null;
 
         if ($hierarchy === null || $permission === null) {
@@ -169,11 +176,11 @@ class HierarchyManager extends Component
 
     private function loadData(): void
     {
-        $this->hierarchies    = RoleHierarchy::with(['parentRole', 'childRole', 'overrides.permission'])
+        $this->hierarchies = RoleHierarchy::with(['parentRole', 'childRole', 'overrides.permission'])
             ->get()->all();
 
-        $allRoles             = Role::orderBy('name')->get();
-        $this->allRoles       = $allRoles->all();
+        $allRoles = Role::orderBy('name')->get();
+        $this->allRoles = $allRoles->all();
         $this->allPermissions = Permission::orderBy('name')->get()->all();
 
         $usedIds = RoleHierarchy::selectRaw('parent_role_id as role_id')

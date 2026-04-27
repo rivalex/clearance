@@ -49,7 +49,7 @@ it('PermissionForm has no direct Spatie write calls (V8)', function (): void {
 });
 
 it('colorForGroup returns consistent color for same group', function (): void {
-    $manager = new PermissionManager();
+    $manager = new PermissionManager;
 
     expect($manager->colorForGroup('orders'))->toBe($manager->colorForGroup('orders'));
     expect($manager->colorForGroup('orders'))->not->toBeEmpty();

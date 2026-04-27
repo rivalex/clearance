@@ -21,7 +21,7 @@ it('creates a role', function (): void {
 });
 
 it('renames a role', function (): void {
-    $role    = $this->service->create('manager', 'web');
+    $role = $this->service->create('manager', 'web');
     $renamed = $this->service->rename($role, 'admin');
 
     expect($renamed->name)->toBe('admin');
@@ -29,7 +29,7 @@ it('renames a role', function (): void {
 
 it('deletes a role', function (): void {
     $role = $this->service->create('manager', 'web');
-    $id   = $role->id;
+    $id = $role->id;
 
     $this->service->delete($role);
 
@@ -37,8 +37,8 @@ it('deletes a role', function (): void {
 });
 
 it('syncs permissions to a role via PermissionService (V8)', function (): void {
-    $role  = $this->service->create('manager', 'web');
-    $read  = Permission::create(['name' => 'orders-read',   'guard_name' => 'web']);
+    $role = $this->service->create('manager', 'web');
+    $read = Permission::create(['name' => 'orders-read',   'guard_name' => 'web']);
     $write = Permission::create(['name' => 'orders-create', 'guard_name' => 'web']);
 
     $this->service->syncPermissions($role, [$read, $write]);
@@ -49,8 +49,8 @@ it('syncs permissions to a role via PermissionService (V8)', function (): void {
 });
 
 it('sync removes revoked permissions (V8)', function (): void {
-    $role  = $this->service->create('manager', 'web');
-    $read  = Permission::create(['name' => 'orders-read',   'guard_name' => 'web']);
+    $role = $this->service->create('manager', 'web');
+    $read = Permission::create(['name' => 'orders-read',   'guard_name' => 'web']);
     $write = Permission::create(['name' => 'orders-create', 'guard_name' => 'web']);
 
     $this->service->syncPermissions($role, [$read, $write]);
@@ -62,7 +62,7 @@ it('sync removes revoked permissions (V8)', function (): void {
 });
 
 it('rejects permission from different guard (guard-scoped enforcement)', function (): void {
-    $role    = $this->service->create('manager', 'web');
+    $role = $this->service->create('manager', 'web');
     $apiPerm = Permission::create(['name' => 'orders-read', 'guard_name' => 'api']);
 
     expect(fn () => $this->service->syncPermissions($role, [$apiPerm]))

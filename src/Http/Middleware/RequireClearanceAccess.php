@@ -19,7 +19,7 @@ class RequireClearanceAccess
         $permission = config('clearance.access_permission', 'clearance-access');
 
         if (! $request->user()?->can($permission)) {
-            abort(403, 'Access to Clearance panel requires the "' . $permission . '" permission.');
+            abort(403, 'Access to Clearance panel requires the "'.$permission.'" permission.');
         }
 
         return $next($request);

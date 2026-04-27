@@ -35,8 +35,8 @@ it('RoleMeta casts booleans correctly', function (): void {
 // --- RoleHierarchy ---
 
 it('creates RoleHierarchy with parent and child relationships', function (): void {
-    $parent    = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child     = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
     $hierarchy = RoleHierarchy::create(['parent_role_id' => $parent->id, 'child_role_id' => $child->id]);
 
     expect($hierarchy->parentRole->id)->toBe($parent->id)
@@ -46,14 +46,14 @@ it('creates RoleHierarchy with parent and child relationships', function (): voi
 // --- RolePermissionOverride ---
 
 it('creates forced_on override and resolves relationships', function (): void {
-    $parent   = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child    = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm     = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
+    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
     $override = RolePermissionOverride::create([
         'parent_role_id' => $parent->id,
-        'child_role_id'  => $child->id,
-        'permission_id'  => $perm->id,
-        'type'           => RolePermissionOverride::TYPE_FORCED_ON,
+        'child_role_id' => $child->id,
+        'permission_id' => $perm->id,
+        'type' => RolePermissionOverride::TYPE_FORCED_ON,
     ]);
 
     expect($override->isForcedOn())->toBeTrue()
@@ -62,14 +62,14 @@ it('creates forced_on override and resolves relationships', function (): void {
 });
 
 it('creates forced_off override', function (): void {
-    $parent   = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child    = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm     = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
+    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
+    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
     $override = RolePermissionOverride::create([
         'parent_role_id' => $parent->id,
-        'child_role_id'  => $child->id,
-        'permission_id'  => $perm->id,
-        'type'           => RolePermissionOverride::TYPE_FORCED_OFF,
+        'child_role_id' => $child->id,
+        'permission_id' => $perm->id,
+        'type' => RolePermissionOverride::TYPE_FORCED_OFF,
     ]);
 
     expect($override->isForcedOff())->toBeTrue()
@@ -80,11 +80,11 @@ it('creates forced_off override', function (): void {
 
 it('creates UserRoleContext with role relationship', function (): void {
     $role = Role::create(['name' => 'staff', 'guard_name' => 'web']);
-    $ctx  = UserRoleContext::create([
-        'user_id'      => 42,
-        'role_id'      => $role->id,
+    $ctx = UserRoleContext::create([
+        'user_id' => 42,
+        'role_id' => $role->id,
         'context_type' => 'App\Models\Store',
-        'context_id'   => 1,
+        'context_id' => 1,
     ]);
 
     expect($ctx->role->id)->toBe($role->id)
@@ -95,7 +95,7 @@ it('creates UserRoleContext with role relationship', function (): void {
 // --- V5: model files never alter spatie tables ---
 
 it('model files do not call Schema operations on spatie tables (V5)', function (): void {
-    $modelDir     = realpath(__DIR__.'/../../src/Models');
+    $modelDir = realpath(__DIR__.'/../../src/Models');
     $spatieTables = ['roles', 'permissions', 'model_has_roles', 'model_has_permissions', 'role_has_permissions'];
 
     foreach (glob($modelDir.'/*.php') as $file) {
