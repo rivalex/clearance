@@ -5,16 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function (): void {
-    // Spatie tables must exist first (FK dependency)
-    $this->loadMigrationsFrom(
-        realpath(__DIR__.'/../../vendor/spatie/laravel-permission/database/migrations')
-    );
-
-    // Clearance stubs: migrator ignores .stub extension, so include directly
-    $stubDir = realpath(__DIR__.'/../../database/migrations');
-    foreach (glob($stubDir.'/*.php.stub') as $stub) {
-        (include $stub)->up();
-    }
+    $this->runMigrations();
 });
 
 it('creates all 4 clearance tables', function (): void {
