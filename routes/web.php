@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Rivalex\Clearance\Livewire\Guards\GuardManager;
 use Rivalex\Clearance\Livewire\Permissions\PermissionManager;
+use Rivalex\Clearance\Livewire\Hierarchy\HierarchyManager;
 use Rivalex\Clearance\Livewire\Roles\RoleManager;
 
 $prefix     = config('clearance.route_prefix', 'clearance');
@@ -25,12 +26,11 @@ Route::prefix($prefix)
 
         Route::get('/roles',       RoleManager::class)->name('roles');
 
-        // Placeholders — replaced with Livewire components in T15-T16
-
         if (config('clearance.modules.hierarchy', true)) {
-            Route::get('/hierarchy', fn () => 'hierarchy')->name('hierarchy');
+            Route::get('/hierarchy', HierarchyManager::class)->name('hierarchy');
         }
 
+        // Placeholder — replaced with Livewire component in T16
         if (config('clearance.modules.users', false)) {
             Route::get('/users', fn () => 'users')->name('users');
         }
