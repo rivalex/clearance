@@ -7,6 +7,20 @@ Format follows [Conventional Commits](https://conventionalcommits.org).
 
 ## [Unreleased] — 2026-04-27
 
+### T16 — feat(livewire): UserRoleManager optional panel — server-side manager scope (V4,V8,I.Users)
+
+**Files created:**
+- `src/Livewire/Users/UserRoleManager.php`
+- `resources/views/livewire/users/user-role-manager.blade.php`
+- `tests/Unit/T16UserRoleManagerTest.php`
+
+**Files modified:**
+- `routes/web.php` — `/users` route wired to `UserRoleManager::class` (only when `modules.users = true`)
+
+**What and why:** Implements the optional `modules.users` panel for contextual user-role assignment. The component has two modes: admin mode (full view of all `UserRoleContext` records) and manager mode (scoped to the manager's own context). Mode is determined server-side in `resolveManagerScope()` which queries `UserRoleContext` for the authenticated user — if a record exists, that context becomes the scope (V4). Manager mode cannot assign or revoke outside their own `context_type`+`context_id` — enforced in both `assign()` and `revoke()` with explicit error messages. All writes target `UserRoleContext` (Clearance-owned table) via `firstOrCreate` and `delete()` — no Spatie model methods called (V8). `availableRoles` is loaded from Spatie's `Role` model (read-only query) but no writes to Spatie tables occur. Route is only registered when `config('clearance.modules.users', false)` is truthy.
+
+---
+
 ### T15 — feat(livewire): HierarchyManager panel (V2,V3,V9,V8,I.Hierarchy)
 
 **Files created:**

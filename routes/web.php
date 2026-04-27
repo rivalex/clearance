@@ -7,6 +7,7 @@ use Rivalex\Clearance\Livewire\Guards\GuardManager;
 use Rivalex\Clearance\Livewire\Permissions\PermissionManager;
 use Rivalex\Clearance\Livewire\Hierarchy\HierarchyManager;
 use Rivalex\Clearance\Livewire\Roles\RoleManager;
+use Rivalex\Clearance\Livewire\Users\UserRoleManager;
 
 $prefix     = config('clearance.route_prefix', 'clearance');
 $middleware = array_merge(
@@ -30,8 +31,7 @@ Route::prefix($prefix)
             Route::get('/hierarchy', HierarchyManager::class)->name('hierarchy');
         }
 
-        // Placeholder — replaced with Livewire component in T16
         if (config('clearance.modules.users', false)) {
-            Route::get('/users', fn () => 'users')->name('users');
+            Route::get('/users', UserRoleManager::class)->name('users');
         }
     });
