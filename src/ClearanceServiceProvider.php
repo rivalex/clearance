@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rivalex\Clearance;
 
 use Rivalex\Clearance\Commands\ClearanceCommand;
@@ -10,16 +12,13 @@ class ClearanceServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package
             ->name('clearance')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_clearance_table')
-            ->hasCommand(ClearanceCommand::class);
+            ->hasMigration('create_clearance_role_meta_table')
+            ->hasMigration('create_clearance_role_hierarchy_table')
+            ->hasMigration('create_clearance_role_permission_overrides_table')
+            ->hasMigration('create_clearance_user_role_contexts_table');
     }
 }
