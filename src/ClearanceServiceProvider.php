@@ -2,9 +2,9 @@
 
 namespace Rivalex\Clearance;
 
+use Rivalex\Clearance\Commands\ClearanceCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Rivalex\Clearance\Commands\ClearanceCommand;
 
 class ClearanceServiceProvider extends PackageServiceProvider
 {
