@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use Rivalex\Clearance\Livewire\Guards\GuardManager;
 
 $prefix     = config('clearance.route_prefix', 'clearance');
 $middleware = array_merge(
@@ -16,8 +17,9 @@ Route::prefix($prefix)
     ->group(function (): void {
         Route::get('/', fn () => redirect()->route('clearance.guards'))->name('home');
 
-        // Placeholders — replaced with Livewire components in T12-T16
-        Route::get('/guards',      fn () => 'guards')->name('guards');
+        Route::get('/guards',      GuardManager::class)->name('guards');
+
+        // Placeholders — replaced with Livewire components in T13-T16
         Route::get('/permissions', fn () => 'permissions')->name('permissions');
         Route::get('/roles',       fn () => 'roles')->name('roles');
 
