@@ -39,7 +39,7 @@ class ClearanceServiceProvider extends PackageServiceProvider
 
         // @canin($permission, $model) — resolves contextual permission server-side (V4)
         Blade::directive('canin', function (string $expression) use ($contextServiceClass): string {
-            return "<?php if(app(\\{$contextServiceClass}::class)->hasPermissionIn(auth()->user(), {$expression})): ?>";
+            return "<?php if(app(\\{$contextServiceClass}::class)->canIn(auth()->user(), {$expression})): ?>";
         });
 
         Blade::directive('endcanin', function (): string {

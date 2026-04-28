@@ -97,11 +97,11 @@ it('install --role creates role and assigns access permission (I.install)', func
 
 // --- @canin directive integration (I.canin, V4) ---
 
-it('@canin compiles referencing ContextService and auth user (I.canin)', function (): void {
+it('@canin compiles referencing ContextService::canIn and auth user (I.canin)', function (): void {
     $compiled = Blade::compileString('@canin($permission, $model)');
 
     expect($compiled)
-        ->toContain('hasPermissionIn')
+        ->toContain('canIn')
         ->toContain('ContextService')
         ->toContain('auth()->user()');
 });

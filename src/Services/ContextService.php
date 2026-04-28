@@ -15,20 +15,26 @@ class ContextService
     /**
      * Returns effective permission names for a user in a specific context model.
      * Strictly scoped to (user_id, context_type, context_id) — server-side enforcement (V4).
+     * When $guard is provided, only roles with that guard_name are considered.
      *
      * @return Collection<int, string>
      */
-    public function resolveFor(Authenticatable $user, Model $context): Collection
+    public function resolveFor(Authenticatable $user, Model $context, ?string $guard = null): Collection
     {
         $userId = $user->getAuthIdentifier();
         $contextType = get_class($context);
         $contextId = $context->getKey();
 
-        $userContexts = UserRoleContext::where('user_id', $userId)
+        $query = UserRoleContext::where('user_id', $userId)
             ->where('context_type', $contextType)
             ->where('context_id', $contextId)
-            ->with('role.permissions')
-            ->get();
+            ->with('role.permissions');
+
+        if ($guard !== null) {
+            $query->whereHas('role', static fn ($q) => $q->where('guard_name', $guard));
+        }
+
+        $userContexts = $query->get();
 
         $effective = collect();
 
@@ -58,9 +64,18 @@ class ContextService
 
     /**
      * Checks if a user has a specific permission within a context model (V4).
+     * Optional $guard filters roles by guard_name, matching Spatie's guard-specific check pattern.
      */
-    public function hasPermissionIn(Authenticatable $user, string $permission, Model $context): bool
+    public function canIn(Authenticatable $user, string $permission, Model $context, ?string $guard = null): bool
     {
-        return $this->resolveFor($user, $context)->contains($permission);
+        return $this->resolveFor($user, $context, $guard)->contains($permission);
+    }
+
+    /**
+     * Alias of canIn() for backward compatibility.
+     */
+    public function hasPermissionIn(Authenticatable $user, string $permission, Model $context, ?string $guard = null): bool
+    {
+        return $this->canIn($user, $permission, $context, $guard);
     }
 }
