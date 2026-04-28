@@ -7,6 +7,19 @@ Format follows [Conventional Commits](https://conventionalcommits.org).
 
 ## [Unreleased] — 2026-04-28
 
+### fix(model): RoleHierarchy::overrides() relationship + coverage 45% → 89%
+
+**Files modified/created:**
+- `src/Models/RoleHierarchy.php` — added `overrides(): HasMany` to `RolePermissionOverride` (real bug: `HierarchyManager::loadData()` used `with(['overrides.permission'])` without this relation)
+- `tests/Unit/T20LivewireRuntimeTest.php` — 44 runtime tests for all 6 Livewire components via direct instantiation + `app()->call()`
+- `tests/Unit/T5ModelsTest.php` — added `RolePermissionOverride::parentRole()/childRole()` test
+- `tests/Unit/T6HierarchyServiceTest.php` — added `HierarchyService::removeOverride()` test
+- `tests/Unit/T9InstallCommandTest.php` — added `--user` not-found path covering `assignToUser` null branch
+
+**What and why:** Coverage was 45.8%; all Livewire components had 0% runtime coverage (T12–T16 use source inspection only). T20 instantiates each component and exercises business logic directly — state mutation, error paths before dispatch, DB writes. Also fixed `RoleHierarchy` missing `overrides()` relation. Coverage: **88.9%** (172 tests, 505 assertions, 0 failures).
+
+---
+
 ### T19 — docs: README + install docs (complete package documentation)
 
 **Files created:**

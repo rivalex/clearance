@@ -130,6 +130,22 @@ it('cleanup does not touch forced_off overrides (V9)', function (): void {
     expect(RolePermissionOverride::where('type', 'forced_off')->count())->toBe(1);
 });
 
+// --- removeOverride ---
+
+it('removeOverride deletes the override record', function (): void {
+    $parent  = Role::create(['name' => 'manager', 'guard_name' => 'web']);
+    $child   = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm    = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
+
+    $hierarchy = $this->service->createRelation($parent, $child);
+    $override  = $this->service->addOverride($hierarchy, $perm, RolePermissionOverride::TYPE_FORCED_OFF);
+    $id        = $override->id;
+
+    $this->service->removeOverride($override);
+
+    expect(RolePermissionOverride::find($id))->toBeNull();
+});
+
 // --- isParent / isChild ---
 
 it('isParent and isChild return correct values', function (): void {

@@ -76,6 +76,21 @@ it('creates forced_off override', function (): void {
         ->and($override->isForcedOn())->toBeFalse();
 });
 
+it('RolePermissionOverride parentRole and childRole relationships resolve', function (): void {
+    $parent   = Role::create(['name' => 'manager', 'guard_name' => 'web']);
+    $child    = Role::create(['name' => 'staff',   'guard_name' => 'web']);
+    $perm     = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
+    $override = RolePermissionOverride::create([
+        'parent_role_id' => $parent->id,
+        'child_role_id'  => $child->id,
+        'permission_id'  => $perm->id,
+        'type'           => RolePermissionOverride::TYPE_FORCED_ON,
+    ]);
+
+    expect($override->parentRole->id)->toBe($parent->id)
+        ->and($override->childRole->id)->toBe($child->id);
+});
+
 // --- UserRoleContext ---
 
 it('creates UserRoleContext with role relationship', function (): void {

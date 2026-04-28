@@ -45,6 +45,18 @@ it('re-runs install with --force despite marker (V10)', function (): void {
     expect(Permission::where('name', 'clearance-access')->exists())->toBeTrue();
 });
 
+it('warns when --user ID not found (assignToUser not-found path)', function (): void {
+    // users table must exist for the model query to run; it's not in Clearance migrations
+    \Illuminate\Support\Facades\Schema::create('users', function ($table) {
+        $table->id();
+        $table->timestamps();
+    });
+
+    $this->artisan('clearance:install', ['--user' => '999'])
+        ->assertSuccessful()
+        ->expectsOutput('User [999] not found — permission not assigned to user.');
+});
+
 it('assigns permission to a role via --role option', function (): void {
     $this->artisan('clearance:install', ['--role' => 'admin'])->assertSuccessful();
 
