@@ -98,4 +98,48 @@ class PermissionService
 
         return explode($sep, $name)[0];
     }
+
+    /**
+     * Creates a group of permissions for one prefix and multiple abilities (V6, V8).
+     *
+     * @param  array<int, string>  $abilities
+     * @return array<int, Permission>
+     */
+    public function createGroup(string $prefix, string $guardName, array $abilities): array
+    {
+        $sep = $this->config->get('clearance.naming_separator', '-');
+        $created = [];
+
+        foreach ($abilities as $ability) {
+            $created[] = $this->create($prefix.$sep.$ability, $guardName);
+        }
+
+        return $created;
+    }
+
+    /**
+     * Updates a permission group by creating added and deleting removed abilities (V6, V8).
+     *
+     * @param  array<int, string>  $old  current ability names
+     * @param  array<int, string>  $new  desired ability names
+     */
+    public function updateGroup(string $prefix, string $guardName, array $old, array $new): void
+    {
+        $sep = $this->config->get('clearance.naming_separator', '-');
+
+        foreach (array_diff($new, $old) as $ability) {
+            $this->create($prefix.$sep.$ability, $guardName);
+        }
+
+        foreach (array_diff($old, $new) as $ability) {
+            /** @var Permission|null $perm */
+            $perm = Permission::where('name', $prefix.$sep.$ability)
+                ->where('guard_name', $guardName)
+                ->first();
+
+            if ($perm !== null) {
+                $this->delete($perm);
+            }
+        }
+    }
 }

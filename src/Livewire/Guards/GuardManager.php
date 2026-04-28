@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Livewire\Guards;
 
 use Illuminate\View\View;
-use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Rivalex\Clearance\Services\GuardService;
 
 /**
  * Read-only screen listing all configured authentication guards.
  */
-#[Layout('clearance::layouts.app')]
 class GuardManager extends Component
 {
     /** @var array<string, array<string, mixed>> */

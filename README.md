@@ -33,9 +33,28 @@ Optional flags:
 
 The installer:
 1. Publishes `config/clearance.php`
-2. Publishes and runs 4 migrations
-3. Creates the `clearance-access` permission
-4. Writes `storage/.clearance-installed` as an idempotency marker
+2. Publishes Clearance migrations
+3. **Detects Spatie Permission tables** — if the `roles` table is absent, publishes and runs Spatie's migrations automatically before proceeding
+4. Runs all pending migrations (Clearance's 4 tables)
+5. Creates the `clearance-access` permission
+6. Writes `storage/.clearance-installed` as an idempotency marker
+
+> **Note:** If `spatie/laravel-permission` was already installed and migrated, step 3 is skipped — no duplicate migrations are run.
+
+### User model requirement
+
+To use `--user=ID`, your `App\Models\User` must use Spatie's `HasRoles` trait:
+
+```php
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasRoles;
+}
+```
+
+If the trait is absent, the installer emits a warning and skips the user assignment without crashing. Re-run with `--force` after adding the trait.
 
 ## Configuration
 
@@ -66,19 +85,34 @@ return [
 ];
 ```
 
+## Layout Integration
+
+Clearance components render inside the host application's layout — no standalone HTML shell. Livewire uses the host app's default layout (`config('livewire.layout')`, typically `components.layouts.app`).
+
+To override the layout for Clearance routes specifically, set in `config/clearance.php`:
+
+```php
+'layout' => 'components.layouts.app', // or any Blade view name
+```
+
+`null` (default) defers to Livewire's own default, keeping Clearance invisible to the host app's navigation and styling pipeline.
+
 ## Panel Access
 
 Navigate to `/clearance` after installation. Access requires the `clearance-access` permission (checked via `can()`, never `hasRole()`).
 
 Available screens:
 
-| Route | Description |
-|---|---|
-| `/clearance/guards` | Read-only list of configured guards |
-| `/clearance/permissions` | Full permission CRUD with naming validation |
-| `/clearance/roles` | Role CRUD with guard-scoped permission assignment |
-| `/clearance/hierarchy` | Parent→child role hierarchy with override drill-down |
-| `/clearance/users` | Optional: contextual user→role assignment (`modules.users = true`) |
+| URI | Route name | Description |
+|---|---|---|
+| `/clearance` | `clearance.home` | Redirects to guards |
+| `/clearance/guards` | `clearance.guards` | Read-only list of configured guards |
+| `/clearance/permissions` | `clearance.permissions` | Full permission CRUD with naming validation |
+| `/clearance/roles` | `clearance.roles` | Role CRUD with guard-scoped permission assignment |
+| `/clearance/hierarchy` | `clearance.hierarchy` | Parent→child role hierarchy with override drill-down (`modules.hierarchy = true`) |
+| `/clearance/users` | `clearance.users` | Contextual user→role assignment (`modules.users = true`) |
+
+The URI prefix defaults to `clearance` and is configurable via `config('clearance.route_prefix')`. All route names update accordingly (e.g. prefix `admin/access` → `clearance.guards` stays the same name, only URI changes).
 
 ## Permission Naming Convention
 

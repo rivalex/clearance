@@ -69,6 +69,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Layout
+    |--------------------------------------------------------------------------
+    | Blade layout used by Clearance full-page Livewire components.
+    | null = use the host app's Livewire default (config('livewire.layout'),
+    |         which defaults to 'components.layouts.app').
+    | Set to a view name to override, e.g. 'layouts.app'.
+    */
+    'layout' => null,
+
+    /*
+    |--------------------------------------------------------------------------
     | UI
     |--------------------------------------------------------------------------
     */

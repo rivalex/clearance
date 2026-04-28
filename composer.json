@@ -7,6 +7,7 @@
         "clearance"
     ],
     "homepage": "https://github.com/rivalex/clearance",
+    "version": "1.0.0",
     "license": "MIT",
     "authors": [
         {
@@ -19,7 +20,7 @@
         "php": "^8.4",
         "spatie/laravel-package-tools": "^1.16",
         "spatie/laravel-permission": "^6.0",
-        "livewire/livewire": "^3.0",
+        "livewire/livewire": "^3.0||^4.0",
         "illuminate/contracts": "^11.0||^12.0||^13.0"
     },
     "require-dev": {

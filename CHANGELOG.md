@@ -7,6 +7,79 @@ Format follows [Conventional Commits](https://conventionalcommits.org).
 
 ## [Unreleased] — 2026-04-28
 
+### feat(ui): safe typed-delete confirmation for PermissionManager and RoleManager (T25, V8)
+
+**Files:** `PermissionManager.php`, `RoleManager.php`, `permission-manager.blade.php`, `role-manager.blade.php`
+
+`delete(string $prefix)` and `delete(int $id)` now stage the record for confirmation instead of deleting immediately. User must type `DELETE {name}` to confirm. Role deletion additionally blocked when `users_count > 0` — shows count warning. All writes via service layer (V8). 184 tests pass.
+
+---
+
+### feat(ui): RoleManager search, permission/user counts, pagination (T24)
+
+**Files:** `RoleManager.php`, `role-manager.blade.php`
+
+Added `WithPagination`, live search (`wire:model.live.debounce`), Perms and Users count columns (computed in `render()` via Eloquent + DB pivot). Empty state message adapts to search term. 184 tests pass.
+
+---
+
+### feat(ui): PermissionForm redesign — group prefix + CRUD checkboxes + custom pills (T23, V6, V8)
+
+**Files:** `PermissionService.php`, `PermissionForm.php`, `permission-form.blade.php`
+
+Added `createGroup(prefix, guard, abilities[])` and `updateGroup(prefix, guard, old[], new[])` to `PermissionService`. Form replaced: single-name input → prefix input + 5 CRUD checkboxes + Alpine pill list for custom abilities. `updateGroup` diffs and applies changes atomically via service layer. Naming convention (V6) enforced per ability. 184 tests pass.
+
+---
+
+### feat(ui): PermissionManager grouped view with search and pagination (T22, V6)
+
+**Files:** `PermissionManager.php`, `permission-manager.blade.php`
+
+Flat permission table replaced by prefix-grouped cards with colour-coded ability badges (emerald=CRUD, red=destructive, amber=custom). Live search filters whole groups. `WithPagination` paginates groups via `LengthAwarePaginator`. 184 tests pass.
+
+---
+
+### feat(ui): self-contained Blade components registered under clearance:: namespace (T26)
+
+**Files:** `resources/views/components/{message,clipboard,validation-errors}.blade.php`, `ClearanceServiceProvider.php`
+
+Three Alpine.js-based UI components extracted and registered via `Blade::anonymousComponentPath()`. No FontAwesome, no external JS dependencies. Available as `x-clearance::message`, `x-clearance::clipboard`, `x-clearance::validation-errors`. 184 tests pass.
+
+---
+
+### refactor(layout): remove standalone layout — Clearance components now use host app layout
+
+**Files modified:**
+- `src/Livewire/Guards/GuardManager.php` — removed `#[Layout]` attribute + `use Livewire\Attributes\Layout`
+- `src/Livewire/Hierarchy/HierarchyManager.php` — same
+- `src/Livewire/Permissions/PermissionManager.php` — same
+- `src/Livewire/Roles/RoleManager.php` — same
+- `src/Livewire/Users/UserRoleManager.php` — same
+- `config/clearance.php` — added `'layout' => null` key
+- `routes/web.php` — added `$applyLayout` closure that calls `->layout($layout)` on each route when `clearance.layout` is non-null
+
+**What and why:** All five full-page Livewire components were decorated with `#[Layout('clearance::layouts.app')]`, forcing every request to render inside Clearance's own standalone HTML shell (own `<html>`, Tailwind CDN, separate header). This made Clearance visually inconsistent with the host application. Pattern aligned with Lingua package: no `#[Layout]` on components, Livewire falls back to the host app's configured default layout (`config('livewire.layout')`, typically `components.layouts.app`). The `clearance.layout` config key allows explicit override without touching components. 180 tests, 515 assertions — all pass.
+
+---
+
+### fix(install): guard HasRoles trait check before givePermissionTo() on --user flag
+
+**Files modified:**
+- `src/Commands/ClearanceInstallCommand.php` — `assignToUser()` now calls `class_uses_recursive()` to verify the User model uses `Spatie\Permission\Traits\HasRoles` before calling `givePermissionTo()`; emits two actionable `warn()` lines and returns early if trait is absent
+
+**What and why:** `clearance:install --user=1` was throwing `BadMethodCallException: Call to undefined method App\Models\User::givePermissionTo()` when the User model did not use the `HasRoles` trait. The install command cannot add the trait itself (it belongs to the host app), so instead it detects the missing trait via `class_uses_recursive()`, warns the developer with the exact `use` statement to add, and skips the assignment cleanly. Re-running with `--force` after adding the trait will complete the assignment. 6 existing tests still pass.
+
+---
+
+### fix(install): auto-install Spatie Permission migrations when roles table absent
+
+**Files modified:**
+- `src/Commands/ClearanceInstallCommand.php` — added `ensureSpatieInstalled()` private method; added `Illuminate\Support\Facades\Schema` import
+
+**What and why:** `clearance:install` was failing on fresh Laravel apps that had never run Spatie's migrations. The `create_clearance_role_hierarchy_table` stub has `foreign('parent_role_id')->on('roles')` — if the `roles` table does not exist the migration throws a DB exception. Fix adds a pre-check via `Schema::hasTable('roles')` before running clearance migrations. If absent: publishes the `permission-migrations` tag from `Spatie\Permission\PermissionServiceProvider` and calls `artisan migrate` to create all Spatie tables first. If `roles` already exists (Spatie previously installed) the method returns immediately — no duplicate migration. 6 existing install command tests still pass.
+
+---
+
 ### feat(facade): implement Clearance class + facade (canIn, resolveFor, guards)
 
 **Files modified/created:**

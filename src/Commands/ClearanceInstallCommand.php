@@ -6,6 +6,7 @@ namespace Rivalex\Clearance\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 use Rivalex\Clearance\Services\PermissionService;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -52,10 +53,12 @@ class ClearanceInstallCommand extends Command
             '--provider' => 'Rivalex\\Clearance\\ClearanceServiceProvider',
         ]);
 
+        $this->ensureSpatieInstalled();
+
         $this->info('Running migrations...');
         try {
             $this->callSilently('migrate');
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // Schema already exists — idempotent install
         }
 
@@ -84,6 +87,25 @@ class ClearanceInstallCommand extends Command
     }
 
     /**
+     * Publishes and runs Spatie Permission migrations if the roles table is absent.
+     */
+    private function ensureSpatieInstalled(): void
+    {
+        if (Schema::hasTable('roles')) {
+            return;
+        }
+
+        $this->info('Spatie Permission tables not found. Publishing and running Spatie migrations...');
+
+        $this->callSilently('vendor:publish', [
+            '--tag'      => 'permission-migrations',
+            '--provider' => 'Spatie\\Permission\\PermissionServiceProvider',
+        ]);
+
+        $this->call('migrate');
+    }
+
+    /**
      * Assigns the access permission directly to a user by ID.
      */
     private function assignToUser(int $userId, Permission $permission): void
@@ -96,6 +118,13 @@ class ClearanceInstallCommand extends Command
 
         if ($user === null) {
             $this->warn("User [{$userId}] not found — permission not assigned to user.");
+
+            return;
+        }
+
+        if (! in_array(\Spatie\Permission\Traits\HasRoles::class, class_uses_recursive($user))) {
+            $this->warn("User model [" . get_class($user) . "] does not use HasRoles trait — permission not assigned.");
+            $this->warn("Add `use \\Spatie\\Permission\\Traits\\HasRoles;` to your User model, then re-run with --force.");
 
             return;
         }

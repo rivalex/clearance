@@ -4,33 +4,48 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Livewire\Roles;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Services\RoleService;
 use Spatie\Permission\Models\Role;
 
 /**
- * Full CRUD list screen for roles with is_system/is_protected badges (V8).
+ * Full CRUD list screen for roles with search, counts, pagination, and safe delete (V8).
  */
-#[Layout('clearance::layouts.app')]
 class RoleManager extends Component
 {
+    use WithPagination;
+
     public bool $showForm = false;
 
     public ?int $editingId = null;
 
-    /** @var array<int, array{role: Role, meta: RoleMeta|null}> */
-    public array $roleData = [];
+    public string $search = '';
+
+    /** Role ID staged for typed-confirmation deletion (T25). */
+    public ?int $deletingRoleId = null;
+
+    /** Users currently assigned to the role being deleted. */
+    public int $deletingRoleUsersCount = 0;
+
+    /** Typed confirmation text (T25). */
+    public string $deleteConfirmText = '';
 
     /**
-     * Load roles and their metadata on mount.
+     * No-op mount kept for test/Livewire lifecycle compatibility.
      */
-    public function mount(): void
+    public function mount(): void {}
+
+    /**
+     * Reset pagination when search changes.
+     */
+    public function updatingSearch(): void
     {
-        $this->loadRoles();
+        $this->resetPage();
     }
 
     /**
@@ -40,6 +55,7 @@ class RoleManager extends Component
     {
         $this->editingId = null;
         $this->showForm = true;
+        $this->deletingRoleId = null;
     }
 
     /**
@@ -49,21 +65,59 @@ class RoleManager extends Component
     {
         $this->editingId = $id;
         $this->showForm = true;
+        $this->deletingRoleId = null;
     }
 
     /**
-     * Delete a role via RoleService (V8).
+     * Stage a role for typed-confirmation deletion (T25, V8).
+     * Roles with assigned users show a block warning instead of the confirm input.
      */
-    public function delete(int $id, RoleService $roleService): void
+    public function delete(int $id): void
     {
-        /** @var Role|null $role */
-        $role = Role::find($id);
+        $usersCount = DB::table(
+            config('permission.table_names.model_has_roles', 'model_has_roles')
+        )->where('role_id', $id)->count();
 
-        if ($role !== null) {
-            $roleService->delete($role);
+        $this->deletingRoleId = $id;
+        $this->deletingRoleUsersCount = $usersCount;
+        $this->deleteConfirmText = '';
+        $this->showForm = false;
+    }
+
+    /**
+     * Cancel the pending delete.
+     */
+    public function cancelDelete(): void
+    {
+        $this->deletingRoleId = null;
+        $this->deletingRoleUsersCount = 0;
+        $this->deleteConfirmText = '';
+    }
+
+    /**
+     * Execute delete after typed confirmation — blocked when users are assigned (T25, V8).
+     */
+    public function confirmDelete(RoleService $roleService): void
+    {
+        if ($this->deletingRoleId === null || $this->deletingRoleUsersCount > 0) {
+            return;
         }
 
-        $this->loadRoles();
+        /** @var Role|null $role */
+        $role = Role::find($this->deletingRoleId);
+
+        if ($role === null) {
+            $this->cancelDelete();
+
+            return;
+        }
+
+        if ($this->deleteConfirmText !== 'DELETE '.$role->name) {
+            return;
+        }
+
+        $roleService->delete($role);
+        $this->cancelDelete();
     }
 
     /**
@@ -83,24 +137,33 @@ class RoleManager extends Component
     {
         $this->showForm = false;
         $this->editingId = null;
-        $this->loadRoles();
     }
 
     public function render(): View
     {
-        return view('clearance::livewire.roles.role-manager');
-    }
+        $query = Role::orderBy('name');
 
-    private function loadRoles(): void
-    {
-        $roles = Role::orderBy('name')->get();
+        if ($this->search !== '') {
+            $query->where('name', 'like', '%'.$this->search.'%');
+        }
+
+        $roles = $query->paginate(15);
+
         $metas = RoleMeta::whereIn('role_id', $roles->pluck('id')->all())
             ->get()
             ->keyBy('role_id');
 
-        $this->roleData = $roles->map(fn (Role $role) => [
-            'role' => $role,
-            'meta' => $metas->get($role->id),
-        ])->all();
+        $modelHasRolesTable = config('permission.table_names.model_has_roles', 'model_has_roles');
+
+        $roleData = $roles->through(fn (Role $role) => [
+            'role'              => $role,
+            'meta'              => $metas->get($role->id),
+            'permissions_count' => $role->permissions()->count(),
+            'users_count'       => DB::table($modelHasRolesTable)->where('role_id', $role->id)->count(),
+        ]);
+
+        $deletingRole = $this->deletingRoleId !== null ? Role::find($this->deletingRoleId) : null;
+
+        return view('clearance::livewire.roles.role-manager', compact('roleData', 'deletingRole'));
     }
 }

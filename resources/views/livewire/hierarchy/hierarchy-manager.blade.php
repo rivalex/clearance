@@ -1,4 +1,4 @@
-<div>
+<div class="clearance">
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-semibold">Hierarchy</h1>
@@ -149,3 +149,9 @@
         @endforelse
     </div>
 </div>
+
+@assets
+@once
+    <link rel="stylesheet" href="{{ route('clearance.assets', 'css/clearance.min.css') }}">
+@endonce
+@endassets

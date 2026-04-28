@@ -1,4 +1,4 @@
-<div>
+<div class="clearance">
     <div class="mb-6">
         <h1 class="text-xl font-semibold">Guards</h1>
         <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Authentication guards configured in your application.</p>
@@ -29,3 +29,9 @@
         </table>
     </div>
 </div>
+
+@assets
+@once
+    <link rel="stylesheet" href="{{ route('clearance.assets', 'css/clearance.min.css') }}">
+@endonce
+@endassets

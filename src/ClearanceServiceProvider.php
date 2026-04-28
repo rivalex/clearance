@@ -6,8 +6,11 @@ namespace Rivalex\Clearance;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Livewire\Livewire;
 use Rivalex\Clearance\Commands\ClearanceInstallCommand;
 use Rivalex\Clearance\Http\Middleware\RequireClearanceAccess;
+use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
+use Rivalex\Clearance\Livewire\Roles\RoleForm;
 use Rivalex\Clearance\Services\ContextService;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -34,6 +37,11 @@ class ClearanceServiceProvider extends PackageServiceProvider
         /** @var Router $router */
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('clearance.access', RequireClearanceAccess::class);
+
+        Livewire::component('clearance-permission-form', PermissionForm::class);
+        Livewire::component('clearance-role-form', RoleForm::class);
+
+        Blade::anonymousComponentPath(__DIR__ . '/../resources/views/components', 'clearance');
 
         $contextServiceClass = ContextService::class;
 

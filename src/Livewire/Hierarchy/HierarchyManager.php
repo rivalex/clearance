@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Livewire\Hierarchy;
 
 use Illuminate\View\View;
-use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Rivalex\Clearance\Exceptions\ClearanceHierarchyViolationException;
 use Rivalex\Clearance\Exceptions\ClearanceInvalidOverrideException;
@@ -18,7 +17,6 @@ use Spatie\Permission\Models\Role;
 /**
  * Manages parent→child hierarchy relations and override drill-down (V2,V3,V9,V8).
  */
-#[Layout('clearance::layouts.app')]
 class HierarchyManager extends Component
 {
     /** @var array<int, RoleHierarchy> */

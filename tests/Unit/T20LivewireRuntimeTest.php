@@ -37,13 +37,13 @@ it('GuardManager render returns View', function (): void {
 
 // ─── PermissionManager ───────────────────────────────────────────────────────
 
-it('PermissionManager mount loads permissions from DB', function (): void {
+it('PermissionManager mount runs without error', function (): void {
     Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
 
     $component = new PermissionManager;
-    app()->call([$component, 'mount']);
+    app()->call([$component, 'mount']); // no-op; data computed in render()
 
-    expect($component->permissions)->toHaveCount(1);
+    expect($component)->toBeInstanceOf(PermissionManager::class);
 });
 
 it('PermissionManager create opens form in create mode', function (): void {
@@ -51,24 +51,24 @@ it('PermissionManager create opens form in create mode', function (): void {
     $component->create();
 
     expect($component->showForm)->toBeTrue()
-        ->and($component->editingId)->toBeNull();
+        ->and($component->editingPrefix)->toBe('');
 });
 
-it('PermissionManager edit opens form in edit mode', function (): void {
+it('PermissionManager edit opens form for given prefix', function (): void {
     $component = new PermissionManager;
-    $component->edit(42);
+    $component->edit('orders');
 
-    expect($component->editingId)->toBe(42)
+    expect($component->editingPrefix)->toBe('orders')
         ->and($component->showForm)->toBeTrue();
 });
 
 it('PermissionManager closeForm resets state', function (): void {
     $component = new PermissionManager;
-    $component->edit(42);
+    $component->edit('orders');
     $component->closeForm();
 
     expect($component->showForm)->toBeFalse()
-        ->and($component->editingId)->toBeNull();
+        ->and($component->editingPrefix)->toBe('');
 });
 
 it('PermissionManager colorForGroup returns consistent color', function (): void {
@@ -78,34 +78,46 @@ it('PermissionManager colorForGroup returns consistent color', function (): void
         ->and($component->colorForGroup('orders'))->toBe($component->colorForGroup('orders'));
 });
 
-it('PermissionManager delete removes permission and reloads', function (): void {
-    $perm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
-    $id = $perm->id;
-
+it('PermissionManager delete stages prefix for confirmation (T25)', function (): void {
     $component = new PermissionManager;
-    app()->call([$component, 'mount']);
-    app()->call([$component, 'delete'], ['id' => $id]);
+    $component->delete('orders');
 
-    expect(Permission::find($id))->toBeNull()
-        ->and($component->permissions)->toHaveCount(0);
+    expect($component->deletingPrefix)->toBe('orders')
+        ->and($component->showForm)->toBeFalse();
 });
 
-it('PermissionManager delete with non-existent id is a no-op', function (): void {
-    $component = new PermissionManager;
-    app()->call([$component, 'mount']);
-    app()->call([$component, 'delete'], ['id' => 9999]);
+it('PermissionManager confirmDeleteGroup removes all permissions in group', function (): void {
+    Permission::create(['name' => 'orders-create', 'guard_name' => 'web']);
+    Permission::create(['name' => 'orders-read',   'guard_name' => 'web']);
 
-    expect($component->permissions)->toHaveCount(0);
+    $component = new PermissionManager;
+    $component->delete('orders');
+    $component->deleteConfirmText = 'DELETE orders';
+    app()->call([$component, 'confirmDeleteGroup']);
+
+    expect(Permission::where('name', 'like', 'orders-%')->count())->toBe(0)
+        ->and($component->deletingPrefix)->toBe('');
 });
 
-it('PermissionManager onPermissionSaved resets form and reloads', function (): void {
+it('PermissionManager confirmDeleteGroup wrong text is no-op', function (): void {
+    Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
+
+    $component = new PermissionManager;
+    $component->delete('orders');
+    $component->deleteConfirmText = 'wrong';
+    app()->call([$component, 'confirmDeleteGroup']);
+
+    expect(Permission::where('name', 'like', 'orders-%')->count())->toBe(1);
+});
+
+it('PermissionManager onPermissionSaved resets form', function (): void {
     $component = new PermissionManager;
     $component->showForm = true;
-    $component->editingId = 5;
+    $component->editingPrefix = 'orders';
     $component->onPermissionSaved();
 
     expect($component->showForm)->toBeFalse()
-        ->and($component->editingId)->toBeNull();
+        ->and($component->editingPrefix)->toBe('');
 });
 
 it('PermissionManager render returns View', function (): void {
@@ -116,29 +128,45 @@ it('PermissionManager render returns View', function (): void {
 
 // ─── PermissionForm ──────────────────────────────────────────────────────────
 
-it('PermissionForm mount sets defaults for new permission', function (): void {
+it('PermissionForm mount sets defaults for new group', function (): void {
     $component = new PermissionForm;
     app()->call([$component, 'mount']);
 
-    expect($component->name)->toBe('')
+    expect($component->prefix)->toBe('')
+        ->and($component->editingPrefix)->toBe('')
         ->and($component->guardName)->toBe(config('auth.defaults.guard', 'web'))
-        ->and($component->permissionId)->toBeNull();
+        ->and($component->crudAbilities)->toBe([])
+        ->and($component->customAbilities)->toBe([]);
 });
 
-it('PermissionForm mount loads existing permission for edit', function (): void {
-    $perm = Permission::create(['name' => 'orders-edit', 'guard_name' => 'web']);
+it('PermissionForm mount loads existing group for edit', function (): void {
+    Permission::create(['name' => 'orders-create', 'guard_name' => 'web']);
+    Permission::create(['name' => 'orders-export', 'guard_name' => 'web']);
 
     $component = new PermissionForm;
-    app()->call([$component, 'mount'], ['permissionId' => $perm->id]);
+    app()->call([$component, 'mount'], ['editingPrefix' => 'orders']);
 
-    expect($component->name)->toBe('orders-edit')
-        ->and($component->guardName)->toBe('web');
+    expect($component->prefix)->toBe('orders')
+        ->and($component->guardName)->toBe('web')
+        ->and($component->crudAbilities)->toContain('create')
+        ->and($component->customAbilities)->toContain('export');
 });
 
-it('PermissionForm save sets errorMessage on invalid name (returns before dispatch)', function (): void {
+it('PermissionForm save sets errorMessage when no abilities selected', function (): void {
     $component = new PermissionForm;
     app()->call([$component, 'mount']);
-    $component->name = 'INVALID NAME';
+    $component->prefix = 'orders';
+
+    app()->call([$component, 'save']);
+
+    expect($component->errorMessage)->toBe('Select at least one ability.');
+});
+
+it('PermissionForm save sets errorMessage on invalid prefix name', function (): void {
+    $component = new PermissionForm;
+    app()->call([$component, 'mount']);
+    $component->prefix = 'INVALID NAME';
+    $component->crudAbilities = ['create'];
 
     app()->call([$component, 'save']);
 
@@ -153,13 +181,13 @@ it('PermissionForm render returns View', function (): void {
 
 // ─── RoleManager ─────────────────────────────────────────────────────────────
 
-it('RoleManager mount loads roles', function (): void {
+it('RoleManager mount runs without error', function (): void {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
 
     $component = new RoleManager;
-    app()->call([$component, 'mount']);
+    app()->call([$component, 'mount']); // no-op; data computed in render()
 
-    expect($component->roleData)->toHaveCount(1);
+    expect($component)->toBeInstanceOf(RoleManager::class);
 });
 
 it('RoleManager create opens form', function (): void {
@@ -197,16 +225,41 @@ it('RoleManager onRoleSaved resets form and reloads', function (): void {
         ->and($component->editingId)->toBeNull();
 });
 
-it('RoleManager delete removes role and reloads', function (): void {
+it('RoleManager delete stages role for confirmation (T25)', function (): void {
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
-    $id = $role->id;
 
     $component = new RoleManager;
-    app()->call([$component, 'mount']);
-    app()->call([$component, 'delete'], ['id' => $id]);
+    $component->delete($role->id);
+
+    expect($component->deletingRoleId)->toBe($role->id)
+        ->and(Role::find($role->id))->not->toBeNull(); // not deleted yet
+});
+
+it('RoleManager confirmDelete removes role after correct text', function (): void {
+    $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
+    $id   = $role->id;
+
+    $component = new RoleManager;
+    $component->delete($id);
+    $component->deleteConfirmText = 'DELETE editor';
+    app()->call([$component, 'confirmDelete']);
 
     expect(Role::find($id))->toBeNull()
-        ->and($component->roleData)->toHaveCount(0);
+        ->and($component->deletingRoleId)->toBeNull();
+});
+
+it('RoleManager confirmDelete blocks when users are assigned (T25)', function (): void {
+    $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
+    \Illuminate\Support\Facades\DB::table('model_has_roles')->insert([
+        'role_id' => $role->id, 'model_type' => 'App\\Models\\User', 'model_id' => 1,
+    ]);
+
+    $component = new RoleManager;
+    $component->delete($role->id);
+    $component->deleteConfirmText = 'DELETE editor';
+    app()->call([$component, 'confirmDelete']);
+
+    expect(Role::find($role->id))->not->toBeNull(); // blocked
 });
 
 it('RoleManager render returns View', function (): void {

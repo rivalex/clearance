@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Livewire\Users;
 
 use Illuminate\View\View;
-use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Spatie\Permission\Models\Role;
@@ -15,7 +14,6 @@ use Spatie\Permission\Models\Role;
  * Optional module (modules.users). Server-side scoped for manager access (V4).
  * No direct Spatie write calls (V8).
  */
-#[Layout('clearance::layouts.app')]
 class UserRoleManager extends Component
 {
     /** @var array<int, UserRoleContext> */
