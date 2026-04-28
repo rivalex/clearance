@@ -5,6 +5,38 @@ Format follows [Conventional Commits](https://conventionalcommits.org).
 
 ---
 
+## [Unreleased] — 2026-04-28
+
+### T19 — docs: README + install docs (complete package documentation)
+
+**Files created:**
+- `README.md`
+
+**What and why:** Adds the package README with installation guide, configuration reference, permission naming convention docs, `@canin` directive usage, role hierarchy explanation, contextual roles (`modules.users`) docs, and database table reference. Covers I.install, I.config, I.canin, I.routes.
+
+---
+
+### T18 — test(feature): Pest feature tests — routes, middleware, @canin, DB compat (V1,V7,V10,I.install)
+
+**Files created:**
+- `tests/Feature/T18FeatureTest.php`
+
+**Files modified:**
+- `tests/TestCase.php` — added `app.key` to `getEnvironmentSetUp()` to support HTTP feature tests
+
+**What and why:** Feature test suite covering: route registration (all five named clearance routes present and prefixed), middleware enforcement (unauthenticated requests redirected per V1), V7 (`permission.teams` stays `false`), V10 idempotency (marker file preserved on repeat install, `--force` overrides), I.install `--role` flag, @canin directive compilation and DB-backed resolution (V4 context isolation), and SQLite DB compat (all four clearance tables exist after migrations). 12 tests, 30 assertions.
+
+---
+
+### T17 — test(unit): Pest invariant tests — all services (V1,V2,V3,V4,V5,V6,V7,V8,V9)
+
+**Files created:**
+- `tests/Unit/T17ServiceInvariantsTest.php`
+
+**What and why:** Dedicated invariant validation suite covering gaps not tested in T3–T8. V5: migration stubs verified to only `Schema::create` clearance-prefixed tables — no Spatie core tables created or altered. V8: source scan confirms all Livewire component PHP files contain zero direct Spatie write calls (`Role::create`, `Permission::create`, `givePermissionTo`, `revokePermissionTo`). V1: `RequireClearanceAccess` source verified to use `->can()` not `hasRole()`. V2+V9 integration: full cross-service flow (assign perm to parent → create hierarchy → add forced_on override → revoke perm → cleanup → override gone). V3: three-level chain rejected. V4: context isolation by `context_type` and `user_id`. V6: naming convention accepts and rejects correct patterns. V7: `permission.teams` config is falsy. 10 tests, 98 assertions.
+
+---
+
 ## [Unreleased] — 2026-04-27
 
 ### T16 — feat(livewire): UserRoleManager optional panel — server-side manager scope (V4,V8,I.Users)
