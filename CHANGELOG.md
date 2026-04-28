@@ -7,6 +7,16 @@ Format follows [Conventional Commits](https://conventionalcommits.org).
 
 ## [Unreleased] — 2026-04-28
 
+### feat(facade): implement Clearance class + facade (canIn, resolveFor, guards)
+
+**Files modified/created:**
+- `src/Clearance.php` — implemented: `canIn()`, `resolveFor()`, `guards()` thin wrappers over `ContextService` + `GuardService`; constructor DI auto-resolved by container
+- `tests/Unit/T21ClearanceTest.php` — 8 tests: container resolution, facade resolution, `guards()`, `canIn()` false/true/guard-filter, `resolveFor()` with/without permissions
+
+**What and why:** `Clearance.php` was an empty stub. Now exposes a clean PHP API for contextual permission checks without requiring direct service injection. `Facades/Clearance` was already registered — just needed the underlying class to be real. `Clearance::getFacadeRoot()` confirmed to return `Clearance` instance. 8 tests, 10 assertions.
+
+---
+
 ### fix(model): RoleHierarchy::overrides() relationship + coverage 45% → 89%
 
 **Files modified/created:**
