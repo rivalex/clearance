@@ -56,6 +56,7 @@ class RoleManager extends Component
         $this->editingId = null;
         $this->showForm = true;
         $this->deletingRoleId = null;
+        $this->dispatch('open-role-form');
     }
 
     /**
@@ -66,6 +67,7 @@ class RoleManager extends Component
         $this->editingId = $id;
         $this->showForm = true;
         $this->deletingRoleId = null;
+        $this->dispatch('open-role-form');
     }
 
     /**
@@ -82,6 +84,7 @@ class RoleManager extends Component
         $this->deletingRoleUsersCount = $usersCount;
         $this->deleteConfirmText = '';
         $this->showForm = false;
+        $this->dispatch('open-delete-role');
     }
 
     /**
@@ -92,6 +95,7 @@ class RoleManager extends Component
         $this->deletingRoleId = null;
         $this->deletingRoleUsersCount = 0;
         $this->deleteConfirmText = '';
+        $this->dispatch('close-delete-role');
     }
 
     /**
@@ -121,7 +125,7 @@ class RoleManager extends Component
     }
 
     /**
-     * Close form without saving.
+     * Close form without saving (called when modal dismissed by user via X button).
      */
     public function closeForm(): void
     {
@@ -137,6 +141,7 @@ class RoleManager extends Component
     {
         $this->showForm = false;
         $this->editingId = null;
+        $this->dispatch('close-role-form');
     }
 
     public function render(): View

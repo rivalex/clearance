@@ -5,60 +5,21 @@
             <h1 class="text-xl font-semibold">Permissions</h1>
             <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Manage application permissions grouped by prefix.</p>
         </div>
-        @unless($showForm || $deletingPrefix !== '')
-            <button wire:click="create"
-                    class="px-4 py-2 text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition">
-                Add group
-            </button>
-        @endunless
+        <flux:button wire:click="create" variant="primary" size="sm" icon="plus">
+            Add group
+        </flux:button>
     </div>
 
-    {{-- Permission form (create / edit) --}}
-    @if($showForm)
-        <div class="mb-6">
-            <livewire:clearance-permission-form :editingPrefix="$editingPrefix" :key="'pf-'.($editingPrefix ?: 'new')" />
-        </div>
-    @endif
-
-    {{-- Typed-delete confirmation panel (T25) --}}
-    @if($deletingPrefix !== '')
-        <div class="mb-6 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
-            <p class="text-sm font-medium text-red-700 dark:text-red-400 mb-1">
-                Delete group <code class="font-mono font-bold">{{ $deletingPrefix }}</code>?
-                All permissions in this group will be permanently removed.
-            </p>
-            <p class="text-xs text-red-500 dark:text-red-400 mb-3">
-                Type <span class="font-mono font-semibold">DELETE {{ $deletingPrefix }}</span> to confirm.
-            </p>
-            <div class="flex items-center gap-3">
-                <input wire:model="deleteConfirmText"
-                       type="text"
-                       placeholder="DELETE {{ $deletingPrefix }}"
-                       class="rounded-md border border-red-300 dark:border-red-700 bg-white dark:bg-zinc-900
-                              px-3 py-1.5 text-sm font-mono w-64 focus:outline-none focus:ring-2 focus:ring-red-400" />
-                <button wire:click="confirmDeleteGroup"
-                        class="px-3 py-1.5 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                    Confirm delete
-                </button>
-                <button wire:click="cancelDelete"
-                        class="text-sm text-zinc-500 dark:text-zinc-400 hover:underline">
-                    Cancel
-                </button>
-            </div>
-        </div>
-    @endif
-
     {{-- Search --}}
-    @unless($showForm)
-        <div class="mb-4">
-            <input wire:model.live.debounce.300ms="search"
-                   type="search"
-                   placeholder="Search by prefix or permission name…"
-                   class="w-full max-w-sm rounded-md border border-zinc-300 dark:border-zinc-600
-                          bg-white dark:bg-zinc-900 px-3 py-2 text-sm
-                          focus:outline-none focus:ring-2 focus:ring-zinc-400" />
-        </div>
-    @endunless
+    <div class="mb-4">
+        <flux:input
+            wire:model.live.debounce.300ms="search"
+            type="search"
+            placeholder="Search by prefix or permission name…"
+            class="max-w-sm"
+            icon="magnifying-glass"
+        />
+    </div>
 
     {{-- Grouped permission cards --}}
     <div class="space-y-3">
@@ -127,6 +88,54 @@
             {{ $groupedPermissions->links() }}
         </div>
     @endif
+
+    {{-- Create / Edit modal --}}
+    <flux:modal
+        name="permission-form"
+        class="md:w-[42rem]"
+        x-on:open-permission-form.window="show()"
+        x-on:close-permission-form.window="close()"
+    >
+        <div class="clearance">
+            @if($showForm)
+                <livewire:clearance-permission-form
+                    :editingPrefix="$editingPrefix"
+                    :key="'pf-'.($editingPrefix ?: 'new')"
+                />
+            @endif
+        </div>
+    </flux:modal>
+
+    {{-- Delete confirmation modal --}}
+    <flux:modal
+        name="delete-permission"
+        class="md:w-[30rem]"
+        x-on:open-delete-permission.window="show()"
+        x-on:close-delete-permission.window="close()"
+    >
+        <div class="clearance">
+            @if($deletingPrefix !== '')
+                <flux:heading size="lg" class="mb-1">Delete permission group?</flux:heading>
+                <flux:text class="mb-4 text-zinc-500 dark:text-zinc-400">
+                    All permissions in group
+                    <code class="font-mono font-semibold text-zinc-700 dark:text-zinc-200">{{ $deletingPrefix }}</code>
+                    will be permanently removed. Type
+                    <span class="font-mono font-semibold">DELETE {{ $deletingPrefix }}</span> to confirm.
+                </flux:text>
+
+                <flux:input
+                    wire:model="deleteConfirmText"
+                    placeholder="DELETE {{ $deletingPrefix }}"
+                    class="font-mono mb-4"
+                />
+
+                <div class="flex items-center justify-between">
+                    <flux:button wire:click="cancelDelete" variant="ghost">Cancel</flux:button>
+                    <flux:button wire:click="confirmDeleteGroup" variant="danger">Confirm delete</flux:button>
+                </div>
+            @endif
+        </div>
+    </flux:modal>
 </div>
 
 @assets

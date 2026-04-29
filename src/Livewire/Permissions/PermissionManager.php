@@ -54,6 +54,7 @@ class PermissionManager extends Component
         $this->editingPrefix = '';
         $this->showForm = true;
         $this->deletingPrefix = '';
+        $this->dispatch('open-permission-form');
     }
 
     /**
@@ -64,6 +65,7 @@ class PermissionManager extends Component
         $this->editingPrefix = $prefix;
         $this->showForm = true;
         $this->deletingPrefix = '';
+        $this->dispatch('open-permission-form');
     }
 
     /**
@@ -74,6 +76,7 @@ class PermissionManager extends Component
         $this->deletingPrefix = $prefix;
         $this->deleteConfirmText = '';
         $this->showForm = false;
+        $this->dispatch('open-delete-permission');
     }
 
     /**
@@ -83,6 +86,7 @@ class PermissionManager extends Component
     {
         $this->deletingPrefix = '';
         $this->deleteConfirmText = '';
+        $this->dispatch('close-delete-permission');
     }
 
     /**
@@ -107,7 +111,7 @@ class PermissionManager extends Component
     }
 
     /**
-     * Close form without saving.
+     * Close form without saving (called when modal dismissed by user via X button).
      */
     public function closeForm(): void
     {
@@ -123,6 +127,7 @@ class PermissionManager extends Component
     {
         $this->showForm = false;
         $this->editingPrefix = '';
+        $this->dispatch('close-permission-form');
     }
 
     /**

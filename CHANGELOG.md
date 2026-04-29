@@ -5,6 +5,16 @@ Format follows [Conventional Commits](https://conventionalcommits.org).
 
 ---
 
+## [Unreleased] — 2026-04-29
+
+### feat(ui): modal-based forms for all sections — Permissions, Roles, Users, Hierarchy
+
+**Files:** `PermissionManager.php`, `RoleManager.php`, `UserRoleManager.php`, `HierarchyManager.php`, all 6 view files
+
+Replaced inline expand/collapse form panels with `flux:modal` dialogs across all four sections. Each manager dispatches browser events (`open-*`, `close-*`) to control modals via Alpine `x-on:event.window="show()"`. Form views redesigned as self-contained modal content using Flux UI components (`flux:input`, `flux:checkbox`, `flux:select`, `flux:button`, `flux:heading`, `flux:separator`). Modal content wrapped in `.clearance` div to preserve scoped CSS after Flux teleport. Delete-confirm panels converted to modals. `UserRoleManager` gained `openAssignForm()`/`closeAssignForm()`; `HierarchyManager` gained `openAddRelation()`/`closeAddRelation()`/`closeOverrideForm()`. 184 tests pass.
+
+---
+
 ## [Unreleased] — 2026-04-28
 
 ### feat(ui): safe typed-delete confirmation for PermissionManager and RoleManager (T25, V8)

@@ -49,6 +49,26 @@ class UserRoleManager extends Component
     }
 
     /**
+     * Open assign form modal.
+     */
+    public function openAssignForm(): void
+    {
+        $this->showAssignForm = true;
+        $this->errorMessage = null;
+        $this->dispatch('open-assign-role');
+    }
+
+    /**
+     * Close assign form modal without saving.
+     */
+    public function closeAssignForm(): void
+    {
+        $this->showAssignForm = false;
+        $this->resetAssignForm();
+        $this->dispatch('close-assign-role');
+    }
+
+    /**
      * Assign a contextual role to a user (V4 scope check; V8 — writes Clearance table only).
      */
     public function assign(): void
@@ -81,6 +101,7 @@ class UserRoleManager extends Component
         $this->showAssignForm = false;
         $this->resetAssignForm();
         $this->loadData();
+        $this->dispatch('close-assign-role');
     }
 
     /**

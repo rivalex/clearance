@@ -4,53 +4,14 @@
             <h1 class="text-xl font-semibold">Hierarchy</h1>
             <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Single-level parent→child role relationships and permission overrides.</p>
         </div>
-        @unless($showAddRelation)
-            <button wire:click="$set('showAddRelation', true)"
-                    class="px-4 py-2 text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition">
-                Add relation
-            </button>
-        @endunless
+        <flux:button wire:click="openAddRelation" variant="primary" size="sm" icon="plus">
+            Add relation
+        </flux:button>
     </div>
 
     @if($errorMessage)
         <div class="mb-4 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
             {{ $errorMessage }}
-        </div>
-    @endif
-
-    @if($showAddRelation)
-        <div class="mb-6 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-5">
-            <h2 class="text-sm font-semibold mb-3">New parent → child relation</h2>
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Parent role</label>
-                    <select wire:model="newParentId"
-                            class="w-full rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-3 py-2 text-sm">
-                        <option value="">— select —</option>
-                        @foreach($allRoles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Child role</label>
-                    <select wire:model="newChildId"
-                            class="w-full rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-3 py-2 text-sm">
-                        <option value="">— select —</option>
-                        @foreach($allRoles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="flex gap-3">
-                <button wire:click="addRelation"
-                        class="px-4 py-2 text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition">
-                    Create
-                </button>
-                <button wire:click="$set('showAddRelation', false)"
-                        class="text-sm text-zinc-500 hover:underline">Cancel</button>
-            </div>
         </div>
     @endif
 
@@ -84,6 +45,10 @@
                                 class="text-xs text-sky-600 dark:text-sky-400 hover:underline">
                             {{ $drilldownId === $hierarchy->id ? 'Hide' : 'Overrides' }}
                         </button>
+                        <button wire:click="openOverrideForm({{ $hierarchy->id }})"
+                                class="text-xs text-zinc-500 dark:text-zinc-400 hover:underline">
+                            + Override
+                        </button>
                         <button wire:click="removeRelation({{ $hierarchy->id }})"
                                 wire:confirm="Remove this hierarchy relation?"
                                 class="text-xs text-red-600 dark:text-red-400 hover:underline">Remove</button>
@@ -93,7 +58,7 @@
                 @if($drilldownId === $hierarchy->id)
                     <div class="border-t border-zinc-100 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 px-4 py-3">
                         @if(count($hierarchy->overrides) > 0)
-                            <div class="space-y-1 mb-3">
+                            <div class="space-y-1">
                                 @foreach($hierarchy->overrides as $override)
                                     <div class="flex items-center justify-between text-xs">
                                         <div class="flex items-center gap-2">
@@ -110,34 +75,8 @@
                                     </div>
                                 @endforeach
                             </div>
-                        @endif
-
-                        @if($showOverrideForm && $overrideHierarchyId === $hierarchy->id)
-                            <div class="flex items-center gap-3 flex-wrap mt-2">
-                                <select wire:model="overridePermissionId"
-                                        class="rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-2 py-1.5 text-xs">
-                                    <option value="">— permission —</option>
-                                    @foreach($allPermissions as $permission)
-                                        <option value="{{ $permission->id }}">{{ $permission->name }}</option>
-                                    @endforeach
-                                </select>
-                                <select wire:model="overrideType"
-                                        class="rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-2 py-1.5 text-xs">
-                                    <option value="forced_on">forced_on</option>
-                                    <option value="forced_off">forced_off</option>
-                                </select>
-                                <button wire:click="addOverride"
-                                        class="px-3 py-1.5 text-xs font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded hover:opacity-90 transition">
-                                    Add
-                                </button>
-                                <button wire:click="$set('showOverrideForm', false)"
-                                        class="text-xs text-zinc-500 hover:underline">Cancel</button>
-                            </div>
                         @else
-                            <button wire:click="openOverrideForm({{ $hierarchy->id }})"
-                                    class="text-xs text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 hover:underline">
-                                + Add override
-                            </button>
+                            <p class="text-xs text-zinc-400">No overrides defined.</p>
                         @endif
                     </div>
                 @endif
@@ -148,6 +87,90 @@
             </div>
         @endforelse
     </div>
+
+    {{-- Add relation modal --}}
+    <flux:modal
+        name="add-relation"
+        class="md:w-[36rem]"
+        x-on:open-add-relation.window="show()"
+        x-on:close-add-relation.window="close()"
+    >
+        <div class="clearance space-y-5">
+            <div>
+                <flux:heading size="lg">New parent → child relation</flux:heading>
+                <flux:text class="text-zinc-500 dark:text-zinc-400">
+                    Create a single-level inheritance between two roles.
+                </flux:text>
+            </div>
+
+            @if($errorMessage)
+                <div class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+                    {{ $errorMessage }}
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <flux:select wire:model="newParentId" label="Parent role">
+                    <option value="">— select —</option>
+                    @foreach($allRoles as $role)
+                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endforeach
+                </flux:select>
+                <flux:select wire:model="newChildId" label="Child role">
+                    <option value="">— select —</option>
+                    @foreach($allRoles as $role)
+                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endforeach
+                </flux:select>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+                <flux:button wire:click="closeAddRelation" variant="ghost">Cancel</flux:button>
+                <flux:button wire:click="addRelation" variant="primary">Create</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- Add override modal --}}
+    <flux:modal
+        name="add-override"
+        class="md:w-[36rem]"
+        x-on:open-add-override.window="show()"
+        x-on:close-add-override.window="close()"
+    >
+        <div class="clearance space-y-5">
+            <div>
+                <flux:heading size="lg">Add permission override</flux:heading>
+                <flux:text class="text-zinc-500 dark:text-zinc-400">
+                    Force a permission on or off for the child role in this hierarchy.
+                </flux:text>
+            </div>
+
+            @if($errorMessage)
+                <div class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+                    {{ $errorMessage }}
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <flux:select wire:model="overridePermissionId" label="Permission">
+                    <option value="">— select permission —</option>
+                    @foreach($allPermissions as $permission)
+                        <option value="{{ $permission->id }}">{{ $permission->name }}</option>
+                    @endforeach
+                </flux:select>
+                <flux:select wire:model="overrideType" label="Override type">
+                    <option value="forced_on">forced_on</option>
+                    <option value="forced_off">forced_off</option>
+                </flux:select>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+                <flux:button wire:click="closeOverrideForm" variant="ghost">Cancel</flux:button>
+                <flux:button wire:click="addOverride" variant="primary">Add override</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>
 
 @assets

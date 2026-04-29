@@ -58,6 +58,27 @@ class HierarchyManager extends Component
     }
 
     /**
+     * Open the add-relation modal.
+     */
+    public function openAddRelation(): void
+    {
+        $this->showAddRelation = true;
+        $this->errorMessage = null;
+        $this->dispatch('open-add-relation');
+    }
+
+    /**
+     * Close the add-relation modal without saving.
+     */
+    public function closeAddRelation(): void
+    {
+        $this->showAddRelation = false;
+        $this->newParentId = null;
+        $this->newChildId = null;
+        $this->dispatch('close-add-relation');
+    }
+
+    /**
      * Add a parent→child relation via HierarchyService (V2, V3, V8).
      */
     public function addRelation(HierarchyService $hierarchyService): void
@@ -85,6 +106,7 @@ class HierarchyManager extends Component
         $this->newParentId = null;
         $this->newChildId = null;
         $this->loadData();
+        $this->dispatch('close-add-relation');
     }
 
     /**
@@ -115,7 +137,7 @@ class HierarchyManager extends Component
     }
 
     /**
-     * Open override form for a given hierarchy.
+     * Open override form modal for a given hierarchy.
      */
     public function openOverrideForm(int $hierarchyId): void
     {
@@ -123,6 +145,16 @@ class HierarchyManager extends Component
         $this->overridePermissionId = null;
         $this->overrideType = 'forced_on';
         $this->showOverrideForm = true;
+        $this->dispatch('open-add-override');
+    }
+
+    /**
+     * Close the override form modal without saving.
+     */
+    public function closeOverrideForm(): void
+    {
+        $this->showOverrideForm = false;
+        $this->dispatch('close-add-override');
     }
 
     /**
@@ -151,6 +183,7 @@ class HierarchyManager extends Component
 
         $this->showOverrideForm = false;
         $this->loadData();
+        $this->dispatch('close-add-override');
     }
 
     /**

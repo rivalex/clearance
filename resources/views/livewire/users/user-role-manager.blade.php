@@ -10,67 +10,14 @@
                 @endif
             </p>
         </div>
-        @unless($showAssignForm)
-            <button wire:click="$set('showAssignForm', true)"
-                    class="px-4 py-2 text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition">
-                Assign role
-            </button>
-        @endunless
+        <flux:button wire:click="openAssignForm" variant="primary" size="sm" icon="plus">
+            Assign role
+        </flux:button>
     </div>
 
     @if($errorMessage)
         <div class="mb-4 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
             {{ $errorMessage }}
-        </div>
-    @endif
-
-    @if($showAssignForm)
-        <div class="mb-6 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-5">
-            <h2 class="text-sm font-semibold mb-3">Assign contextual role</h2>
-            <div class="grid grid-cols-2 gap-4 mb-4 sm:grid-cols-4">
-                <div>
-                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">User ID</label>
-                    <input wire:model="assignUserId" type="text" placeholder="e.g. 42"
-                           class="w-full rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-3 py-2 text-sm" />
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Role</label>
-                    <select wire:model="assignRoleId"
-                            class="w-full rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-3 py-2 text-sm">
-                        <option value="">— select —</option>
-                        @foreach($availableRoles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @if(!$scopeContextType)
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Context type</label>
-                        <input wire:model="assignContextType" type="text" placeholder="App\Models\Project"
-                               class="w-full rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-mono text-xs" />
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Context ID</label>
-                        <input wire:model="assignContextId" type="text" placeholder="1"
-                               class="w-full rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-3 py-2 text-sm" />
-                    </div>
-                @else
-                    <div class="col-span-2">
-                        <label class="block text-xs font-medium text-zinc-500 mb-1">Context (locked to your scope)</label>
-                        <span class="inline-block px-3 py-2 text-xs font-mono bg-zinc-100 dark:bg-zinc-700 rounded-md text-zinc-600 dark:text-zinc-300">
-                            {{ $scopeContextType }}#{{ $scopeContextId }}
-                        </span>
-                    </div>
-                @endif
-            </div>
-            <div class="flex gap-3">
-                <button wire:click="assign"
-                        class="px-4 py-2 text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition">
-                    Assign
-                </button>
-                <button wire:click="$set('showAssignForm', false)"
-                        class="text-sm text-zinc-500 hover:underline">Cancel</button>
-            </div>
         </div>
     @endif
 
@@ -106,6 +53,58 @@
             </tbody>
         </table>
     </div>
+
+    {{-- Assign role modal --}}
+    <flux:modal
+        name="assign-role"
+        class="md:w-[38rem]"
+        x-on:open-assign-role.window="show()"
+        x-on:close-assign-role.window="close()"
+    >
+        <div class="clearance space-y-5">
+            <div>
+                <flux:heading size="lg">Assign contextual role</flux:heading>
+                <flux:text class="text-zinc-500 dark:text-zinc-400">
+                    Assign a role to a user within a specific context.
+                </flux:text>
+            </div>
+
+            @if($errorMessage)
+                <div class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+                    {{ $errorMessage }}
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <flux:input wire:model="assignUserId" label="User ID" placeholder="e.g. 42" />
+                <flux:select wire:model="assignRoleId" label="Role">
+                    <option value="">— select —</option>
+                    @foreach($availableRoles as $role)
+                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endforeach
+                </flux:select>
+            </div>
+
+            @if(!$scopeContextType)
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <flux:input wire:model="assignContextType" label="Context type" placeholder="App\Models\Project" class="font-mono" />
+                    <flux:input wire:model="assignContextId" label="Context ID" placeholder="1" />
+                </div>
+            @else
+                <div>
+                    <flux:text class="text-xs font-medium text-zinc-500 mb-1">Context (locked to your scope)</flux:text>
+                    <span class="inline-block px-3 py-2 text-xs font-mono bg-zinc-100 dark:bg-zinc-700 rounded-md text-zinc-600 dark:text-zinc-300">
+                        {{ $scopeContextType }}#{{ $scopeContextId }}
+                    </span>
+                </div>
+            @endif
+
+            <div class="flex items-center justify-between pt-2">
+                <flux:button wire:click="closeAssignForm" variant="ghost">Cancel</flux:button>
+                <flux:button wire:click="assign" variant="primary">Assign</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>
 
 @assets
