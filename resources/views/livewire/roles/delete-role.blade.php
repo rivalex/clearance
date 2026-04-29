@@ -22,11 +22,7 @@
                         <span class="font-mono font-semibold text-zinc-700 dark:text-zinc-200">DELETE {{ $role->name }}</span>
                         to confirm.
                     </flux:text>
-                    <flux:input
-                        wire:model="confirmText"
-                        placeholder="DELETE {{ $role->name }}"
-                        class="font-mono"
-                    />
+                    <flux:input wire:model="confirmText" placeholder="DELETE {{ $role->name }}" class="font-mono" />
                     <div class="flex items-center justify-between pt-1">
                         <flux:button wire:click="$set('showModal', false)" variant="ghost">Cancel</flux:button>
                         <flux:button wire:click="confirmDelete" variant="danger">Confirm delete</flux:button>

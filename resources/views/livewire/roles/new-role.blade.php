@@ -1,5 +1,5 @@
 <div>
-    <flux:button wire:click="$set('showModal', true)" variant="primary" size="sm" icon="plus">
+    <flux:button wire:click="$set('showModal', true)" variant="primary" color="green" size="sm" icon="plus">
         Add role
     </flux:button>
 

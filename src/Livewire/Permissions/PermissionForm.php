@@ -18,7 +18,7 @@ use Spatie\Permission\Models\Permission;
 class PermissionForm extends Component
 {
     /** Standard CRUD-like abilities shown as checkboxes. */
-    private const STANDARD_ABILITIES = ['create', 'read', 'update', 'delete', 'list'];
+    private const STANDARD_ABILITIES = ['create', 'read', 'update', 'delete'];
 
     /** Prefix being edited; empty = create mode. */
     public string $editingPrefix = '';

@@ -1,0 +1,275 @@
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e10]: Internal Server Error
+    - button "Copy as Markdown" [ref=e11] [cursor=pointer]:
+      - img [ref=e12]
+      - generic [ref=e15]: Copy as Markdown
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - heading "ErrorException" [level=1] [ref=e20]
+      - generic [ref=e22]: resources/views/layouts/app/sidebar.blade.php:59
+      - paragraph [ref=e23]: Attempt to read property "name" on null
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: LARAVEL
+          - generic [ref=e28]: 12.58.0
+        - generic [ref=e29]:
+          - generic [ref=e30]: PHP
+          - generic [ref=e31]: 8.4.20
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - text: UNHANDLED
+      - generic [ref=e36]: CODE 0
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - img [ref=e40]
+        - text: "500"
+      - generic [ref=e43]:
+        - img [ref=e44]
+        - text: GET
+      - generic [ref=e47]: https://translate.test/lingua/languages
+      - button [ref=e48] [cursor=pointer]:
+        - img [ref=e49]
+  - generic [ref=e53]:
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - img [ref=e57]
+        - heading "Exception trace" [level=3] [ref=e60]
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63] [cursor=pointer]:
+            - generic [ref=e66]:
+              - code [ref=e70]:
+                - generic [ref=e71]: "Illuminate\\Foundation\\Bootstrap\\HandleExceptions->{closure:Illuminate\\Foundation\\Bootstrap\\HandleExceptions::forwardsTo():257}(integer, string, string, integer)"
+              - generic [ref=e73]: resources/views/layouts/app/sidebar.blade.php:59
+            - button [ref=e75]:
+              - img [ref=e76]
+          - code [ref=e84]:
+            - generic [ref=e85]: 54 <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
+            - generic [ref=e86]: "55 {{ __('Documentation') }}"
+            - generic [ref=e87]: 56 </flux:sidebar.item>
+            - generic [ref=e88]: 57 </flux:sidebar.nav>
+            - generic [ref=e89]: "58"
+            - generic [ref=e90]: 59 <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
+            - generic [ref=e91]: 60 </flux:sidebar>
+            - generic [ref=e92]: "61"
+            - generic [ref=e93]: "62"
+            - generic [ref=e94]: 63 <!-- Mobile User Menu -->
+            - generic [ref=e95]: 64 <flux:header class="lg:hidden">
+            - generic [ref=e96]: 65 <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+            - generic [ref=e97]: "66"
+            - generic [ref=e98]: 67 <flux:spacer />
+            - generic [ref=e99]: "68"
+            - generic [ref=e100]: 69 <flux:dropdown position="top" align="end">
+            - generic [ref=e101]: 70 <flux:profile
+            - generic [ref=e102]: "71"
+        - generic [ref=e104] [cursor=pointer]:
+          - img [ref=e105]
+          - generic [ref=e109]: 10 vendor frames
+          - button [ref=e110]:
+            - img [ref=e111]
+        - generic [ref=e116] [cursor=pointer]:
+          - generic [ref=e119]:
+            - code [ref=e123]:
+              - generic [ref=e124]: Illuminate\View\Factory->renderComponent()
+            - generic [ref=e126]: resources/views/layouts/app.blade.php:3
+          - button [ref=e128]:
+            - img [ref=e129]
+        - generic [ref=e134] [cursor=pointer]:
+          - img [ref=e135]
+          - generic [ref=e139]: 10 vendor frames
+          - button [ref=e140]:
+            - img [ref=e141]
+        - generic [ref=e146] [cursor=pointer]:
+          - generic [ref=e149]:
+            - code [ref=e153]:
+              - generic [ref=e154]: Illuminate\View\Factory->renderComponent()
+            - generic [ref=e156]: storage/framework/views/4943bc92ebba41e8b0e508149542e0ad.blade.php:16
+          - button [ref=e158]:
+            - img [ref=e159]
+        - generic [ref=e164] [cursor=pointer]:
+          - img [ref=e165]
+          - generic [ref=e169]: 70 vendor frames
+          - button [ref=e170]:
+            - img [ref=e171]
+        - generic [ref=e176] [cursor=pointer]:
+          - generic [ref=e179]:
+            - code [ref=e183]:
+              - generic [ref=e184]: Illuminate\Foundation\Application->handleRequest(object(Illuminate\Http\Request))
+            - generic [ref=e186]: public/index.php:20
+          - button [ref=e188]:
+            - img [ref=e189]
+        - generic [ref=e194] [cursor=pointer]:
+          - img [ref=e195]
+          - generic [ref=e199]: 1 vendor frame
+          - button [ref=e200]:
+            - img [ref=e201]
+    - generic [ref=e205]:
+      - generic [ref=e206]:
+        - generic [ref=e207]:
+          - img [ref=e209]
+          - heading "Queries" [level=3] [ref=e211]
+        - generic [ref=e213]: 1-10 of 28
+      - generic [ref=e214]:
+        - generic [ref=e215]:
+          - generic [ref=e216]:
+            - generic [ref=e217]:
+              - img [ref=e218]
+              - generic [ref=e220]: sqlite
+            - code [ref=e224]:
+              - generic [ref=e225]: select * from "sessions" where "id" = 'xa5u3hoYugzAtO332YXRjdgP92E0zUWxEjYwiF9S' limit 1
+          - generic [ref=e226]: 0.63ms
+        - generic [ref=e227]:
+          - generic [ref=e228]:
+            - generic [ref=e229]:
+              - img [ref=e230]
+              - generic [ref=e232]: sqlite
+            - code [ref=e236]:
+              - generic [ref=e237]: select * from "languages" where "is_default" = 1 limit 1
+          - generic [ref=e238]: 0.04ms
+        - generic [ref=e239]:
+          - generic [ref=e240]:
+            - generic [ref=e241]:
+              - img [ref=e242]
+              - generic [ref=e244]: sqlite
+            - code [ref=e248]:
+              - generic [ref=e249]: select * from "cache" where "key" in ('laravel-cache-spatie.translation-loader.*.en')
+          - generic [ref=e250]: 0.05ms
+        - generic [ref=e251]:
+          - generic [ref=e252]:
+            - generic [ref=e253]:
+              - img [ref=e254]
+              - generic [ref=e256]: sqlite
+            - code [ref=e260]:
+              - generic [ref=e261]: select * from "lingua_settings" where "key" = 'selector.show_flags' limit 1
+          - generic [ref=e262]: 0.04ms
+        - generic [ref=e263]:
+          - generic [ref=e264]:
+            - generic [ref=e265]:
+              - img [ref=e266]
+              - generic [ref=e268]: sqlite
+            - code [ref=e272]:
+              - generic [ref=e273]: select * from "languages" order by "sort" asc
+          - generic [ref=e274]: 0.06ms
+        - generic [ref=e275]:
+          - generic [ref=e276]:
+            - generic [ref=e277]:
+              - img [ref=e278]
+              - generic [ref=e280]: sqlite
+            - code [ref=e284]:
+              - generic [ref=e285]: select * from "lingua_settings" where "key" = 'selector.show_flags' limit 1
+          - generic [ref=e286]: 0.05ms
+        - generic [ref=e287]:
+          - generic [ref=e288]:
+            - generic [ref=e289]:
+              - img [ref=e290]
+              - generic [ref=e292]: sqlite
+            - code [ref=e296]:
+              - generic [ref=e297]: select * from "lingua_settings" where "key" = 'selector.show_flags' limit 1
+          - generic [ref=e298]: 0.05ms
+        - generic [ref=e299]:
+          - generic [ref=e300]:
+            - generic [ref=e301]:
+              - img [ref=e302]
+              - generic [ref=e304]: sqlite
+            - code [ref=e308]:
+              - generic [ref=e309]: select * from "lingua_settings" where "key" = 'selector.show_flags' limit 1
+          - generic [ref=e310]: 0.03ms
+        - generic [ref=e311]:
+          - generic [ref=e312]:
+            - generic [ref=e313]:
+              - img [ref=e314]
+              - generic [ref=e316]: sqlite
+            - code [ref=e320]:
+              - generic [ref=e321]: select * from "languages"
+          - generic [ref=e322]: 0.06ms
+        - generic [ref=e323]:
+          - generic [ref=e324]:
+            - generic [ref=e325]:
+              - img [ref=e326]
+              - generic [ref=e328]: sqlite
+            - code [ref=e332]:
+              - generic [ref=e333]: select * from "cache" where "key" in ('laravel-cache-spatie.translation-loader.selected.en')
+          - generic [ref=e334]: 0.07ms
+      - generic [ref=e335]:
+        - button [disabled] [ref=e336]:
+          - img [ref=e337]
+        - button [disabled] [ref=e340]:
+          - img [ref=e341]
+        - button "1" [ref=e344] [cursor=pointer]
+        - button "2" [ref=e346] [cursor=pointer]
+        - button "3" [ref=e348] [cursor=pointer]
+        - button [ref=e349] [cursor=pointer]:
+          - img [ref=e350]
+        - button [ref=e352] [cursor=pointer]:
+          - img [ref=e353]
+  - generic [ref=e357]:
+    - generic [ref=e358]:
+      - heading "Headers" [level=2] [ref=e359]
+      - generic [ref=e360]:
+        - generic [ref=e361]:
+          - generic [ref=e362]: priority
+          - generic [ref=e364]: u=0, i
+        - generic [ref=e365]:
+          - generic [ref=e366]: accept-language
+          - generic [ref=e368]: it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7
+        - generic [ref=e369]:
+          - generic [ref=e370]: accept-encoding
+          - generic [ref=e372]: gzip, deflate, br, zstd
+        - generic [ref=e373]:
+          - generic [ref=e374]: sec-fetch-dest
+          - generic [ref=e376]: document
+        - generic [ref=e377]:
+          - generic [ref=e378]: sec-fetch-user
+          - generic [ref=e380]: "?1"
+        - generic [ref=e381]:
+          - generic [ref=e382]: sec-fetch-mode
+          - generic [ref=e384]: navigate
+        - generic [ref=e385]:
+          - generic [ref=e386]: sec-fetch-site
+          - generic [ref=e388]: none
+        - generic [ref=e389]:
+          - generic [ref=e390]: accept
+          - generic [ref=e392]: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+        - generic [ref=e393]:
+          - generic [ref=e394]: user-agent
+          - generic [ref=e396]: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+        - generic [ref=e397]:
+          - generic [ref=e398]: upgrade-insecure-requests
+          - generic [ref=e400]: "1"
+        - generic [ref=e401]:
+          - generic [ref=e402]: sec-ch-ua-platform
+          - generic [ref=e404]: "\"macOS\""
+        - generic [ref=e405]:
+          - generic [ref=e406]: sec-ch-ua-mobile
+          - generic [ref=e408]: "?0"
+        - generic [ref=e409]:
+          - generic [ref=e410]: sec-ch-ua
+          - generic [ref=e412]: "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
+        - generic [ref=e413]:
+          - generic [ref=e414]: host
+          - generic [ref=e416]: translate.test
+    - generic [ref=e417]:
+      - heading "Body" [level=2] [ref=e418]
+      - generic [ref=e419]: // No request body
+    - generic [ref=e420]:
+      - heading "Routing" [level=2] [ref=e421]
+      - generic [ref=e422]:
+        - generic [ref=e423]:
+          - generic [ref=e424]: controller
+          - generic [ref=e426]: Livewire\Mechanisms\HandleRouting\LivewirePageController
+        - generic [ref=e427]:
+          - generic [ref=e428]: route name
+          - generic [ref=e430]: lingua.languages
+        - generic [ref=e431]:
+          - generic [ref=e432]: middleware
+          - generic [ref=e434]: web
+    - generic [ref=e435]:
+      - heading "Routing parameters" [level=2] [ref=e436]
+      - generic [ref=e437]: // No routing parameters
+  - generic [ref=e440]:
+    - img [ref=e442]
+    - img [ref=e3480]
