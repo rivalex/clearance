@@ -5,9 +5,7 @@
             <h1 class="text-xl font-semibold">Roles</h1>
             <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Manage roles and their permission assignments.</p>
         </div>
-        <flux:button wire:click="create" variant="primary" size="sm" icon="plus">
-            Add role
-        </flux:button>
+        <livewire:clearance-new-role wire:key="new-role" />
     </div>
 
     {{-- Search --}}
@@ -59,13 +57,13 @@
                         <td class="px-4 py-3 text-center text-xs {{ $item['users_count'] > 0 ? 'font-semibold text-zinc-700 dark:text-zinc-200' : 'text-zinc-400' }}">
                             {{ $item['users_count'] }}
                         </td>
-                        <td class="px-4 py-3 text-right space-x-2">
-                            <button wire:click="edit({{ $item['role']->id }})"
-                                    class="text-xs text-sky-600 dark:text-sky-400 hover:underline">Edit</button>
-                            @unless($item['meta']?->is_protected)
-                                <button wire:click="delete({{ $item['role']->id }})"
-                                        class="text-xs text-red-600 dark:text-red-400 hover:underline">Delete</button>
-                            @endunless
+                        <td class="px-4 py-3 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <livewire:clearance-edit-role :roleId="$item['role']->id" :wire:key="'edit-role-'.$item['role']->id" />
+                                @unless($item['meta']?->is_protected)
+                                    <livewire:clearance-delete-role :roleId="$item['role']->id" :wire:key="'delete-role-'.$item['role']->id" />
+                                @endunless
+                            </div>
                         </td>
                     </tr>
                 @empty
@@ -89,63 +87,6 @@
             {{ $roleData->links() }}
         </div>
     @endif
-
-    {{-- Create / Edit modal --}}
-    <flux:modal
-        name="role-form"
-        class="md:w-[52rem]"
-        x-on:open-role-form.window="show()"
-        x-on:close-role-form.window="close()"
-    >
-        <div class="clearance">
-            @if($showForm)
-                <livewire:clearance-role-form
-                    :roleId="$editingId"
-                    :key="'rf-'.($editingId ?? 'new')"
-                />
-            @endif
-        </div>
-    </flux:modal>
-
-    {{-- Delete confirmation modal --}}
-    <flux:modal
-        name="delete-role"
-        class="md:w-[32rem]"
-        x-on:open-delete-role.window="show()"
-        x-on:close-delete-role.window="close()"
-    >
-        <div class="clearance">
-            @if($deletingRoleId !== null && $deletingRole !== null)
-                @if($deletingRoleUsersCount > 0)
-                    <flux:heading size="lg" class="mb-1">Cannot delete role</flux:heading>
-                    <flux:text class="mb-4 text-zinc-500 dark:text-zinc-400">
-                        Role <code class="font-mono font-semibold text-zinc-700 dark:text-zinc-200">{{ $deletingRole->name }}</code>
-                        has {{ $deletingRoleUsersCount }} user(s) assigned.
-                        Reassign or remove them before deleting.
-                    </flux:text>
-                    <div class="flex justify-end">
-                        <flux:button wire:click="cancelDelete" variant="ghost">Close</flux:button>
-                    </div>
-                @else
-                    <flux:heading size="lg" class="mb-1">Delete role?</flux:heading>
-                    <flux:text class="mb-4 text-zinc-500 dark:text-zinc-400">
-                        This action cannot be undone. Type
-                        <span class="font-mono font-semibold text-zinc-700 dark:text-zinc-200">DELETE {{ $deletingRole->name }}</span>
-                        to confirm.
-                    </flux:text>
-                    <flux:input
-                        wire:model="deleteConfirmText"
-                        placeholder="DELETE {{ $deletingRole->name }}"
-                        class="font-mono mb-4"
-                    />
-                    <div class="flex items-center justify-between">
-                        <flux:button wire:click="cancelDelete" variant="ghost">Cancel</flux:button>
-                        <flux:button wire:click="confirmDelete" variant="danger">Confirm delete</flux:button>
-                    </div>
-                @endif
-            @endif
-        </div>
-    </flux:modal>
 </div>
 
 @assets

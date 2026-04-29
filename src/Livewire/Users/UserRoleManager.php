@@ -55,7 +55,6 @@ class UserRoleManager extends Component
     {
         $this->showAssignForm = true;
         $this->errorMessage = null;
-        $this->dispatch('open-assign-role');
     }
 
     /**
@@ -65,7 +64,6 @@ class UserRoleManager extends Component
     {
         $this->showAssignForm = false;
         $this->resetAssignForm();
-        $this->dispatch('close-assign-role');
     }
 
     /**
@@ -101,7 +99,6 @@ class UserRoleManager extends Component
         $this->showAssignForm = false;
         $this->resetAssignForm();
         $this->loadData();
-        $this->dispatch('close-assign-role');
     }
 
     /**

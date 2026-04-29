@@ -55,12 +55,7 @@
     </div>
 
     {{-- Assign role modal --}}
-    <flux:modal
-        name="assign-role"
-        class="md:w-[38rem]"
-        x-on:open-assign-role.window="show()"
-        x-on:close-assign-role.window="close()"
-    >
+    <flux:modal wire:model="showAssignForm" class="md:w-[38rem]">
         <div class="clearance space-y-5">
             <div>
                 <flux:heading size="lg">Assign contextual role</flux:heading>

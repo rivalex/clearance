@@ -10,28 +10,17 @@ use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rivalex\Clearance\Services\PermissionService;
 use Spatie\Permission\Models\Permission;
 
 /**
- * Full CRUD list screen for permissions, grouped by prefix with search and pagination (V6, V8).
+ * List screen for permissions, grouped by prefix with search and pagination (V6, V8).
+ * Create/edit/delete handled by child modal components (NewPermission, EditPermission, DeletePermission).
  */
 class PermissionManager extends Component
 {
     use WithPagination;
 
-    public bool $showForm = false;
-
-    /** Prefix being edited; empty string = create mode. */
-    public string $editingPrefix = '';
-
     public string $search = '';
-
-    /** Prefix staged for deletion (T25). */
-    public string $deletingPrefix = '';
-
-    /** Typed confirmation text for delete (T25). */
-    public string $deleteConfirmText = '';
 
     /**
      * No-op mount kept for test/Livewire lifecycle compatibility.
@@ -47,88 +36,11 @@ class PermissionManager extends Component
     }
 
     /**
-     * Open form in create mode.
-     */
-    public function create(): void
-    {
-        $this->editingPrefix = '';
-        $this->showForm = true;
-        $this->deletingPrefix = '';
-        $this->dispatch('open-permission-form');
-    }
-
-    /**
-     * Open form in edit mode for the given group prefix.
-     */
-    public function edit(string $prefix): void
-    {
-        $this->editingPrefix = $prefix;
-        $this->showForm = true;
-        $this->deletingPrefix = '';
-        $this->dispatch('open-permission-form');
-    }
-
-    /**
-     * Stage a group prefix for typed-confirmation deletion (T25, V8).
-     */
-    public function delete(string $prefix): void
-    {
-        $this->deletingPrefix = $prefix;
-        $this->deleteConfirmText = '';
-        $this->showForm = false;
-        $this->dispatch('open-delete-permission');
-    }
-
-    /**
-     * Cancel the pending delete.
-     */
-    public function cancelDelete(): void
-    {
-        $this->deletingPrefix = '';
-        $this->deleteConfirmText = '';
-        $this->dispatch('close-delete-permission');
-    }
-
-    /**
-     * Execute group delete after typed confirmation (T25, V8 — all writes via PermissionService).
-     */
-    public function confirmDeleteGroup(PermissionService $permissionService): void
-    {
-        if ($this->deletingPrefix === '') {
-            return;
-        }
-
-        if ($this->deleteConfirmText !== 'DELETE '.$this->deletingPrefix) {
-            return;
-        }
-
-        $sep = config('clearance.naming_separator', '-');
-
-        Permission::where('name', 'like', $this->deletingPrefix.$sep.'%')->get()
-            ->each(fn (Permission $p) => $permissionService->delete($p));
-
-        $this->cancelDelete();
-    }
-
-    /**
-     * Close form without saving (called when modal dismissed by user via X button).
-     */
-    public function closeForm(): void
-    {
-        $this->showForm = false;
-        $this->editingPrefix = '';
-    }
-
-    /**
-     * Refresh list when form reports a save.
+     * Re-render after a child modal saves or deletes.
      */
     #[On('permission-saved')]
-    public function onPermissionSaved(): void
-    {
-        $this->showForm = false;
-        $this->editingPrefix = '';
-        $this->dispatch('close-permission-form');
-    }
+    #[On('permission-deleted')]
+    public function refresh(): void {}
 
     /**
      * Deterministic Tailwind color class for a permission group prefix.

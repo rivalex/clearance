@@ -64,7 +64,6 @@ class HierarchyManager extends Component
     {
         $this->showAddRelation = true;
         $this->errorMessage = null;
-        $this->dispatch('open-add-relation');
     }
 
     /**
@@ -75,7 +74,6 @@ class HierarchyManager extends Component
         $this->showAddRelation = false;
         $this->newParentId = null;
         $this->newChildId = null;
-        $this->dispatch('close-add-relation');
     }
 
     /**
@@ -106,7 +104,6 @@ class HierarchyManager extends Component
         $this->newParentId = null;
         $this->newChildId = null;
         $this->loadData();
-        $this->dispatch('close-add-relation');
     }
 
     /**
@@ -145,7 +142,6 @@ class HierarchyManager extends Component
         $this->overridePermissionId = null;
         $this->overrideType = 'forced_on';
         $this->showOverrideForm = true;
-        $this->dispatch('open-add-override');
     }
 
     /**
@@ -154,7 +150,6 @@ class HierarchyManager extends Component
     public function closeOverrideForm(): void
     {
         $this->showOverrideForm = false;
-        $this->dispatch('close-add-override');
     }
 
     /**
@@ -183,7 +178,6 @@ class HierarchyManager extends Component
 
         $this->showOverrideForm = false;
         $this->loadData();
-        $this->dispatch('close-add-override');
     }
 
     /**

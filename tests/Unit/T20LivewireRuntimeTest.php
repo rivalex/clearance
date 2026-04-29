@@ -6,7 +6,13 @@ use Illuminate\View\View;
 use Rivalex\Clearance\Livewire\Guards\GuardManager;
 use Rivalex\Clearance\Livewire\Hierarchy\HierarchyManager;
 use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
+use Rivalex\Clearance\Livewire\Permissions\DeletePermission;
+use Rivalex\Clearance\Livewire\Permissions\EditPermission;
+use Rivalex\Clearance\Livewire\Permissions\NewPermission;
 use Rivalex\Clearance\Livewire\Permissions\PermissionManager;
+use Rivalex\Clearance\Livewire\Roles\DeleteRole;
+use Rivalex\Clearance\Livewire\Roles\EditRole;
+use Rivalex\Clearance\Livewire\Roles\NewRole;
 use Rivalex\Clearance\Livewire\Roles\RoleForm;
 use Rivalex\Clearance\Livewire\Roles\RoleManager;
 use Rivalex\Clearance\Livewire\Users\UserRoleManager;
@@ -46,31 +52,6 @@ it('PermissionManager mount runs without error', function (): void {
     expect($component)->toBeInstanceOf(PermissionManager::class);
 });
 
-it('PermissionManager create opens form in create mode', function (): void {
-    $component = new PermissionManager;
-    $component->create();
-
-    expect($component->showForm)->toBeTrue()
-        ->and($component->editingPrefix)->toBe('');
-});
-
-it('PermissionManager edit opens form for given prefix', function (): void {
-    $component = new PermissionManager;
-    $component->edit('orders');
-
-    expect($component->editingPrefix)->toBe('orders')
-        ->and($component->showForm)->toBeTrue();
-});
-
-it('PermissionManager closeForm resets state', function (): void {
-    $component = new PermissionManager;
-    $component->edit('orders');
-    $component->closeForm();
-
-    expect($component->showForm)->toBeFalse()
-        ->and($component->editingPrefix)->toBe('');
-});
-
 it('PermissionManager colorForGroup returns consistent color', function (): void {
     $component = new PermissionManager;
 
@@ -78,46 +59,60 @@ it('PermissionManager colorForGroup returns consistent color', function (): void
         ->and($component->colorForGroup('orders'))->toBe($component->colorForGroup('orders'));
 });
 
-it('PermissionManager delete stages prefix for confirmation (T25)', function (): void {
-    $component = new PermissionManager;
-    $component->delete('orders');
+it('NewPermission showModal defaults to false', function (): void {
+    $component = new NewPermission;
 
-    expect($component->deletingPrefix)->toBe('orders')
-        ->and($component->showForm)->toBeFalse();
+    expect($component->showModal)->toBeFalse();
 });
 
-it('PermissionManager confirmDeleteGroup removes all permissions in group', function (): void {
+it('NewPermission onPermissionSaved closes modal', function (): void {
+    $component = new NewPermission;
+    $component->showModal = true;
+    $component->onPermissionSaved();
+
+    expect($component->showModal)->toBeFalse();
+});
+
+it('EditPermission stores prefix and modal defaults false', function (): void {
+    $component = new EditPermission;
+    $component->prefix = 'orders';
+
+    expect($component->showModal)->toBeFalse()
+        ->and($component->prefix)->toBe('orders');
+});
+
+it('EditPermission onPermissionSaved closes modal', function (): void {
+    $component = new EditPermission;
+    $component->prefix = 'orders';
+    $component->showModal = true;
+    $component->onPermissionSaved();
+
+    expect($component->showModal)->toBeFalse();
+});
+
+it('DeletePermission confirmDelete removes group on correct text (T25)', function (): void {
     Permission::create(['name' => 'orders-create', 'guard_name' => 'web']);
     Permission::create(['name' => 'orders-read',   'guard_name' => 'web']);
 
-    $component = new PermissionManager;
-    $component->delete('orders');
-    $component->deleteConfirmText = 'DELETE orders';
-    app()->call([$component, 'confirmDeleteGroup']);
+    $component = new DeletePermission;
+    $component->prefix = 'orders';
+    $component->showModal = true;
+    $component->confirmText = 'DELETE orders';
+    app()->call([$component, 'confirmDelete']);
 
     expect(Permission::where('name', 'like', 'orders-%')->count())->toBe(0)
-        ->and($component->deletingPrefix)->toBe('');
+        ->and($component->showModal)->toBeFalse();
 });
 
-it('PermissionManager confirmDeleteGroup wrong text is no-op', function (): void {
+it('DeletePermission confirmDelete is no-op on wrong text', function (): void {
     Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
 
-    $component = new PermissionManager;
-    $component->delete('orders');
-    $component->deleteConfirmText = 'wrong';
-    app()->call([$component, 'confirmDeleteGroup']);
+    $component = new DeletePermission;
+    $component->prefix = 'orders';
+    $component->confirmText = 'wrong';
+    app()->call([$component, 'confirmDelete']);
 
     expect(Permission::where('name', 'like', 'orders-%')->count())->toBe(1);
-});
-
-it('PermissionManager onPermissionSaved resets form', function (): void {
-    $component = new PermissionManager;
-    $component->showForm = true;
-    $component->editingPrefix = 'orders';
-    $component->onPermissionSaved();
-
-    expect($component->showForm)->toBeFalse()
-        ->and($component->editingPrefix)->toBe('');
 });
 
 it('PermissionManager render returns View', function (): void {
@@ -190,73 +185,51 @@ it('RoleManager mount runs without error', function (): void {
     expect($component)->toBeInstanceOf(RoleManager::class);
 });
 
-it('RoleManager create opens form', function (): void {
-    $component = new RoleManager;
-    $component->create();
+it('NewRole showModal defaults to false', function (): void {
+    $component = new NewRole;
 
-    expect($component->showForm)->toBeTrue()
-        ->and($component->editingId)->toBeNull();
+    expect($component->showModal)->toBeFalse();
 });
 
-it('RoleManager edit opens form in edit mode', function (): void {
-    $component = new RoleManager;
-    $component->edit(7);
-
-    expect($component->editingId)->toBe(7)
-        ->and($component->showForm)->toBeTrue();
-});
-
-it('RoleManager closeForm resets state', function (): void {
-    $component = new RoleManager;
-    $component->edit(7);
-    $component->closeForm();
-
-    expect($component->showForm)->toBeFalse()
-        ->and($component->editingId)->toBeNull();
-});
-
-it('RoleManager onRoleSaved resets form and reloads', function (): void {
-    $component = new RoleManager;
-    $component->showForm = true;
-    $component->editingId = 3;
+it('NewRole onRoleSaved closes modal', function (): void {
+    $component = new NewRole;
+    $component->showModal = true;
     $component->onRoleSaved();
 
-    expect($component->showForm)->toBeFalse()
-        ->and($component->editingId)->toBeNull();
+    expect($component->showModal)->toBeFalse();
 });
 
-it('RoleManager delete stages role for confirmation (T25)', function (): void {
-    $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
+it('EditRole stores roleId and modal defaults false', function (): void {
+    $component = new EditRole;
+    $component->roleId = 7;
 
-    $component = new RoleManager;
-    $component->delete($role->id);
-
-    expect($component->deletingRoleId)->toBe($role->id)
-        ->and(Role::find($role->id))->not->toBeNull(); // not deleted yet
+    expect($component->showModal)->toBeFalse()
+        ->and($component->roleId)->toBe(7);
 });
 
-it('RoleManager confirmDelete removes role after correct text', function (): void {
+it('DeleteRole confirmDelete removes role on correct text (T25)', function (): void {
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
     $id   = $role->id;
 
-    $component = new RoleManager;
-    $component->delete($id);
-    $component->deleteConfirmText = 'DELETE editor';
+    $component = new DeleteRole;
+    $component->roleId = $id;
+    $component->showModal = true;
+    $component->confirmText = 'DELETE editor';
     app()->call([$component, 'confirmDelete']);
 
     expect(Role::find($id))->toBeNull()
-        ->and($component->deletingRoleId)->toBeNull();
+        ->and($component->showModal)->toBeFalse();
 });
 
-it('RoleManager confirmDelete blocks when users are assigned (T25)', function (): void {
+it('DeleteRole confirmDelete blocked when users assigned (T25)', function (): void {
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
     \Illuminate\Support\Facades\DB::table('model_has_roles')->insert([
         'role_id' => $role->id, 'model_type' => 'App\\Models\\User', 'model_id' => 1,
     ]);
 
-    $component = new RoleManager;
-    $component->delete($role->id);
-    $component->deleteConfirmText = 'DELETE editor';
+    $component = new DeleteRole;
+    $component->roleId = $role->id;
+    $component->confirmText = 'DELETE editor';
     app()->call([$component, 'confirmDelete']);
 
     expect(Role::find($role->id))->not->toBeNull(); // blocked

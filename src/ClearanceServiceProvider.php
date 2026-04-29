@@ -9,7 +9,13 @@ use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
 use Rivalex\Clearance\Commands\ClearanceInstallCommand;
 use Rivalex\Clearance\Http\Middleware\RequireClearanceAccess;
+use Rivalex\Clearance\Livewire\Permissions\DeletePermission;
+use Rivalex\Clearance\Livewire\Permissions\EditPermission;
+use Rivalex\Clearance\Livewire\Permissions\NewPermission;
 use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
+use Rivalex\Clearance\Livewire\Roles\DeleteRole;
+use Rivalex\Clearance\Livewire\Roles\EditRole;
+use Rivalex\Clearance\Livewire\Roles\NewRole;
 use Rivalex\Clearance\Livewire\Roles\RoleForm;
 use Rivalex\Clearance\Services\ContextService;
 use Spatie\LaravelPackageTools\Package;
@@ -39,7 +45,14 @@ class ClearanceServiceProvider extends PackageServiceProvider
         $router->aliasMiddleware('clearance.access', RequireClearanceAccess::class);
 
         Livewire::component('clearance-permission-form', PermissionForm::class);
+        Livewire::component('clearance-new-permission', NewPermission::class);
+        Livewire::component('clearance-edit-permission', EditPermission::class);
+        Livewire::component('clearance-delete-permission', DeletePermission::class);
+
         Livewire::component('clearance-role-form', RoleForm::class);
+        Livewire::component('clearance-new-role', NewRole::class);
+        Livewire::component('clearance-edit-role', EditRole::class);
+        Livewire::component('clearance-delete-role', DeleteRole::class);
 
         Blade::anonymousComponentPath(__DIR__ . '/../resources/views/components', 'clearance');
 

@@ -8,9 +8,7 @@ use Rivalex\Clearance\Livewire\Roles\RoleManager;
 it('RoleManager class exists with required methods', function (): void {
     expect(class_exists(RoleManager::class))->toBeTrue();
     expect(method_exists(RoleManager::class, 'render'))->toBeTrue();
-    expect(method_exists(RoleManager::class, 'create'))->toBeTrue();
-    expect(method_exists(RoleManager::class, 'edit'))->toBeTrue();
-    expect(method_exists(RoleManager::class, 'delete'))->toBeTrue();
+    expect(method_exists(RoleManager::class, 'refresh'))->toBeTrue();
 });
 
 it('RoleForm class exists with required methods', function (): void {

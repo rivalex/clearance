@@ -89,12 +89,7 @@
     </div>
 
     {{-- Add relation modal --}}
-    <flux:modal
-        name="add-relation"
-        class="md:w-[36rem]"
-        x-on:open-add-relation.window="show()"
-        x-on:close-add-relation.window="close()"
-    >
+    <flux:modal wire:model="showAddRelation" class="md:w-[36rem]">
         <div class="clearance space-y-5">
             <div>
                 <flux:heading size="lg">New parent → child relation</flux:heading>
@@ -132,12 +127,7 @@
     </flux:modal>
 
     {{-- Add override modal --}}
-    <flux:modal
-        name="add-override"
-        class="md:w-[36rem]"
-        x-on:open-add-override.window="show()"
-        x-on:close-add-override.window="close()"
-    >
+    <flux:modal wire:model="showOverrideForm" class="md:w-[36rem]">
         <div class="clearance space-y-5">
             <div>
                 <flux:heading size="lg">Add permission override</flux:heading>

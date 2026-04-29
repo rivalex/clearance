@@ -8,9 +8,9 @@ use Rivalex\Clearance\Livewire\Permissions\PermissionManager;
 it('PermissionManager class exists with required methods', function (): void {
     expect(class_exists(PermissionManager::class))->toBeTrue();
     expect(method_exists(PermissionManager::class, 'render'))->toBeTrue();
-    expect(method_exists(PermissionManager::class, 'create'))->toBeTrue();
-    expect(method_exists(PermissionManager::class, 'edit'))->toBeTrue();
-    expect(method_exists(PermissionManager::class, 'delete'))->toBeTrue();
+    expect(method_exists(PermissionManager::class, 'refresh'))->toBeTrue();
+    expect(method_exists(PermissionManager::class, 'colorForGroup'))->toBeTrue();
+    expect(method_exists(PermissionManager::class, 'badgeTypeForAbility'))->toBeTrue();
 });
 
 it('PermissionForm class exists with required methods', function (): void {
