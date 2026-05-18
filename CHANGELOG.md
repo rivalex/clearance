@@ -5,6 +5,25 @@ Format follows [Conventional Commits](https://conventionalcommits.org).
 
 ---
 
+## [Unreleased] - 2026-05-18 — Security patch 5
+
+### security: 6 additional vulnerabilities resolved (M1–M3, L1–L3)
+
+**Files modified:**
+- `src/Livewire/Settings.php` — `#[Locked]` on `metaSubjectType` + `metaSubjectKey`; `saveMeta()` now validates subject type allowlist + full `max:` rules (M1, M2)
+- `src/Support/SvgSanitizer.php` — `safeCssColor()` static helper; `cleanNode()` strips `DOMComment` nodes (M3, L3)
+- `resources/views/livewire/settings.blade.php` — all `style=` colour injections use `SvgSanitizer::safeCssColor()` (M3)
+- `resources/views/livewire/guards/guard-manager.blade.php` — same (M3)
+- `resources/views/livewire/roles/role-manager.blade.php` — same (M3)
+- `src/Livewire/Guards/NewGuard.php` — `render()` upgraded from `canAccess()` to `canPerform('guards')` (L1)
+- `src/Livewire/Permissions/NewPermission.php` — `render()` upgraded to `canPerform('permissions')` (L1)
+- `src/Livewire/Roles/NewRole.php` — `render()` upgraded to `canPerform('roles')` (L1)
+- `src/Livewire/Permissions/PermissionGroupRow.php` — `abort_unless(canAccess())` added to `render()` (L2)
+
+**Verified**: 222/222 tests pass.
+
+---
+
 ## [Unreleased] - 2026-05-18 — Security patch 4
 
 ### security: defense-in-depth render guards for all container/display components

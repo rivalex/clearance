@@ -10,7 +10,7 @@ use DOMNode;
 
 /**
  * Strips unsafe nodes and attributes from SVG markup.
- * Uses DOMDocument — no extra dependency.
+ * Uses DOMDocument - no extra dependency.
  */
 class SvgSanitizer
 {
@@ -30,6 +30,19 @@ class SvgSanitizer
         'patternunits', 'offset', 'stop-color', 'stop-opacity', 'preserveaspectratio',
         'style',
     ];
+
+    /**
+     * Returns value if it is a valid 6-digit hex colour, otherwise 'currentColor'.
+     * Use when injecting a stored colour into a CSS style= attribute.
+     */
+    public static function safeCssColor(?string $color): string
+    {
+        if ($color !== null && preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            return $color;
+        }
+
+        return 'currentColor';
+    }
 
     public static function sanitize(?string $raw): ?string
     {
@@ -60,6 +73,7 @@ class SvgSanitizer
         }
 
         $svg = $svgList->item(0);
+        self::cleanAttributes($svg);
         self::cleanNode($svg);
 
         return $doc->saveXML($svg) ?: null;
@@ -70,6 +84,12 @@ class SvgSanitizer
         $toRemove = [];
 
         foreach ($node->childNodes as $child) {
+            // Strip HTML comments — they cannot execute JS but may carry exfiltration payloads.
+            if ($child instanceof \DOMComment) {
+                $toRemove[] = $child;
+                continue;
+            }
+
             if (! $child instanceof DOMElement) {
                 continue;
             }
@@ -114,6 +134,12 @@ class SvgSanitizer
 
             // Block any javascript: scheme in any attribute
             if (str_starts_with(strtolower($value), 'javascript:')) {
+                $remove[] = $attr->name;
+                continue;
+            }
+
+            // Block CSS-based XSS vectors in style attributes
+            if ($name === 'style' && preg_match('/url\s*\(|expression\s*\(|javascript:|behavior\s*:|binding\s*:/i', $value)) {
                 $remove[] = $attr->name;
                 continue;
             }

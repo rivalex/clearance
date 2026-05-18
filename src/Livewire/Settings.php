@@ -7,10 +7,13 @@ namespace Rivalex\Clearance\Livewire;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Models\ClearanceMeta;
 use Rivalex\Clearance\Models\ClearanceSettings;
 use Rivalex\Clearance\Services\GuardService;
+use Rivalex\Clearance\Support\SvgSanitizer;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -27,7 +30,10 @@ class Settings extends Component
     public bool $showIcons = true;
 
     // --- Meta editing state ---
+    #[Locked]
     public string $metaSubjectType = '';
+
+    #[Locked]
     public string $metaSubjectKey = '';
     public string $metaDisplayName = '';
     public string $metaDescription = '';
@@ -58,6 +64,8 @@ class Settings extends Component
      */
     public function saveGeneral(): void
     {
+        abort_unless(app(Clearance::class)->canPerform('settings'), 403);
+
         ClearanceSettings::set('default_role', $this->defaultRole ?: null);
         ClearanceSettings::set('show_icons', $this->showIcons ? '1' : '0');
 
@@ -70,6 +78,8 @@ class Settings extends Component
      */
     public function bulkAssignDefaultRole(): void
     {
+        abort_unless(app(Clearance::class)->canPerform('settings'), 403);
+
         $this->bulkMessage = null;
 
         if (! $this->defaultRole) {
@@ -87,7 +97,8 @@ class Settings extends Component
         }
 
         $userModelClass = config('clearance.user_model')
-            ?? config('auth.providers.' . config('auth.defaults.guard') . '.model');
+            ?? config('auth.providers.' . config('auth.defaults.guard') . '.model')
+            ?? \App\Models\User::class;
 
         if (! $userModelClass || ! class_exists($userModelClass)) {
             $this->bulkMessage = __('clearance::ui.settings.bulk_no_user_model');
@@ -137,8 +148,14 @@ class Settings extends Component
      */
     public function saveMeta(): void
     {
+        abort_unless(app(Clearance::class)->canPerform('settings'), 403);
+        abort_unless(in_array($this->metaSubjectType, ['role', 'guard'], true), 422);
+
         $this->validate([
-            'metaColor' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'metaDisplayName' => ['nullable', 'string', 'max:120'],
+            'metaDescription' => ['nullable', 'string', 'max:500'],
+            'metaColor'       => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'metaIconSvg'     => ['nullable', 'string', 'max:8000'],
         ]);
 
         ClearanceMeta::updateOrCreate(
@@ -147,7 +164,7 @@ class Settings extends Component
                 'display_name' => $this->metaDisplayName ?: null,
                 'description'  => $this->metaDescription ?: null,
                 'color'        => $this->metaColor ?: null,
-                'icon_svg'     => $this->metaIconSvg ?: null,
+                'icon_svg'     => $this->metaIconSvg ? SvgSanitizer::sanitize($this->metaIconSvg) : null,
             ]
         );
 
@@ -171,6 +188,12 @@ class Settings extends Component
         $roleMetas  = ClearanceMeta::where('subject_type', 'role')->get()->keyBy('subject_key');
         $guardMetas = ClearanceMeta::where('subject_type', 'guard')->get()->keyBy('subject_key');
 
-        return view('clearance::livewire.settings', compact('roles', 'guards', 'roleMetas', 'guardMetas'));
+        return view('clearance::livewire.settings', [
+            'roles'              => $roles,
+            'guards'             => $guards,
+            'roleMetas'          => $roleMetas,
+            'guardMetas'         => $guardMetas,
+            'metaIconSvgPreview' => SvgSanitizer::sanitize($this->metaIconSvg),
+        ]);
     }
 }

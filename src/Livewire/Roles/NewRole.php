@@ -24,7 +24,7 @@ class NewRole extends Component
 
     public function render(): View
     {
-        abort_unless(app(Clearance::class)->canAccess(), 403);
+        abort_unless(app(Clearance::class)->canPerform('roles'), 403);
 
         return view('clearance::livewire.roles.new-role');
     }

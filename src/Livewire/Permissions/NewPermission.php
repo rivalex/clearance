@@ -24,7 +24,7 @@ class NewPermission extends Component
 
     public function render(): View
     {
-        abort_unless(app(Clearance::class)->canAccess(), 403);
+        abort_unless(app(Clearance::class)->canPerform('permissions'), 403);
 
         return view('clearance::livewire.permissions.new-permission');
     }

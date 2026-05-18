@@ -21,7 +21,7 @@ class NewGuard extends Component
 
     public function render(): View
     {
-        abort_unless(app(Clearance::class)->canAccess(), 403);
+        abort_unless(app(Clearance::class)->canPerform('guards'), 403);
 
         return view('clearance::livewire.guards.new-guard');
     }

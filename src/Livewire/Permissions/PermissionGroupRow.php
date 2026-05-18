@@ -7,6 +7,7 @@ namespace Rivalex\Clearance\Livewire\Permissions;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Models\Permission;
 
 /**
@@ -70,6 +71,8 @@ class PermissionGroupRow extends Component
 	
 	public function render(): View
 	{
+		abort_unless(app(Clearance::class)->canAccess(), 403);
+
 		return view('clearance::livewire.permissions.permission-group-row');
 	}
 }
