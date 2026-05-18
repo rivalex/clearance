@@ -31,7 +31,7 @@
                         <td class="px-4 py-3 font-medium">
                             <div class="flex items-center gap-2">
                                 @if($showIcons && !empty($guardMetas->get($name)?->icon_svg))
-                                    <span class="inline-flex shrink-0 size-4" style="color: {{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($guardMetas->get($name)?->color) }}">{!! $guardMetas->get($name)->icon_svg !!}</span>
+                                    <span class="inline-flex shrink-0 size-4" style="color: {{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($guardMetas->get($name)?->color) }}">{!! \Rivalex\Clearance\Support\SvgSanitizer::sanitize($guardMetas->get($name)->icon_svg) !!}</span>
                                 @endif
                                 <span class="font-mono text-xs">{{ $guardMetas->get($name)?->display_name ?: $name }}</span>
                             </div>

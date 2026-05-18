@@ -94,7 +94,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 @if($meta?->icon_svg)
-                                    <span class="inline-flex items-center justify-center w-6 h-6" style="{{ $meta->color ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) : '' }}">{!! $meta->icon_svg !!}</span>
+                                    <span class="inline-flex items-center justify-center w-6 h-6" style="{{ $meta->color ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) : '' }}">{!! \Rivalex\Clearance\Support\SvgSanitizer::sanitize($meta->icon_svg) !!}</span>
                                 @else
                                     <span class="text-zinc-300 dark:text-zinc-600">-</span>
                                 @endif
@@ -153,7 +153,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 @if($meta?->icon_svg)
-                                    <span class="inline-flex items-center justify-center w-6 h-6" style="{{ $meta->color ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) : '' }}">{!! $meta->icon_svg !!}</span>
+                                    <span class="inline-flex items-center justify-center w-6 h-6" style="{{ $meta->color ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) : '' }}">{!! \Rivalex\Clearance\Support\SvgSanitizer::sanitize($meta->icon_svg) !!}</span>
                                 @else
                                     <span class="text-zinc-300 dark:text-zinc-600">-</span>
                                 @endif
@@ -246,7 +246,7 @@
                 </label>
                 @if($metaIconSvg)
                     <div class="mb-2 flex items-center gap-3">
-                        <span class="inline-flex items-center justify-center w-8 h-8 rounded border border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-900" style="{{ $metaColor ? 'color:'.$metaColor : '' }}">{!! $metaIconSvgPreview !!}</span>
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded border border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-900" style="{{ $metaColor ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($metaColor) : '' }}">{!! $metaIconSvgPreview !!}</span>
                         <span class="text-xs text-zinc-400">{{ __('clearance::ui.settings.meta.icon_preview') }}</span>
                         <button
                             type="button"

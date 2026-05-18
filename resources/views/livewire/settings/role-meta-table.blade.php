@@ -21,22 +21,22 @@
                             {{ $role->name }}
                             <span class="ml-1 text-zinc-400">({{ $role->guard_name }})</span>
                         </td>
-                        <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $meta?->display_name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $meta?->display_name ?? '-' }}</td>
                         <td class="px-4 py-3">
                             @if($meta?->icon_svg)
-                                <span class="inline-flex items-center justify-center w-6 h-6" style="{{ $meta->color ? 'color:'.$meta->color : '' }}">{!! $meta->icon_svg !!}</span>
+                                <span class="inline-flex items-center justify-center w-6 h-6" style="{{ $meta->color ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) : '' }}">{!! \Rivalex\Clearance\Support\SvgSanitizer::sanitize($meta->icon_svg) !!}</span>
                             @else
-                                <span class="text-zinc-300 dark:text-zinc-600">—</span>
+                                <span class="text-zinc-300 dark:text-zinc-600">-</span>
                             @endif
                         </td>
                         <td class="px-4 py-3">
                             @if($meta?->color)
                                 <span class="inline-flex items-center gap-2">
-                                    <span class="inline-block w-4 h-4 rounded-full border border-zinc-200 dark:border-zinc-600" style="background:{{ $meta->color }}"></span>
+                                    <span class="inline-block w-4 h-4 rounded-full border border-zinc-200 dark:border-zinc-600" style="background:{{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) }}"></span>
                                     <span class="font-mono text-xs text-zinc-500">{{ $meta->color }}</span>
                                 </span>
                             @else
-                                <span class="text-zinc-300 dark:text-zinc-600">—</span>
+                                <span class="text-zinc-300 dark:text-zinc-600">-</span>
                             @endif
                         </td>
                         <td class="px-4 py-3 text-right">

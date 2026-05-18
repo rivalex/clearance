@@ -42,7 +42,7 @@
                         <td class="px-4 py-3 font-medium">
                             <div class="flex items-center gap-2">
                                 @if($showIcons && !empty($item['clearance_meta']?->icon_svg))
-                                    <span class="inline-flex shrink-0 size-4" style="color: {{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($item['clearance_meta']?->color) }}">{!! $item['clearance_meta']->icon_svg !!}</span>
+                                    <span class="inline-flex shrink-0 size-4" style="color: {{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($item['clearance_meta']?->color) }}">{!! \Rivalex\Clearance\Support\SvgSanitizer::sanitize($item['clearance_meta']->icon_svg) !!}</span>
                                 @endif
                                 {{ $item['clearance_meta']?->display_name ?: $item['role']->name }}
                             </div>

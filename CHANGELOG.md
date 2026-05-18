@@ -5,6 +5,21 @@ Format follows [Conventional Commits](https://conventionalcommits.org).
 
 ---
 
+## [Unreleased] - 2026-05-18 — Security patch 6
+
+### security: 2 additional vulnerabilities resolved (M1, L1)
+
+**Files modified:**
+- `resources/views/livewire/settings/guard-meta-table.blade.php` — `{!! icon_svg !!}` wrapped with `SvgSanitizer::sanitize()`; both `style=` colour attrs use `safeCssColor()` (M1, L1)
+- `resources/views/livewire/settings/role-meta-table.blade.php` — same (M1, L1)
+- `resources/views/livewire/guards/guard-manager.blade.php` — `{!! icon_svg !!}` wrapped with `SvgSanitizer::sanitize()` (M1)
+- `resources/views/livewire/roles/role-manager.blade.php` — same (M1)
+- `resources/views/livewire/settings.blade.php` — `{!! $meta->icon_svg !!}` (×2) wrapped with `SvgSanitizer::sanitize()`; preview `style=` colour uses `safeCssColor()` (M1, L1)
+
+**Verified**: 222/222 tests pass.
+
+---
+
 ## [Unreleased] - 2026-05-18 — Security patch 5
 
 ### security: 6 additional vulnerabilities resolved (M1–M3, L1–L3)
