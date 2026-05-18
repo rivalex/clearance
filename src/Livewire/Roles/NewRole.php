@@ -7,9 +7,10 @@ namespace Rivalex\Clearance\Livewire\Roles;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
 
 /**
- * Thin modal wrapper — opens create mode of RoleForm in a Flux modal.
+ * Thin modal wrapper - opens create mode of RoleForm in a Flux modal.
  */
 class NewRole extends Component
 {
@@ -23,6 +24,8 @@ class NewRole extends Component
 
     public function render(): View
     {
+        abort_unless(app(Clearance::class)->canAccess(), 403);
+
         return view('clearance::livewire.roles.new-role');
     }
 }

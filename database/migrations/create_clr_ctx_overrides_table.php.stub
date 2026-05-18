@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('clearance_user_context_permission_overrides', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id'); // no FK - user model is configurable
+            $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('permission_id');
+            $table->string('context_type');
+            $table->unsignedBigInteger('context_id');
+            $table->string('type'); // 'forced_on' or 'forced_off' - enforced in PHP, not DB ENUM
+            $table->timestamps();
+
+            $table->unique(
+                ['user_id', 'role_id', 'permission_id', 'context_type', 'context_id'],
+                'clr_ucpo_unique',
+            );
+            $table->index('user_id');
+            $table->index(['context_type', 'context_id'], 'clr_ucpo_ctx_index');
+
+            $table->foreign('role_id')
+                ->references('id')
+                ->on('roles')
+                ->onDelete('cascade');
+
+            $table->foreign('permission_id', 'clr_ucpo_permission_id_fk')
+                ->references('id')
+                ->on('permissions')
+                ->onDelete('cascade');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('clearance_user_context_permission_overrides');
+    }
+};
