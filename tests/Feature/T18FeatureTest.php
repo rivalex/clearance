@@ -9,7 +9,7 @@ use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\ContextService;
 use Rivalex\Clearance\Tests\Support\FakeContext;
 use Rivalex\Clearance\Tests\Support\FakeUser;
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -27,8 +27,7 @@ it('clearance named routes are all registered', function (): void {
     expect(Route::has('clearance.home'))->toBeTrue()
         ->and(Route::has('clearance.guards'))->toBeTrue()
         ->and(Route::has('clearance.permissions'))->toBeTrue()
-        ->and(Route::has('clearance.roles'))->toBeTrue()
-        ->and(Route::has('clearance.hierarchy'))->toBeTrue();
+        ->and(Route::has('clearance.roles'))->toBeTrue();
 });
 
 it('clearance routes use configured prefix', function (): void {
@@ -147,12 +146,10 @@ it('@canin resolves false for wrong context_id (V4)', function (): void {
 
 // --- DB compat: SQLite (test env default) ---
 
-it('all four clearance tables exist after migrations (DB compat)', function (): void {
+it('core clearance tables exist after migrations (DB compat)', function (): void {
     foreach ([
-        'clearance_role_meta',
-        'clearance_role_hierarchy',
-        'clearance_role_permission_overrides',
-        'clearance_user_role_contexts',
+        'clr_role_meta',
+        'clr_role_ctx',
     ] as $table) {
         expect(Schema::hasTable($table))->toBeTrue($table.' missing');
     }

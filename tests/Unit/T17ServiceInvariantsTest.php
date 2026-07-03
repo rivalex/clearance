@@ -2,22 +2,19 @@
 
 declare(strict_types=1);
 
-use Rivalex\Clearance\Models\RolePermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\ContextService;
-use Rivalex\Clearance\Services\HierarchyService;
 use Rivalex\Clearance\Services\PermissionService;
 use Rivalex\Clearance\Services\RoleService;
 use Rivalex\Clearance\Tests\Support\FakeContext;
 use Rivalex\Clearance\Tests\Support\FakeUser;
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
     $this->runMigrations();
     $this->permService = new PermissionService(app('config'));
     $this->roleService = new RoleService($this->permService);
-    $this->hierarchyService = new HierarchyService;
     $this->contextService = new ContextService;
 });
 
@@ -41,10 +38,10 @@ it('migration stubs only create clearance-prefixed tables (V5)', function (): vo
                 ->not->toContain("Schema::table('{$table}'");
         }
 
-        // Every table created must be clearance-prefixed
+        // Every table created must be clearance-prefixed (clr_ short form accepted)
         preg_match_all("/Schema::create\('([^']+)'/", $source, $matches);
         foreach ($matches[1] as $table) {
-            expect($table)->toStartWith('clearance_');
+            expect($table)->toMatch('/^(clearance_|clr_)/');
         }
     }
 });
@@ -97,39 +94,6 @@ it('PermissionService accepts valid gruppo-azione names (V6)', function (): void
         expect(fn () => $this->permService->validate($name))
             ->not->toThrow(\Rivalex\Clearance\Exceptions\ClearanceNamingException::class);
     }
-});
-
-// --- V2 + V9 cross-service integration ---
-
-it('forced_on auto-cleaned when parent loses permission (V2+V9)', function (): void {
-    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm   = $this->permService->create('orders-update', 'web');
-
-    $this->permService->assignToRole($parent, $perm);
-
-    $hierarchy = $this->hierarchyService->createRelation($parent, $child);
-    $this->hierarchyService->addOverride($hierarchy, $perm, RolePermissionOverride::TYPE_FORCED_ON);
-
-    expect(RolePermissionOverride::where('type', 'forced_on')->count())->toBe(1);
-
-    $this->permService->revokeFromRole($parent, $perm);
-    $this->hierarchyService->cleanupForcedOnForPermission($parent, $perm);
-
-    expect(RolePermissionOverride::where('type', 'forced_on')->count())->toBe(0);
-});
-
-// --- V3: single-level hierarchy ---
-
-it('three-level chain rejected (V3)', function (): void {
-    $a = Role::create(['name' => 'a', 'guard_name' => 'web']);
-    $b = Role::create(['name' => 'b', 'guard_name' => 'web']);
-    $c = Role::create(['name' => 'c', 'guard_name' => 'web']);
-
-    $this->hierarchyService->createRelation($a, $b);
-
-    expect(fn () => $this->hierarchyService->createRelation($b, $c))
-        ->toThrow(\Rivalex\Clearance\Exceptions\ClearanceHierarchyViolationException::class);
 });
 
 // --- V4: context scope strictly isolated ---

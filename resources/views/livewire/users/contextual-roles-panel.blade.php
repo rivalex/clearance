@@ -44,7 +44,7 @@
                     {{-- Card header --}}
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div class="flex flex-wrap items-center gap-2">
-                            <span class="font-semibold text-sm">{{ $role?->name ?? '—' }}</span>
+                            <span class="font-semibold text-sm">{{ $role?->name ?? '-' }}</span>
                             @if($role)
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 font-mono">
                                     {{ $role->guard_name }}

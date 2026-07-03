@@ -14,7 +14,6 @@ it('RoleManager class exists with required methods', function (): void {
 it('RoleForm class exists with required methods', function (): void {
     expect(class_exists(RoleForm::class))->toBeTrue();
     expect(method_exists(RoleForm::class, 'save'))->toBeTrue();
-    expect(method_exists(RoleForm::class, 'cancel'))->toBeTrue();
 });
 
 it('RoleManager view exists', function (): void {
@@ -46,12 +45,11 @@ it('RoleForm routes writes through RoleService (V8)', function (): void {
     expect($source)->not->toContain('givePermissionTo(');
 });
 
-it('RoleForm save() handles is_system and is_protected badges via RoleMeta', function (): void {
+it('RoleForm save() handles is_locked badge via RoleMeta', function (): void {
     $source = file_get_contents(
         realpath(__DIR__.'/../../src/Livewire/Roles/RoleForm.php')
     );
 
     expect($source)->toContain('RoleMeta');
-    expect($source)->toContain('is_system');
-    expect($source)->toContain('is_protected');
+    expect($source)->toContain('is_locked');
 });

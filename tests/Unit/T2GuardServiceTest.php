@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use Rivalex\Clearance\Models\Guard;
 use Rivalex\Clearance\Services\GuardService;
 
 beforeEach(function (): void {
+    $this->runMigrations();
+
     config()->set('auth.guards', [
         'web' => ['driver' => 'session', 'provider' => 'users'],
         'api' => ['driver' => 'token',   'provider' => 'users'],
@@ -48,10 +51,25 @@ it('has() returns false for unknown guard', function (): void {
     expect($service->has('nonexistent'))->toBeFalse();
 });
 
-it('has() respects override — returns false for excluded guard', function (): void {
+it('has() respects override - returns false for excluded guard', function (): void {
     config()->set('clearance.guards', ['web']);
 
     $service = new GuardService(app('config'));
 
     expect($service->has('api'))->toBeFalse();
+});
+
+it('merges guards from database and updates auth.guards config', function (): void {
+    Guard::create(['name' => 'custom', 'driver' => 'passport', 'provider' => 'users']);
+
+    $service = new GuardService(app('config'));
+    $all = $service->all();
+
+    expect($all)->toHaveKey('custom')
+        ->and($all['custom']['driver'])->toBe('passport')
+        ->and($all['custom']['is_db'])->toBeTrue();
+
+    // Verify auth.guards config was updated
+    expect(config('auth.guards'))->toHaveKey('custom')
+        ->and(config('auth.guards.custom.driver'))->toBe('passport');
 });

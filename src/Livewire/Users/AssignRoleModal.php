@@ -10,13 +10,12 @@ use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Rivalex\Clearance\Clearance;
-use Rivalex\Clearance\Exceptions\ClearanceConfigException;
-use Rivalex\Clearance\Models\RoleHierarchy;
+use Rivalex\Clearance\Exceptions\ClearanceScopeViolationException;
 use Rivalex\Clearance\Services\UserClearanceService;
 use Spatie\Permission\Models\Role;
 
 /**
- * Modal for assigning a master role to a user — global or contextual scope.
+ * Modal for assigning a master role to a user - global or contextual scope.
  */
 class AssignRoleModal extends Component
 {
@@ -95,27 +94,50 @@ class AssignRoleModal extends Component
             throw $e;
         }
 
-        $role = Role::findOrFail((int) $this->selectedRoleId);
+        $role  = Role::findOrFail((int) $this->selectedRoleId);
+        $actor = auth()->user();
 
-        try {
-            $service->assertNotSlave($role);
-        } catch (ClearanceConfigException $e) {
-            $this->errorMessage = __('clearance::ui.user_clearance.assign.slave_role_blocked');
-            return;
+        // super_admin can only be assigned by another super_admin.
+        if ($role->name === 'super_admin') {
+            if ($actor === null || ! method_exists($actor, 'hasRole') || ! $actor->hasRole('super_admin')) {
+                $this->errorMessage = __('clearance::ui.roles.errors.super_admin_only');
+
+                return;
+            }
+        }
+
+        // Prevent self-escalation: only super_admin can assign any role to themselves.
+        if ($actor !== null && (string) $actor->getAuthIdentifier() === (string) $this->userId) {
+            if (! method_exists($actor, 'hasRole') || ! $actor->hasRole('super_admin')) {
+                $this->errorMessage = __('clearance::ui.roles.errors.super_admin_only');
+
+                return;
+            }
+        }
+
+        if ($this->scope === 'contextual') {
+            $allowed = array_keys(config('clearance.contextual_models', []));
+            abort_unless(in_array($this->contextClass, $allowed, true), 422);
         }
 
         $user = $this->resolveUser();
 
-        if ($this->scope === 'global') {
-            $service->assignGlobalRole($user, $role);
-        } else {
-            /** @var class-string<Model> $contextClass */
-            $contextClass = $this->contextClass;
+        try {
+            if ($this->scope === 'global') {
+                $service->assignGlobalRole($user, $role);
+            } else {
+                /** @var class-string<Model> $contextClass */
+                $contextClass = $this->contextClass;
 
-            foreach ($this->selectedContextIds as $ctxId) {
-                $context = $contextClass::findOrFail($ctxId);
-                $service->assignContextual($user, $role, $context);
+                foreach ($this->selectedContextIds as $ctxId) {
+                    $context = $contextClass::findOrFail($ctxId);
+                    $service->assignContextual($user, $role, $context);
+                }
             }
+        } catch (ClearanceScopeViolationException $e) {
+            $this->errorMessage = $e->getMessage();
+
+            return;
         }
 
         Flux::modal($this->modalName)->close();
@@ -127,21 +149,17 @@ class AssignRoleModal extends Component
 
     public function render(): View
     {
-        $childIds = RoleHierarchy::pluck('child_role_id')->map(fn ($id) => (int) $id)->toArray();
-
         if ($this->scope === 'global') {
             $user            = $this->resolveUser();
             $assignedRoleIds = $user->roles->pluck('id')->toArray();
 
-            $availableRoles = Role::whereNotIn('id', $childIds)
-                ->whereNotIn('id', $assignedRoleIds)
+            $availableRoles = Role::whereNotIn('id', $assignedRoleIds)
                 ->orderBy('name')
                 ->get()
                 ->all();
         } else {
-            // Same master role can apply to different context instances
-            $availableRoles = Role::whereNotIn('id', $childIds)
-                ->orderBy('name')
+            // Same role can apply to different context instances
+            $availableRoles = Role::orderBy('name')
                 ->get()
                 ->all();
         }
@@ -149,6 +167,8 @@ class AssignRoleModal extends Component
         $contextInstances = [];
 
         if ($this->scope === 'contextual' && $this->contextClass !== '') {
+            $allowed = array_keys(config('clearance.contextual_models', []));
+            abort_unless(in_array($this->contextClass, $allowed, true), 422);
             /** @var class-string<Model> $contextClass */
             $contextClass     = $this->contextClass;
             $contextInstances = $contextClass::all();

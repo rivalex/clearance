@@ -6,6 +6,8 @@ namespace Rivalex\Clearance\Tests;
 
 use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Livewire\LivewireServiceProvider;
+use Flux\FluxServiceProvider;
 use Rivalex\Clearance\ClearanceServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
@@ -20,6 +22,8 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
+            LivewireServiceProvider::class,
+            FluxServiceProvider::class,
             PermissionServiceProvider::class,
             ClearanceServiceProvider::class,
         ];
@@ -37,14 +41,14 @@ class TestCase extends Orchestra
     }
 
     /**
-     * Runs Spatie permission tables (no teams — V7) and all Clearance migration stubs.
+     * Runs Spatie permission tables (no teams - V7) and all Clearance migration stubs.
      * Uses direct include because loadMigrationsFrom() ignores .stub extension.
      */
     protected function runMigrations(): void
     {
         $spatieMigrations = realpath(__DIR__.'/../vendor/spatie/laravel-permission/database/migrations');
 
-        // Only create_permission_tables — skip add_teams_fields (V7: teams must stay disabled)
+        // Only create_permission_tables - skip add_teams_fields (V7: teams must stay disabled)
         (include $spatieMigrations.'/create_permission_tables.php.stub')->up();
 
         $clearanceStubs = realpath(__DIR__.'/../database/migrations');

@@ -14,7 +14,7 @@ use Rivalex\Clearance\Services\UserClearanceService;
 use Spatie\Permission\Models\Role;
 
 /**
- * Typed-confirm modal for removing a role assignment — global or contextual scope.
+ * Typed-confirm modal for removing a role assignment - global or contextual scope.
  */
 class RemoveAssignmentModal extends Component
 {
@@ -75,6 +75,8 @@ class RemoveAssignmentModal extends Component
         if ($this->scope === 'global') {
             $service->removeGlobalRole($user, $role);
         } else {
+            $allowed = array_keys(config('clearance.contextual_models', []));
+            abort_unless(in_array($this->contextClass, $allowed, true), 422);
             /** @var class-string<Model> $contextClass */
             $contextClass = $this->contextClass;
             $context      = $contextClass::findOrFail($this->contextId);

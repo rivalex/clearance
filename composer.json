@@ -1,13 +1,19 @@
 {
     "name": "rivalex/clearance",
-    "description": "A complete UI panel (Livewire 4 + Flux UI) for managing permissions, roles, hierarchies and contexts, accessible to the developer and configurable for exposure to the application admin or manager.",
+    "description": "A complete admin panel (Livewire 4 + Flux UI) for managing permissions, roles, role ceilings and contextual authorization on top of spatie/laravel-permission - installable via a single artisan command, fully opt-in and configurable for exposure to admins or managers.",
     "keywords": [
-        "Alessandro Rivolta",
         "laravel",
-        "clearance"
+        "permissions",
+        "roles",
+        "rbac",
+        "authorization",
+        "acl",
+        "spatie",
+        "livewire",
+        "flux",
+        "admin-panel"
     ],
     "homepage": "https://github.com/rivalex/clearance",
-    "version": "1.0.0",
     "license": "MIT",
     "authors": [
         {
@@ -17,17 +23,18 @@
         }
     ],
     "require": {
-        "php": "^8.4",
-        "spatie/laravel-package-tools": "^1.16",
-        "spatie/laravel-permission": "^6.0",
+        "php": "^8.3",
+        "illuminate/contracts": "^11.0||^12.0||^13.0",
+        "livewire/flux": "^2.14",
         "livewire/livewire": "^3.0||^4.0",
-        "illuminate/contracts": "^11.0||^12.0||^13.0"
+        "spatie/laravel-package-tools": "^1.16",
+        "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.8",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^11.1.0",
+        "orchestra/testbench": "^10.11||^11.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-arch": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0",
@@ -72,6 +79,6 @@
             }
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

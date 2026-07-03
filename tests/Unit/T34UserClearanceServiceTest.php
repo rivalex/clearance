@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schema;
-use Rivalex\Clearance\Exceptions\ClearanceConfigException;
-use Rivalex\Clearance\Models\RoleHierarchy;
 use Rivalex\Clearance\Models\UserContextPermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\UserClearanceService;
@@ -104,21 +102,3 @@ it('removeContextual deletes UserRoleContext and cascades overrides', function (
     )->toBeFalse();
 });
 
-// T34.5: assertNotSlave throws for slave role
-it('assertNotSlave throws ClearanceConfigException for slave roles', function (): void {
-    $parent = Role::create(['name' => 'parent-role', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'child-role', 'guard_name' => 'web']);
-    RoleHierarchy::create(['parent_role_id' => $parent->id, 'child_role_id' => $child->id]);
-
-    expect(fn () => $this->service->assertNotSlave($child))
-        ->toThrow(ClearanceConfigException::class);
-});
-
-// T34.6: assertNotSlave passes for master role
-it('assertNotSlave passes silently for master roles', function (): void {
-    $role = Role::create(['name' => 'master-role', 'guard_name' => 'web']);
-
-    $this->service->assertNotSlave($role);
-
-    expect(true)->toBeTrue();
-});

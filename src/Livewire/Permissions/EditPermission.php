@@ -5,22 +5,28 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Livewire\Permissions;
 
 use Illuminate\View\View;
-use Livewire\Attributes\On;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
- * Thin modal wrapper — opens edit mode of PermissionForm for a given prefix.
+ * Thin modal wrapper - opens edit mode of PermissionForm for a given prefix.
  */
 class EditPermission extends Component
 {
+    #[Locked]
     public string $prefix;
 
-    public bool $showModal = false;
+    #[Locked]
+    public string $guard;
 
-    #[On('permission-saved')]
-    public function onPermissionSaved(): void
+    public string $modalName = '';
+
+    #[Locked]
+    public string $groupKey;
+
+    public function mount(): void
     {
-        $this->showModal = false;
+        $this->modalName = 'edit-permission-' . $this->groupKey;
     }
 
     public function render(): View

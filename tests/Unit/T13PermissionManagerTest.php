@@ -9,14 +9,11 @@ it('PermissionManager class exists with required methods', function (): void {
     expect(class_exists(PermissionManager::class))->toBeTrue();
     expect(method_exists(PermissionManager::class, 'render'))->toBeTrue();
     expect(method_exists(PermissionManager::class, 'refresh'))->toBeTrue();
-    expect(method_exists(PermissionManager::class, 'colorForGroup'))->toBeTrue();
-    expect(method_exists(PermissionManager::class, 'badgeTypeForAbility'))->toBeTrue();
 });
 
 it('PermissionForm class exists with required methods', function (): void {
     expect(class_exists(PermissionForm::class))->toBeTrue();
     expect(method_exists(PermissionForm::class, 'save'))->toBeTrue();
-    expect(method_exists(PermissionForm::class, 'cancel'))->toBeTrue();
 });
 
 it('PermissionManager view exists', function (): void {
@@ -48,9 +45,3 @@ it('PermissionForm has no direct Spatie write calls (V8)', function (): void {
     expect($source)->not->toContain('assignRole(');
 });
 
-it('colorForGroup returns consistent color for same group', function (): void {
-    $manager = new PermissionManager;
-
-    expect($manager->colorForGroup('orders'))->toBe($manager->colorForGroup('orders'));
-    expect($manager->colorForGroup('orders'))->not->toBeEmpty();
-});

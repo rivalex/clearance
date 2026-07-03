@@ -2,46 +2,51 @@
 
 declare(strict_types=1);
 
-use Rivalex\Clearance\Livewire\Users\UserRoleManager;
+use Rivalex\Clearance\Livewire\Users\AssignRoleModal;
+use Rivalex\Clearance\Livewire\Users\RemoveAssignmentModal;
+use Rivalex\Clearance\Livewire\Users\UserClearanceManager;
+use Rivalex\Clearance\Services\UserClearanceService;
 
-it('UserRoleManager class exists with required methods', function (): void {
-    expect(class_exists(UserRoleManager::class))->toBeTrue();
-    expect(method_exists(UserRoleManager::class, 'render'))->toBeTrue();
-    expect(method_exists(UserRoleManager::class, 'assign'))->toBeTrue();
-    expect(method_exists(UserRoleManager::class, 'revoke'))->toBeTrue();
+it('UserClearanceManager class exists with required methods', function (): void {
+    expect(class_exists(UserClearanceManager::class))->toBeTrue();
+    expect(method_exists(UserClearanceManager::class, 'render'))->toBeTrue();
+    expect(method_exists(UserClearanceManager::class, 'mount'))->toBeTrue();
+    expect(method_exists(UserClearanceManager::class, 'placeholder'))->toBeTrue();
 });
 
-it('UserRoleManager view exists', function (): void {
-    expect(view()->exists('clearance::livewire.users.user-role-manager'))->toBeTrue();
+it('UserClearanceManager is lazy', function (): void {
+    $reflection = new ReflectionClass(UserClearanceManager::class);
+    $lazyAttr   = array_filter(
+        $reflection->getAttributes(),
+        fn ($a) => str_contains($a->getName(), 'Lazy'),
+    );
+    expect(count($lazyAttr))->toBeGreaterThan(0);
 });
 
-it('UserRoleManager enforces server-side scope in assign and revoke (V4)', function (): void {
+it('UserClearanceManager resolves user via clearance config or auth providers', function (): void {
     $source = file_get_contents(
-        realpath(__DIR__.'/../../src/Livewire/Users/UserRoleManager.php')
+        realpath(__DIR__.'/../../src/Livewire/Users/UserClearanceManager.php')
     );
 
-    expect(substr_count($source, 'scopeContextType !== null'))->toBeGreaterThanOrEqual(2);
-    expect($source)->toContain('resolveManagerScope');
-    expect($source)->toContain('Cannot assign outside your managed context');
-    expect($source)->toContain('Cannot revoke outside your managed context');
+    expect($source)->toContain('clearance.user_model');
+    expect($source)->toContain('auth.providers.users.model');
+    expect($source)->toContain('findOrFail');
 });
 
-it('UserRoleManager has no direct Spatie write calls (V8)', function (): void {
+it('RemoveAssignmentModal requires typed confirmation before deleting', function (): void {
     $source = file_get_contents(
-        realpath(__DIR__.'/../../src/Livewire/Users/UserRoleManager.php')
+        realpath(__DIR__.'/../../src/Livewire/Users/RemoveAssignmentModal.php')
     );
 
-    expect($source)->not->toContain('Role::create(');
-    expect($source)->not->toContain('Permission::create(');
-    expect($source)->not->toContain('givePermissionTo(');
-    expect($source)->not->toContain('assignRole(');
+    expect($source)->toContain('DELETE ');
+    expect($source)->toContain('confirmText');
 });
 
-it('UserRoleManager writes only to Clearance-owned table via UserRoleContext (V8)', function (): void {
-    $source = file_get_contents(
-        realpath(__DIR__.'/../../src/Livewire/Users/UserRoleManager.php')
-    );
+it('UserClearanceService has all required methods', function (): void {
+    $reflection = new ReflectionClass(UserClearanceService::class);
 
-    expect($source)->toContain('UserRoleContext');
-    expect($source)->toContain('firstOrCreate');
+    expect($reflection->hasMethod('assignGlobalRole'))->toBeTrue();
+    expect($reflection->hasMethod('removeGlobalRole'))->toBeTrue();
+    expect($reflection->hasMethod('assignContextual'))->toBeTrue();
+    expect($reflection->hasMethod('removeContextual'))->toBeTrue();
 });

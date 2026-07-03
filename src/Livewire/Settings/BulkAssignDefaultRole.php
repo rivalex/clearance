@@ -42,7 +42,8 @@ class BulkAssignDefaultRole extends Component
         }
 
         $userModelClass = config('clearance.user_model')
-            ?? config('auth.providers.' . config('auth.defaults.guard') . '.model');
+            ?? config('auth.providers.' . config('auth.defaults.guard') . '.model')
+            ?? \App\Models\User::class;
 
         if (! $userModelClass || ! class_exists($userModelClass)) {
             $this->bulkMessage = __('clearance::ui.settings.bulk_no_user_model');

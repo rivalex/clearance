@@ -16,7 +16,7 @@ class UserContextPermissionOverride extends Model
 
     public const TYPE_FORCED_OFF = 'forced_off';
 
-    protected $table = 'clearance_user_context_permission_overrides';
+    protected $table = 'clr_ctx_overrides';
 
     protected $fillable = ['user_id', 'role_id', 'permission_id', 'context_type', 'context_id', 'type'];
 

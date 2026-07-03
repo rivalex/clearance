@@ -10,8 +10,8 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * Exposes contextual permission and role checks directly on the User model.
- * Includes Spatie's HasRoles — `use HasClearance` is the only line needed in your User model.
- * Safe to combine with an explicit `use HasRoles` — PHP deduplicates the trait automatically.
+ * Includes Spatie's HasRoles - `use HasClearance` is the only line needed in your User model.
+ * Safe to combine with an explicit `use HasRoles` - PHP deduplicates the trait automatically.
  *
  * @mixin \Illuminate\Contracts\Auth\Authenticatable
  */
@@ -28,7 +28,7 @@ trait HasClearance
     }
 
     /**
-     * Alias of canIn() — mirrors Spatie's hasPermissionTo() naming convention.
+     * Alias of canIn() - mirrors Spatie's hasPermissionTo() naming convention.
      */
     public function hasPermissionIn(string $permission, Model $context, ?string $guard = null): bool
     {

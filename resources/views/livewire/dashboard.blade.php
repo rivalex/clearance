@@ -52,20 +52,6 @@
 		<flux:card class="flex flex-col justify-between">
 			<div>
 				<div class="flex items-center justify-between mb-2">
-					<span class="text-sm font-medium text-zinc-500">{{ __('clearance::ui.dashboard.stats.hierarchies') }}</span>
-					<x-clearance::icon.git-compare-arrows class="w-5 h-5 text-indigo-500" />
-				</div>
-				<div class="text-3xl font-bold">{{ $stats['hierarchies_count'] }}</div>
-			</div>
-			<div class="mt-4">
-				<flux:button href="{{ route('clearance.hierarchy') }}" variant="primary" color="indigo"
-				             size="xs">{{ __('clearance::ui.dashboard.actions.view_structure') }}</flux:button>
-			</div>
-		</flux:card>
-
-		<flux:card class="flex flex-col justify-between">
-			<div>
-				<div class="flex items-center justify-between mb-2">
 					<span class="text-sm font-medium text-zinc-500">{{ __('clearance::ui.dashboard.stats.contextual_assignments') }}</span>
 					<x-clearance::icon.users class="w-5 h-5 text-rose-500" />
 				</div>
@@ -123,12 +109,6 @@
 					<x-clearance::icon.brick-wall-shield class="w-5 h-5 text-emerald-500" />
 					{{ __('clearance::ui.dashboard.quick_links.guards_config') }}
 				</flux:button>
-				@if(config('clearance.modules.hierarchy'))
-					<flux:button href="{{ route('clearance.hierarchy') }}" variant="ghost" class="w-full justify-start gap-4">
-						<x-clearance::icon.git-compare-arrows class="w-5 h-5 text-indigo-500" />
-						{{ __('clearance::ui.dashboard.quick_links.roles_hierarchy') }}
-					</flux:button>
-				@endif
 {{--				@if(config('clearance.modules.users'))--}}
 {{--					<flux:button href="{{ route('clearance.users') }}" variant="ghost" class="w-full justify-start gap-4">--}}
 {{--						<x-clearance::icon.users class="w-5 h-5 text-rose-500" />--}}

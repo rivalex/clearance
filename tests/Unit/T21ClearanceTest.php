@@ -7,7 +7,7 @@ use Rivalex\Clearance\Facades\Clearance as ClearanceFacade;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Tests\Support\FakeContext;
 use Rivalex\Clearance\Tests\Support\FakeUser;
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {

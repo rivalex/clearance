@@ -11,7 +11,9 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Rivalex\Clearance\Clearance;
-use Rivalex\Clearance\Models\RoleHierarchy;
+use Rivalex\Clearance\Exceptions\ClearanceProtectedResourceException;
+use Rivalex\Clearance\Exceptions\ClearanceScopeViolationException;
+use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Services\UserClearanceService;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -68,14 +70,18 @@ class GlobalRolesPanel extends Component
             ->map(fn ($id) => (int) $id)
             ->toArray();
 
-        $service->syncGlobalExtraPermissions($this->resolveUser(), $role, $desiredIds);
+        try {
+            $service->syncGlobalExtraPermissions(auth()->user(), $this->resolveUser(), $role, $desiredIds);
+        } catch (ClearanceScopeViolationException|ClearanceProtectedResourceException $e) {
+            abort(403, $e->getMessage());
+        }
+
         $this->initManualPermissions();
     }
 
     public function render(): View
     {
-        $user     = $this->resolveUser();
-        $childIds = RoleHierarchy::pluck('child_role_id')->map(fn ($id) => (int) $id)->toArray();
+        $user = $this->resolveUser();
 
         $assignedRoles   = $user->roles()->with('permissions')->orderBy('name')->get();
         $assignedRoleIds = $assignedRoles->pluck('id')->toArray();
@@ -86,17 +92,19 @@ class GlobalRolesPanel extends Component
             'role_permission_ids' => $role->permissions->pluck('id')->map(fn ($id) => (int) $id)->toArray(),
         ])->all();
 
-        $availableMasterRoles = Role::whereNotIn('id', $childIds)
-            ->whereNotIn('id', $assignedRoleIds)
-            ->orderBy('name')
-            ->get()
+        $candidateRoles = Role::whereNotIn('id', $assignedRoleIds)->orderBy('name')->get();
+        $metas = RoleMeta::whereIn('role_id', $candidateRoles->pluck('id')->all())->get()->keyBy('role_id');
+
+        // Only show roles that are global-scoped (or have no RoleMeta → default global, V15).
+        $availableMasterRoles = $candidateRoles
+            ->filter(fn ($r) => ! isset($metas[$r->id]) || $metas[$r->id]->isGlobal())
+            ->values()
             ->all();
 
         return view('clearance::livewire.users.global-roles-panel', [
             'user'                 => $user,
             'roleCards'            => $roleCards,
             'availableMasterRoles' => $availableMasterRoles,
-            'childIds'             => $childIds,
         ]);
     }
 

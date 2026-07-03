@@ -1,15 +1,12 @@
-<div>
-    <button wire:click="$set('showModal', true)"
-            class="text-xs text-sky-600 dark:text-sky-400 hover:underline">Edit</button>
-
-    <flux:modal wire:model="showModal" class="md:w-[42rem]">
-        <div class="clearance">
-            @if($showModal)
-                <livewire:clearance-permission-form
-                    :editingPrefix="$prefix"
-                    :key="'edit-perm-'.$prefix"
-                />
-            @endif
-        </div>
-    </flux:modal>
+<div class="clearance">
+	<flux:modal.trigger name="{{ $modalName }}">
+		<flux:button variant="ghost" size="xs" color="green"
+		             icon="pencil-square">{{ __('clearance::ui.common.edit') }}</flux:button>
+	</flux:modal.trigger>
+	
+	<flux:modal name="{{ $modalName }}" class="min-w-96 md:min-w-2xl">
+		<livewire:clearance::permissions.permission-form
+				:guard="$guard" :groupKey="$groupKey" :modalName="$modalName"
+				:editingPrefix="$prefix" :key="$modalName"/>
+	</flux:modal>
 </div>

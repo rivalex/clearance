@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Schema;
 use Rivalex\Clearance\Exceptions\ClearanceProtectedResourceException;
 use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Services\PermissionService;
 use Rivalex\Clearance\Services\RoleService;
+use Rivalex\Clearance\Tests\Support\FakeEloquentUser;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -16,6 +18,18 @@ beforeEach(function (): void {
     $this->superAdmin    = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
     $this->clearancePerm = Permission::firstOrCreate(['name' => 'clearance-access', 'guard_name' => 'web']);
     $this->superAdmin->syncPermissions([$this->clearancePerm]);
+
+    // super_admin actor bypasses the F9 role-sync ceiling, so these tests exercise the
+    // absolute super_admin-role clearance-* immutability rule in isolation.
+    Schema::create('fake_users', static function ($table): void {
+        $table->id();
+        $table->string('name');
+        $table->string('email')->unique();
+        $table->string('password');
+        $table->timestamps();
+    });
+    $this->actor = FakeEloquentUser::create(['name' => 'Actor', 'email' => 't38-actor@example.com', 'password' => 'x']);
+    $this->actor->assignRole($this->superAdmin);
 });
 
 // --- super_admin role protection ---
@@ -37,7 +51,7 @@ it('blocks deleting the super_admin role', function (): void {
 it('blocks removing a clearance-* permission from super_admin via syncPermissions', function (): void {
     $other = Permission::firstOrCreate(['name' => 'orders-read', 'guard_name' => 'web']);
 
-    expect(fn () => $this->roleService->syncPermissions($this->superAdmin, [$other]))
+    expect(fn () => $this->roleService->syncPermissions($this->actor, $this->superAdmin, [$other]))
         ->toThrow(ClearanceProtectedResourceException::class);
 
     expect($this->superAdmin->fresh()->hasPermissionTo('clearance-access'))->toBeTrue();
@@ -46,14 +60,14 @@ it('blocks removing a clearance-* permission from super_admin via syncPermission
 it('blocks adding a new clearance-* permission to super_admin via syncPermissions', function (): void {
     $extra = Permission::firstOrCreate(['name' => 'clearance-users-write', 'guard_name' => 'web']);
 
-    expect(fn () => $this->roleService->syncPermissions($this->superAdmin, [$this->clearancePerm, $extra]))
+    expect(fn () => $this->roleService->syncPermissions($this->actor, $this->superAdmin, [$this->clearancePerm, $extra]))
         ->toThrow(ClearanceProtectedResourceException::class);
 });
 
 it('allows adding non-clearance permissions to super_admin', function (): void {
     $orders = Permission::firstOrCreate(['name' => 'orders-read', 'guard_name' => 'web']);
 
-    $this->roleService->syncPermissions($this->superAdmin, [$this->clearancePerm, $orders]);
+    $this->roleService->syncPermissions($this->actor, $this->superAdmin, [$this->clearancePerm, $orders]);
 
     expect($this->superAdmin->fresh()->hasPermissionTo('orders-read'))->toBeTrue();
     expect($this->superAdmin->fresh()->hasPermissionTo('clearance-access'))->toBeTrue();
@@ -63,7 +77,7 @@ it('allows removing non-clearance permissions from super_admin', function (): vo
     $orders = Permission::firstOrCreate(['name' => 'orders-read', 'guard_name' => 'web']);
     $this->superAdmin->givePermissionTo($orders);
 
-    $this->roleService->syncPermissions($this->superAdmin, [$this->clearancePerm]);
+    $this->roleService->syncPermissions($this->actor, $this->superAdmin, [$this->clearancePerm]);
 
     expect($this->superAdmin->fresh()->hasPermissionTo('orders-read'))->toBeFalse();
     expect($this->superAdmin->fresh()->hasPermissionTo('clearance-access'))->toBeTrue();
@@ -100,4 +114,30 @@ it('allows deleting a non-clearance permission', function (): void {
     $this->permService->delete($perm);
 
     expect(Permission::find($id))->toBeNull();
+});
+
+it('blocks renaming a locked non-super_admin role', function (): void {
+    $role = Role::firstOrCreate(['name' => 'locked-role', 'guard_name' => 'web']);
+    \Rivalex\Clearance\Models\RoleMeta::updateOrCreate(
+        ['role_id' => $role->id],
+        ['is_locked' => true],
+    );
+
+    expect(fn () => $this->roleService->rename($role, 'renamed'))
+        ->toThrow(ClearanceProtectedResourceException::class);
+
+    expect(Role::where('name', 'locked-role')->exists())->toBeTrue();
+});
+
+it('blocks deleting a locked non-super_admin role', function (): void {
+    $role = Role::firstOrCreate(['name' => 'locked-role', 'guard_name' => 'web']);
+    \Rivalex\Clearance\Models\RoleMeta::updateOrCreate(
+        ['role_id' => $role->id],
+        ['is_locked' => true],
+    );
+
+    expect(fn () => $this->roleService->delete($role))
+        ->toThrow(ClearanceProtectedResourceException::class);
+
+    expect(Role::where('name', 'locked-role')->exists())->toBeTrue();
 });

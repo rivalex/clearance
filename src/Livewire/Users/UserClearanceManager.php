@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
 
 /**
  * Top-level lazy wrapper for the user clearance management panel.
@@ -22,6 +23,7 @@ class UserClearanceManager extends Component
 
     public function mount(int|string $userId): void
     {
+        abort_unless(app(Clearance::class)->canPerform('users'), 403);
         $this->userId = $userId;
     }
 

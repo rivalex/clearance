@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-use Rivalex\Clearance\Models\RoleHierarchy;
+use Rivalex\Clearance\Models\Permission as ClearancePermission;
 use Rivalex\Clearance\Models\RoleMeta;
-use Rivalex\Clearance\Models\RolePermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -19,76 +18,59 @@ it('creates RoleMeta with defaults', function (): void {
     $role = Role::create(['name' => 'admin', 'guard_name' => 'web']);
     $meta = RoleMeta::create(['role_id' => $role->id]);
 
-    expect($meta->is_system)->toBeFalse()
-        ->and($meta->is_protected)->toBeFalse()
+    expect($meta->is_locked)->toBeFalse()
         ->and($meta->role->id)->toBe($role->id);
 });
 
 it('RoleMeta casts booleans correctly', function (): void {
     $role = Role::create(['name' => 'admin', 'guard_name' => 'web']);
-    $meta = RoleMeta::create(['role_id' => $role->id, 'is_system' => true, 'is_protected' => true]);
+    $meta = RoleMeta::create(['role_id' => $role->id, 'is_locked' => true]);
 
-    expect($meta->is_system)->toBeTrue()
-        ->and($meta->is_protected)->toBeTrue();
+    expect($meta->is_locked)->toBeTrue();
 });
 
-// --- RoleHierarchy ---
+// --- Permission helpers ---
 
-it('creates RoleHierarchy with parent and child relationships', function (): void {
-    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $hierarchy = RoleHierarchy::create(['parent_role_id' => $parent->id, 'child_role_id' => $child->id]);
+it('Permission abilities returns sorted abilities for a group using configured separator', function (): void {
+    config()->set('clearance.naming_separator', '_');
 
-    expect($hierarchy->parentRole->id)->toBe($parent->id)
-        ->and($hierarchy->childRole->id)->toBe($child->id);
+    ClearancePermission::create(['name' => 'orders_export', 'guard_name' => 'web']);
+    ClearancePermission::create(['name' => 'orders_delete', 'guard_name' => 'web']);
+    ClearancePermission::create(['name' => 'orders_create', 'guard_name' => 'web']);
+    ClearancePermission::create(['name' => 'orders_archive', 'guard_name' => 'web']);
+    ClearancePermission::create(['name' => 'orders_read', 'guard_name' => 'web']);
+    ClearancePermission::create(['name' => 'orders_update', 'guard_name' => 'web']);
+    ClearancePermission::create(['name' => 'products_read', 'guard_name' => 'web']);
+    ClearancePermission::create(['name' => 'orders_sync', 'guard_name' => 'api']);
+
+    $result = ClearancePermission::abilities('orders', 'web');
+
+    expect($result)->toBeArray()
+        ->and($result['permission_group'])->toBe('orders')
+        ->and($result['guard_name'])->toBe('web')
+        ->and($result['labels']['group'])->toBe('Orders')
+        ->and($result['labels']['guard'])->toBe('Web')
+        ->and($result['abilities'])->toBe([
+            ['color' => 'green', 'label' => 'Create', 'name' => 'create'],
+            ['color' => 'green', 'label' => 'Read', 'name' => 'read'],
+            ['color' => 'green', 'label' => 'Update', 'name' => 'update'],
+            ['color' => 'red', 'label' => 'Delete', 'name' => 'delete'],
+            ['color' => 'amber', 'label' => 'Archive', 'name' => 'archive'],
+            ['color' => 'amber', 'label' => 'Export', 'name' => 'export'],
+        ]);
 });
 
-// --- RolePermissionOverride ---
-
-it('creates forced_on override and resolves relationships', function (): void {
-    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
-    $override = RolePermissionOverride::create([
-        'parent_role_id' => $parent->id,
-        'child_role_id' => $child->id,
-        'permission_id' => $perm->id,
-        'type' => RolePermissionOverride::TYPE_FORCED_ON,
-    ]);
-
-    expect($override->isForcedOn())->toBeTrue()
-        ->and($override->isForcedOff())->toBeFalse()
-        ->and($override->permission->id)->toBe($perm->id);
+it('Permission sortAbilities orders CRUD first and custom abilities alphabetically', function (): void {
+    expect(ClearancePermission::sortAbilities(['custom2', 'delete', 'read', 'custom1', 'update', 'create']))
+        ->toBe(['create', 'read', 'update', 'delete', 'custom1', 'custom2']);
 });
 
-it('creates forced_off override', function (): void {
-    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
-    $override = RolePermissionOverride::create([
-        'parent_role_id' => $parent->id,
-        'child_role_id' => $child->id,
-        'permission_id' => $perm->id,
-        'type' => RolePermissionOverride::TYPE_FORCED_OFF,
-    ]);
-
-    expect($override->isForcedOff())->toBeTrue()
-        ->and($override->isForcedOn())->toBeFalse();
-});
-
-it('RolePermissionOverride parentRole and childRole relationships resolve', function (): void {
-    $parent   = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child    = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm     = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
-    $override = RolePermissionOverride::create([
-        'parent_role_id' => $parent->id,
-        'child_role_id'  => $child->id,
-        'permission_id'  => $perm->id,
-        'type'           => RolePermissionOverride::TYPE_FORCED_ON,
-    ]);
-
-    expect($override->parentRole->id)->toBe($parent->id)
-        ->and($override->childRole->id)->toBe($child->id);
+it('Permission colorForAbility maps CRUD and custom ability colors', function (): void {
+    expect(ClearancePermission::colorForAbility('create'))->toBe('green')
+        ->and(ClearancePermission::colorForAbility('read'))->toBe('green')
+        ->and(ClearancePermission::colorForAbility('update'))->toBe('green')
+        ->and(ClearancePermission::colorForAbility('delete'))->toBe('red')
+        ->and(ClearancePermission::colorForAbility('export'))->toBe('amber');
 });
 
 // --- UserRoleContext ---

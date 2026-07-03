@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-use Rivalex\Clearance\Models\RolePermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\ContextService;
 use Rivalex\Clearance\Tests\Support\FakeContext;
 use Rivalex\Clearance\Tests\Support\FakeUser;
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -62,48 +61,6 @@ it('does not return permissions from different user_id (V4)', function (): void 
     ]);
 
     expect($this->service->resolveFor($this->user, $this->context))->toBeEmpty();
-});
-
-it('applies forced_on override to effective permissions', function (): void {
-    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm = Permission::create(['name' => 'orders-update', 'guard_name' => 'web']);
-    $parent->givePermissionTo($perm);
-
-    RolePermissionOverride::create([
-        'parent_role_id' => $parent->id,
-        'child_role_id' => $child->id,
-        'permission_id' => $perm->id,
-        'type' => RolePermissionOverride::TYPE_FORCED_ON,
-    ]);
-
-    UserRoleContext::create([
-        'user_id' => 1, 'role_id' => $child->id,
-        'context_type' => FakeContext::class, 'context_id' => 5,
-    ]);
-
-    expect($this->service->resolveFor($this->user, $this->context)->contains('orders-update'))->toBeTrue();
-});
-
-it('applies forced_off override to remove permission', function (): void {
-    $parent = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $child = Role::create(['name' => 'staff',   'guard_name' => 'web']);
-    $perm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
-    $child->givePermissionTo($perm);
-
-    RolePermissionOverride::create([
-        'parent_role_id' => $parent->id,
-        'child_role_id' => $child->id,
-        'permission_id' => $perm->id,
-        'type' => RolePermissionOverride::TYPE_FORCED_OFF,
-    ]);
-
-    UserRoleContext::create([
-        'user_id' => 1, 'role_id' => $child->id,
-        'context_type' => FakeContext::class, 'context_id' => 5,
-    ]);
-
-    expect($this->service->resolveFor($this->user, $this->context)->contains('orders-delete'))->toBeFalse();
 });
 
 // --- guard filtering ---

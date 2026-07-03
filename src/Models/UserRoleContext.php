@@ -10,7 +10,7 @@ use Spatie\Permission\Models\Role;
 
 class UserRoleContext extends Model
 {
-    protected $table = 'clearance_user_role_contexts';
+    protected $table = 'clr_role_ctx';
 
     protected $fillable = ['user_id', 'role_id', 'context_type', 'context_id'];
 

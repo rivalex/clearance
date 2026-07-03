@@ -43,10 +43,30 @@ return [
     | Modules
     |--------------------------------------------------------------------------
     | Toggle optional Clearance modules.
+    | 'users' - master switch: gates the /clearance/users routes AND
+    |           registers the Users Livewire components. Set to true to
+    |           expose the user management panel.
     */
     'modules' => [
         'users' => false,
-        'hierarchy' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Contextual Models
+    |--------------------------------------------------------------------------
+    | Models that can act as role-binding contexts (e.g. Store, Team, Project).
+    | Each entry: FQCN => ['label' => '...', 'label_attribute' => 'name', 'searchable' => ['name']].
+    | The model may optionally implement \Rivalex\Clearance\Contracts\ClearanceContextable
+    | for custom label rendering; otherwise label_attribute is used as fallback.
+    */
+    'contextual_models' => [
+        // App\Models\Store::class => [
+        //     'label'           => 'Store',
+        //     'icon'            => 'building-storefront',
+        //     'label_attribute' => 'name',
+        //     'searchable'      => ['name'],
+        // ],
     ],
 
     /*
@@ -69,6 +89,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Allowed Guard Drivers
+    |--------------------------------------------------------------------------
+    | Only guards with one of these drivers are injected into auth.guards at
+    | boot. Prevents auth subsystem corruption from invalid driver values.
+    */
+    'allowed_guard_drivers' => ['session', 'token', 'jwt', 'passport', 'sanctum'],
+
+    /*
+    |--------------------------------------------------------------------------
     | Layout
     |--------------------------------------------------------------------------
     | Blade layout used by Clearance full-page Livewire components.
@@ -80,11 +109,31 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Auto-assign Default Role
+    |--------------------------------------------------------------------------
+    | When true, Clearance listens to Illuminate\Auth\Events\Registered and
+    | automatically assigns the default role (stored in clearance_settings)
+    | to every newly registered user.
+    | Set to false to handle role assignment manually in your application.
+    */
+    'auto_assign_default_role' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Super Admin Gate Bypass
+    |--------------------------------------------------------------------------
+    | When true, a Gate::before() hook grants all permissions to users
+    | holding the 'super_admin' role, bypassing every policy/can() check.
+    | Set to false to enforce normal permission checks for super admins too.
+    */
+    'super_admin_gate_bypass' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | UI
     |--------------------------------------------------------------------------
     */
     'ui' => [
         'flux_pro' => null, // null = auto-detect via Flux::pro()
     ],
-
 ];

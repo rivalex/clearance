@@ -7,6 +7,7 @@ namespace Rivalex\Clearance\Livewire\Settings;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Models\ClearanceMeta;
 use Spatie\Permission\Models\Role;
 
@@ -21,6 +22,8 @@ class RoleMetaTable extends Component
 
     public function render(): View
     {
+        abort_unless(app(Clearance::class)->canPerform('settings'), 403);
+
         $roles     = Role::orderBy('name')->get();
         $roleMetas = ClearanceMeta::where('subject_type', 'role')->get()->keyBy('subject_key');
 

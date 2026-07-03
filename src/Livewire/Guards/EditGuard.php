@@ -9,7 +9,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
- * Thin modal wrapper — opens edit mode of GuardForm for a given guard.
+ * Thin modal wrapper - opens edit mode of GuardForm for a given guard.
  */
 class EditGuard extends Component
 {

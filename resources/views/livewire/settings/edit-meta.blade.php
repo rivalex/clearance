@@ -57,7 +57,7 @@
                 @if($iconSvg)
                     <div class="mb-2 flex items-center gap-3">
                         <span class="inline-flex items-center justify-center w-8 h-8 rounded border border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-900"
-                              style="{{ $color ? 'color:'.$color : '' }}">{!! $iconSvg !!}</span>
+                              style="{{ $color ? 'color:'.$color : '' }}">{!! $iconSvgPreview !!}</span>
                         <span class="text-xs text-zinc-400">{{ __('clearance::ui.settings.meta.icon_preview') }}</span>
                         <button type="button" wire:click="$set('iconSvg', '')"
                                 class="text-xs text-red-400 hover:text-red-600">

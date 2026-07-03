@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ClearanceSettings extends Model
 {
-    protected $table = 'clearance_settings';
+    protected $table = 'clr_settings';
 
     protected $fillable = ['key', 'value'];
 

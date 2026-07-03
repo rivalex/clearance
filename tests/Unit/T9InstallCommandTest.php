@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -33,7 +33,7 @@ it('skips install when marker exists (V10 idempotency)', function (): void {
         ->assertSuccessful()
         ->expectsOutput('Clearance already installed. Use --force to re-run.');
 
-    // Marker untouched — command bailed early without overwriting
+    // Marker untouched - command bailed early without overwriting
     expect(file_get_contents(storage_path('.clearance-installed')))->toBe('2026-01-01 00:00:00');
 });
 
@@ -45,16 +45,24 @@ it('re-runs install with --force despite marker (V10)', function (): void {
     expect(Permission::where('name', 'clearance-access')->exists())->toBeTrue();
 });
 
-it('warns when --user ID not found (assignToUser not-found path)', function (): void {
-    // users table must exist for the model query to run; it's not in Clearance migrations
-    \Illuminate\Support\Facades\Schema::create('users', function ($table) {
+it('creates super_admin role with clearance permissions on install', function (): void {
+    $this->artisan('clearance:install')->assertSuccessful();
+
+    $role = Role::where('name', 'super_admin')->first();
+    expect($role)->not->toBeNull();
+    expect($role->hasPermissionTo('clearance-access'))->toBeTrue();
+    expect($role->hasPermissionTo('clearance-users-write'))->toBeTrue();
+});
+
+it('warns when --user ID not found (assignSuperAdminToUser not-found path)', function (): void {
+    Schema::create('users', function ($table): void {
         $table->id();
         $table->timestamps();
     });
 
     $this->artisan('clearance:install', ['--user' => '999'])
         ->assertSuccessful()
-        ->expectsOutput('User [999] not found — permission not assigned to user.');
+        ->expectsOutput('User [999] not found - super_admin role not assigned.');
 });
 
 it('assigns permission to a role via --role option', function (): void {

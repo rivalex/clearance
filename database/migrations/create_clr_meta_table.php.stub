@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('clearance_meta', function (Blueprint $table) {
+        Schema::create('clr_meta', function (Blueprint $table) {
             $table->id();
             $table->string('subject_type'); // 'role' | 'guard'
             $table->string('subject_key');  // role name or guard name
@@ -26,6 +26,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('clearance_meta');
+        Schema::dropIfExists('clr_meta');
     }
 };

@@ -11,7 +11,9 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Rivalex\Clearance\Clearance;
-use Rivalex\Clearance\Models\RoleHierarchy;
+use Rivalex\Clearance\Exceptions\ClearanceProtectedResourceException;
+use Rivalex\Clearance\Exceptions\ClearanceScopeViolationException;
+use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Models\UserContextPermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\UserClearanceService;
@@ -38,6 +40,9 @@ class ContextualRolesPanel extends Component
 
     public function mount(): void
     {
+        $allowed = array_keys(config('clearance.contextual_models', []));
+        abort_unless(in_array($this->contextClass, $allowed, true), 422);
+
         $this->initContextualPermissions();
     }
 
@@ -76,14 +81,17 @@ class ContextualRolesPanel extends Component
             ->map(fn ($id) => (int) $id)
             ->toArray();
 
-        $service->syncContextualExtraPermissions($this->resolveUser(), $role, $context, $desiredIds);
+        try {
+            $service->syncContextualExtraPermissions(auth()->user(), $this->resolveUser(), $role, $context, $desiredIds);
+        } catch (ClearanceScopeViolationException|ClearanceProtectedResourceException $e) {
+            abort(403, $e->getMessage());
+        }
+
         $this->initContextualPermissions();
     }
 
     public function render(): View
     {
-        $childIds = RoleHierarchy::pluck('child_role_id')->map(fn ($id) => (int) $id)->toArray();
-
         $contextAssignments = UserRoleContext::where('user_id', $this->userId)
             ->where('context_type', $this->contextClass)
             ->with('role.permissions')
@@ -93,9 +101,13 @@ class ContextualRolesPanel extends Component
         $contextClass     = $this->contextClass;
         $contextInstances = $contextClass::all();
 
-        $availableMasterRoles = Role::whereNotIn('id', $childIds)
-            ->orderBy('name')
-            ->get()
+        $allRoles = Role::orderBy('name')->get();
+        $metas = RoleMeta::whereIn('role_id', $allRoles->pluck('id')->all())->get()->keyBy('role_id');
+
+        // Only show roles that are contextual-scoped and accept this panel's context type (V13).
+        $availableMasterRoles = $allRoles
+            ->filter(fn ($r) => isset($metas[$r->id]) && $metas[$r->id]->acceptsContext($this->contextClass))
+            ->values()
             ->all();
 
         $contextModelConfig = config("clearance.contextual_models.{$this->contextClass}", []);

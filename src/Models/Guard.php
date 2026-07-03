@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Guard extends Model
 {
-    protected $table = 'clearance_guards';
+    protected $table = 'clr_guards';
 
     protected $fillable = [
         'name',

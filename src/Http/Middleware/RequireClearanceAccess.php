@@ -12,7 +12,7 @@ class RequireClearanceAccess
 {
     /**
      * Verifies the authenticated user has the configured access permission.
-     * Uses can() — never hasRole (V1).
+     * Uses can() - never hasRole (V1).
      */
     public function handle(Request $request, Closure $next): Response
     {

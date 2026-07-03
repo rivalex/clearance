@@ -6,7 +6,8 @@ namespace Rivalex\Clearance\Services;
 
 use Illuminate\Contracts\Config\Repository;
 use Rivalex\Clearance\Exceptions\ClearanceNamingException;
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Exceptions\ClearanceProtectedResourceException;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class PermissionService
@@ -48,16 +49,24 @@ class PermissionService
         $this->validate($name);
 
         return Permission::create([
-            'name' => $name,
+            'name'       => $name,
             'guard_name' => $guardName,
         ]);
     }
 
     /**
      * Renames an existing permission after validating the new name.
+     *
+     * @throws ClearanceProtectedResourceException if the permission is a built-in clearance-* permission.
      */
     public function rename(Permission $permission, string $name): Permission
     {
+        if (str_starts_with($permission->name, 'clearance-')) {
+            throw new ClearanceProtectedResourceException(
+                "Permission [{$permission->name}] is a built-in clearance permission and cannot be renamed."
+            );
+        }
+
         $this->validate($name);
 
         $permission->update(['name' => $name]);
@@ -67,16 +76,34 @@ class PermissionService
 
     /**
      * Deletes a permission.
+     *
+     * @throws ClearanceProtectedResourceException if the permission is a built-in clearance-* permission.
      */
     public function delete(Permission $permission): void
     {
+        if (str_starts_with($permission->name, 'clearance-')) {
+            throw new ClearanceProtectedResourceException(
+                "Permission [{$permission->name}] is a built-in clearance permission and cannot be deleted."
+            );
+        }
+
+        // Spatie automatically handles pivot cleanup in its boot() method
+        // if the model is registered correctly in config/permission.php.
+        // To be safe and fulfill requirement: "logica per rimuovere i permessi dati manualmente agli utenti"
+        // we can try to detach from all models using the model_has_permissions table directly
+        // to avoid crashes if the 'users' relationship is not perfectly configured in tests.
+        
+        \Illuminate\Support\Facades\DB::table(config('permission.table_names.model_has_permissions'))
+            ->where('permission_id', $permission->id)
+            ->delete();
+
         $permission->delete();
     }
 
     /**
      * Assigns a permission to a role. Single write path per V8.
      */
-    public function assignToRole(Role $role, Permission $permission): void
+    public function assignToRole(Role $role, \Spatie\Permission\Models\Permission $permission): void
     {
         $role->givePermissionTo($permission);
     }
@@ -84,7 +111,7 @@ class PermissionService
     /**
      * Revokes a permission from a role. Single write path per V8.
      */
-    public function revokeFromRole(Role $role, Permission $permission): void
+    public function revokeFromRole(Role $role, \Spatie\Permission\Models\Permission $permission): void
     {
         $role->revokePermissionTo($permission);
     }

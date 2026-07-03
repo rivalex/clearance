@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Rivalex\Clearance\Exceptions\ClearanceNamingException;
 use Rivalex\Clearance\Services\PermissionService;
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -86,7 +86,7 @@ it('groupFor extracts group prefix', function (): void {
         ->and($this->service->groupFor('magazzino-update'))->toBe('magazzino');
 });
 
-// --- role assignment (V8 — single write path) ---
+// --- role assignment (V8 - single write path) ---
 
 it('assigns and revokes permission via service', function (): void {
     $permission = $this->service->create('orders-read', 'web');

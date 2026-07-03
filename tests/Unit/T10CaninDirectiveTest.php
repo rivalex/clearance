@@ -12,7 +12,7 @@ it('@canin compiles to ContextService::canIn with auth user (V4)', function (): 
     expect($compiled)->toContain('$permission, $model');
 });
 
-it('@canin compiled output uses app() — no global state mutation (V4)', function (): void {
+it('@canin compiled output uses app() - no global state mutation (V4)', function (): void {
     $compiled = Blade::compileString('@canin($permission, $model)');
 
     expect($compiled)->toContain('app(');

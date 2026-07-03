@@ -10,24 +10,39 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('clearance_role_meta', function (Blueprint $table) {
+        if (! Schema::hasTable('roles')) {
+            throw new \RuntimeException(
+                'Clearance: the Spatie "roles" table does not exist yet. Run "php artisan clearance:install" '
+                . 'instead of a plain "php artisan migrate" - it publishes and runs spatie/laravel-permission\'s '
+                . 'migrations before Clearance\'s own migrations, which depend on "roles" via foreign key.'
+            );
+        }
+
+        Schema::create('clr_role_meta', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('role_id')->unique();
             $table->boolean('is_locked')->default(false);
             $table->string('scope', 16)->default('global');
             $table->json('context_types')->nullable();
+            $table->unsignedBigInteger('parent_role_id')->nullable();
             $table->index('scope');
+            $table->index('parent_role_id');
             $table->timestamps();
 
             $table->foreign('role_id')
                 ->references('id')
                 ->on('roles')
                 ->onDelete('cascade');
+
+            $table->foreign('parent_role_id')
+                ->references('id')
+                ->on('roles')
+                ->onDelete('set null');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('clearance_role_meta');
+        Schema::dropIfExists('clr_role_meta');
     }
 };

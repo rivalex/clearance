@@ -8,19 +8,17 @@ beforeEach(function (): void {
     $this->runMigrations();
 });
 
-it('creates all 4 clearance tables', function (): void {
-    expect(Schema::hasTable('clearance_role_meta'))->toBeTrue();
-    expect(Schema::hasTable('clearance_role_hierarchy'))->toBeTrue();
-    expect(Schema::hasTable('clearance_role_permission_overrides'))->toBeTrue();
-    expect(Schema::hasTable('clearance_user_role_contexts'))->toBeTrue();
+it('creates core clearance tables', function (): void {
+    expect(Schema::hasTable('clr_role_meta'))->toBeTrue();
+    expect(Schema::hasTable('clr_role_ctx'))->toBeTrue();
 });
 
-it('clearance_role_meta has expected columns', function (): void {
-    expect(Schema::hasColumns('clearance_role_meta', ['id', 'role_id', 'is_system', 'is_protected']))->toBeTrue();
+it('clr_role_meta has expected columns', function (): void {
+    expect(Schema::hasColumns('clr_role_meta', ['id', 'role_id', 'is_locked']))->toBeTrue();
 });
 
-it('clearance_user_role_contexts has all context columns', function (): void {
-    expect(Schema::hasColumns('clearance_user_role_contexts', [
+it('clr_role_ctx has all context columns', function (): void {
+    expect(Schema::hasColumns('clr_role_ctx', [
         'id', 'user_id', 'role_id', 'context_type', 'context_id',
     ]))->toBeTrue();
 });

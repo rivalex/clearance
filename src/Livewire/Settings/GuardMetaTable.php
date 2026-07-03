@@ -7,6 +7,7 @@ namespace Rivalex\Clearance\Livewire\Settings;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Models\ClearanceMeta;
 use Rivalex\Clearance\Services\GuardService;
 
@@ -21,6 +22,8 @@ class GuardMetaTable extends Component
 
     public function render(): View
     {
+        abort_unless(app(Clearance::class)->canPerform('settings'), 403);
+
         $guards     = app(GuardService::class)->all();
         $guardMetas = ClearanceMeta::where('subject_type', 'guard')->get()->keyBy('subject_key');
 

@@ -11,6 +11,7 @@ use Livewire\Component;
 use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Models\ClearanceMeta;
 use Rivalex\Clearance\Services\MetaService;
+use Rivalex\Clearance\Support\SvgSanitizer;
 
 /**
  * Modal form for editing display meta (name, description, colour, SVG icon) for a role or guard.
@@ -87,6 +88,8 @@ class EditMeta extends Component
 
     public function render(): View
     {
-        return view('clearance::livewire.settings.edit-meta');
+        return view('clearance::livewire.settings.edit-meta', [
+            'iconSvgPreview' => SvgSanitizer::sanitize($this->iconSvg),
+        ]);
     }
 }

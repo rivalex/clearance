@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('clearance_guards', function (Blueprint $row) {
+        Schema::create('clr_guards', function (Blueprint $row) {
             $row->id();
             $row->string('name')->unique();
             $row->string('driver')->default('session');
@@ -19,6 +19,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('clearance_guards');
+        Schema::dropIfExists('clr_guards');
     }
 };

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Illuminate\View\View;
 use Rivalex\Clearance\Livewire\Guards\GuardManager;
-use Rivalex\Clearance\Livewire\Hierarchy\HierarchyManager;
 use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
 use Rivalex\Clearance\Livewire\Permissions\DeletePermission;
 use Rivalex\Clearance\Livewire\Permissions\EditPermission;
@@ -15,11 +14,10 @@ use Rivalex\Clearance\Livewire\Roles\EditRole;
 use Rivalex\Clearance\Livewire\Roles\NewRole;
 use Rivalex\Clearance\Livewire\Roles\RoleForm;
 use Rivalex\Clearance\Livewire\Roles\RoleManager;
-use Rivalex\Clearance\Livewire\Users\UserRoleManager;
-use Rivalex\Clearance\Models\RoleHierarchy;
-use Rivalex\Clearance\Models\RolePermissionOverride;
-use Rivalex\Clearance\Models\UserRoleContext;
-use Spatie\Permission\Models\Permission;
+use Rivalex\Clearance\Livewire\Users\UserClearanceManager;
+use Rivalex\Clearance\Livewire\Users\AssignRoleModal;
+use Rivalex\Clearance\Livewire\Users\RemoveAssignmentModal;
+use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -28,11 +26,11 @@ beforeEach(function (): void {
 
 // ─── GuardManager ────────────────────────────────────────────────────────────
 
-it('GuardManager mount populates guards array', function (): void {
+it('GuardManager mount runs without error', function (): void {
     $component = new GuardManager;
     app()->call([$component, 'mount']);
 
-    expect($component->guards)->toBeArray();
+    expect($component)->toBeInstanceOf(GuardManager::class);
 });
 
 it('GuardManager render returns View', function (): void {
@@ -52,12 +50,6 @@ it('PermissionManager mount runs without error', function (): void {
     expect($component)->toBeInstanceOf(PermissionManager::class);
 });
 
-it('PermissionManager colorForGroup returns consistent color', function (): void {
-    $component = new PermissionManager;
-
-    expect($component->colorForGroup('orders'))->toBeString()
-        ->and($component->colorForGroup('orders'))->toBe($component->colorForGroup('orders'));
-});
 
 it('NewPermission showModal defaults to false', function (): void {
     $component = new NewPermission;
@@ -73,21 +65,15 @@ it('NewPermission onPermissionSaved closes modal', function (): void {
     expect($component->showModal)->toBeFalse();
 });
 
-it('EditPermission stores prefix and modal defaults false', function (): void {
+it('EditPermission stores prefix and sets modalName in mount', function (): void {
     $component = new EditPermission;
     $component->prefix = 'orders';
+    $component->guard = 'web';
+    $component->groupKey = 'testkey';
+    app()->call([$component, 'mount']);
 
-    expect($component->showModal)->toBeFalse()
-        ->and($component->prefix)->toBe('orders');
-});
-
-it('EditPermission onPermissionSaved closes modal', function (): void {
-    $component = new EditPermission;
-    $component->prefix = 'orders';
-    $component->showModal = true;
-    $component->onPermissionSaved();
-
-    expect($component->showModal)->toBeFalse();
+    expect($component->prefix)->toBe('orders')
+        ->and($component->modalName)->toBe('edit-permission-testkey');
 });
 
 it('DeletePermission confirmDelete removes group on correct text (T25)', function (): void {
@@ -96,12 +82,12 @@ it('DeletePermission confirmDelete removes group on correct text (T25)', functio
 
     $component = new DeletePermission;
     $component->prefix = 'orders';
-    $component->showModal = true;
+    $component->guard = 'web';
+    $component->groupKey = md5('orders|web');
     $component->confirmText = 'DELETE orders';
     app()->call([$component, 'confirmDelete']);
 
-    expect(Permission::where('name', 'like', 'orders-%')->count())->toBe(0)
-        ->and($component->showModal)->toBeFalse();
+    expect(Permission::where('name', 'like', 'orders-%')->count())->toBe(0);
 });
 
 it('DeletePermission confirmDelete is no-op on wrong text', function (): void {
@@ -116,6 +102,7 @@ it('DeletePermission confirmDelete is no-op on wrong text', function (): void {
 });
 
 it('PermissionManager render returns View', function (): void {
+    Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
     $component = new PermissionManager;
 
     expect($component->render())->toBeInstanceOf(View::class);
@@ -199,12 +186,13 @@ it('NewRole onRoleSaved closes modal', function (): void {
     expect($component->showModal)->toBeFalse();
 });
 
-it('EditRole stores roleId and modal defaults false', function (): void {
+it('EditRole sets modalName in mount', function (): void {
     $component = new EditRole;
     $component->roleId = 7;
+    app()->call([$component, 'mount']);
 
-    expect($component->showModal)->toBeFalse()
-        ->and($component->roleId)->toBe(7);
+    expect($component->roleId)->toBe(7)
+        ->and($component->modalName)->toBe('edit-role-7');
 });
 
 it('DeleteRole confirmDelete removes role on correct text (T25)', function (): void {
@@ -213,26 +201,49 @@ it('DeleteRole confirmDelete removes role on correct text (T25)', function (): v
 
     $component = new DeleteRole;
     $component->roleId = $id;
-    $component->showModal = true;
     $component->confirmText = 'DELETE editor';
+    app()->call([$component, 'mount']);
     app()->call([$component, 'confirmDelete']);
 
-    expect(Role::find($id))->toBeNull()
-        ->and($component->showModal)->toBeFalse();
+    expect(Role::find($id))->toBeNull();
 });
 
-it('DeleteRole confirmDelete blocked when users assigned (T25)', function (): void {
+it('DeleteRole confirmDelete detaches users and deletes role (T25)', function (): void {
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
     \Illuminate\Support\Facades\DB::table('model_has_roles')->insert([
         'role_id' => $role->id, 'model_type' => 'App\\Models\\User', 'model_id' => 1,
     ]);
 
     $component = new DeleteRole;
-    $component->roleId = $role->id;
+    $component->roleId    = $role->id;
+    $component->action    = 'detach';
     $component->confirmText = 'DELETE editor';
+    app()->call([$component, 'mount']);
     app()->call([$component, 'confirmDelete']);
 
-    expect(Role::find($role->id))->not->toBeNull(); // blocked
+    // Users detached (model_has_roles cleared), role deleted
+    expect(Role::find($role->id))->toBeNull();
+    expect(\Illuminate\Support\Facades\DB::table('model_has_roles')
+        ->where('role_id', $role->id)->count())->toBe(0);
+});
+
+it('DeleteRole confirmDelete reassign blocks without targetRoleId (T25b)', function (): void {
+    $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
+    \Illuminate\Support\Facades\DB::table('model_has_roles')->insert([
+        'role_id' => $role->id, 'model_type' => 'App\\Models\\User', 'model_id' => 1,
+    ]);
+
+    $component = new DeleteRole;
+    $component->roleId      = $role->id;
+    $component->action      = 'reassign';
+    $component->targetRoleId = null;
+    $component->confirmText = 'DELETE editor';
+    app()->call([$component, 'mount']);
+    app()->call([$component, 'confirmDelete']);
+
+    // Blocked: no targetRoleId provided
+    expect(Role::find($role->id))->not->toBeNull();
+    expect($component->errorMessage)->not->toBeNull();
 });
 
 it('RoleManager render returns View', function (): void {
@@ -262,7 +273,7 @@ it('RoleForm mount loads existing role for edit', function (): void {
         ->and($component->guardName)->toBe('web');
 });
 
-it('RoleForm updatedGuardName reloads permission options', function (): void {
+it('RoleForm updatedGuardName reloads permission groups', function (): void {
     Permission::create(['name' => 'orders-read', 'guard_name' => 'api']);
 
     $component = new RoleForm;
@@ -270,7 +281,7 @@ it('RoleForm updatedGuardName reloads permission options', function (): void {
     $component->guardName = 'api';
     $component->updatedGuardName();
 
-    expect($component->permissionOptions)->toHaveCount(1);
+    expect($component->permissionGroups)->toHaveCount(1);
 });
 
 it('RoleForm render returns View', function (): void {
@@ -279,210 +290,21 @@ it('RoleForm render returns View', function (): void {
     expect($component->render())->toBeInstanceOf(View::class);
 });
 
-// ─── HierarchyManager ────────────────────────────────────────────────────────
+// ─── UserClearanceManager ────────────────────────────────────────────────────
 
-it('HierarchyManager mount loads data', function (): void {
-    $component = new HierarchyManager;
-    app()->call([$component, 'mount']);
-
-    expect($component->hierarchies)->toBeArray()
-        ->and($component->allRoles)->toBeArray()
-        ->and($component->orphanRoles)->toBeArray();
+it('UserClearanceManager has required properties', function (): void {
+    expect(class_exists(UserClearanceManager::class))->toBeTrue();
+    expect(method_exists(UserClearanceManager::class, 'mount'))->toBeTrue();
+    expect(method_exists(UserClearanceManager::class, 'placeholder'))->toBeTrue();
 });
 
-it('HierarchyManager addRelation with missing roles sets errorMessage', function (): void {
-    $component = new HierarchyManager;
-    $component->newParentId = null;
-    $component->newChildId = null;
-
-    app()->call([$component, 'addRelation']);
-
-    expect($component->errorMessage)->toBe('Select both parent and child roles.');
+it('AssignRoleModal has required structure', function (): void {
+    expect(class_exists(AssignRoleModal::class))->toBeTrue();
+    expect(method_exists(AssignRoleModal::class, 'save'))->toBeTrue();
+    expect(method_exists(AssignRoleModal::class, 'rules'))->toBeTrue();
 });
 
-it('HierarchyManager addRelation enforces V3 single-level', function (): void {
-    $a = Role::create(['name' => 'a', 'guard_name' => 'web']);
-    $b = Role::create(['name' => 'b', 'guard_name' => 'web']);
-    $c = Role::create(['name' => 'c', 'guard_name' => 'web']);
-    RoleHierarchy::create(['parent_role_id' => $a->id, 'child_role_id' => $b->id]);
-
-    $component = new HierarchyManager;
-    $component->newParentId = $b->id;
-    $component->newChildId = $c->id;
-
-    app()->call([$component, 'addRelation']);
-
-    expect($component->errorMessage)->not->toBeNull();
-});
-
-it('HierarchyManager addRelation success creates relation', function (): void {
-    $parent = Role::create(['name' => 'parent', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'child',  'guard_name' => 'web']);
-
-    $component = new HierarchyManager;
-    $component->newParentId = $parent->id;
-    $component->newChildId  = $child->id;
-
-    app()->call([$component, 'addRelation']);
-
-    expect($component->errorMessage)->toBeNull()
-        ->and($component->showAddRelation)->toBeFalse()
-        ->and(RoleHierarchy::count())->toBe(1);
-});
-
-it('HierarchyManager removeRelation deletes relation', function (): void {
-    $parent = Role::create(['name' => 'parent', 'guard_name' => 'web']);
-    $child  = Role::create(['name' => 'child',  'guard_name' => 'web']);
-    $rel    = RoleHierarchy::create(['parent_role_id' => $parent->id, 'child_role_id' => $child->id]);
-
-    $component = new HierarchyManager;
-    app()->call([$component, 'removeRelation'], ['id' => $rel->id]);
-
-    expect(RoleHierarchy::find($rel->id))->toBeNull();
-});
-
-it('HierarchyManager drilldown toggles drilldownId', function (): void {
-    $component = new HierarchyManager;
-    $component->drilldown(3);
-    expect($component->drilldownId)->toBe(3);
-
-    $component->drilldown(3);
-    expect($component->drilldownId)->toBeNull();
-});
-
-it('HierarchyManager openOverrideForm sets state', function (): void {
-    $component = new HierarchyManager;
-    $component->openOverrideForm(5);
-
-    expect($component->overrideHierarchyId)->toBe(5)
-        ->and($component->showOverrideForm)->toBeTrue()
-        ->and($component->overridePermissionId)->toBeNull();
-});
-
-it('HierarchyManager addOverride with missing data sets errorMessage', function (): void {
-    $component = new HierarchyManager;
-    $component->overrideHierarchyId = null;
-    $component->overridePermissionId = null;
-
-    app()->call([$component, 'addOverride']);
-
-    expect($component->errorMessage)->toBe('Select a hierarchy and permission.');
-});
-
-it('HierarchyManager removeOverride deletes override', function (): void {
-    $parent  = Role::create(['name' => 'parent', 'guard_name' => 'web']);
-    $child   = Role::create(['name' => 'child',  'guard_name' => 'web']);
-    $perm    = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
-    $parent->givePermissionTo($perm);
-    RoleHierarchy::create(['parent_role_id' => $parent->id, 'child_role_id' => $child->id]);
-    $override = RolePermissionOverride::create([
-        'parent_role_id' => $parent->id,
-        'child_role_id'  => $child->id,
-        'permission_id'  => $perm->id,
-        'type'           => RolePermissionOverride::TYPE_FORCED_ON,
-    ]);
-
-    $component = new HierarchyManager;
-    app()->call([$component, 'removeOverride'], ['overrideId' => $override->id]);
-
-    expect(RolePermissionOverride::find($override->id))->toBeNull();
-});
-
-it('HierarchyManager render returns View', function (): void {
-    $component = new HierarchyManager;
-
-    expect($component->render())->toBeInstanceOf(View::class);
-});
-
-// ─── UserRoleManager ─────────────────────────────────────────────────────────
-
-it('UserRoleManager mount with no auth user does not crash', function (): void {
-    $component = new UserRoleManager;
-    app()->call([$component, 'mount']);
-
-    expect($component->assignments)->toBeArray()
-        ->and($component->scopeContextType)->toBeNull();
-});
-
-it('UserRoleManager assign with missing fields sets errorMessage', function (): void {
-    $component = new UserRoleManager;
-    $component->assignUserId = null;
-
-    $component->assign();
-
-    expect($component->errorMessage)->toBe('All fields are required.');
-});
-
-it('UserRoleManager assign blocked outside manager scope (V4)', function (): void {
-    $component = new UserRoleManager;
-    $component->scopeContextType = 'App\\Models\\Store';
-    $component->scopeContextId = 1;
-    $component->assignUserId = 99;
-    $component->assignRoleId = 1;
-    $component->assignContextType = 'App\\Models\\OtherModel';
-    $component->assignContextId = 1;
-
-    $component->assign();
-
-    expect($component->errorMessage)->toBe('Cannot assign outside your managed context.');
-});
-
-it('UserRoleManager revoke with non-existent id is a no-op', function (): void {
-    $component = new UserRoleManager;
-    $component->revoke(9999);
-
-    expect($component->errorMessage)->toBeNull();
-});
-
-it('UserRoleManager revoke blocked outside manager scope (V4)', function (): void {
-    $role       = Role::create(['name' => 'staff', 'guard_name' => 'web']);
-    $assignment = UserRoleContext::create([
-        'user_id' => 5, 'role_id' => $role->id,
-        'context_type' => 'App\\Models\\OtherModel', 'context_id' => 99,
-    ]);
-
-    $component = new UserRoleManager;
-    $component->scopeContextType = 'App\\Models\\Store';
-    $component->scopeContextId = 1;
-
-    $component->revoke($assignment->id);
-
-    expect($component->errorMessage)->toBe('Cannot revoke outside your managed context.')
-        ->and(UserRoleContext::find($assignment->id))->not->toBeNull();
-});
-
-it('UserRoleManager assign creates UserRoleContext record', function (): void {
-    $role = Role::create(['name' => 'staff', 'guard_name' => 'web']);
-
-    $component = new UserRoleManager;
-    app()->call([$component, 'mount']);
-    $component->assignUserId = 42;
-    $component->assignRoleId = $role->id;
-    $component->assignContextType = 'App\\Models\\Store';
-    $component->assignContextId = 1;
-
-    $component->assign();
-
-    expect(UserRoleContext::where('user_id', 42)->exists())->toBeTrue()
-        ->and($component->errorMessage)->toBeNull();
-});
-
-it('UserRoleManager revoke deletes UserRoleContext record', function (): void {
-    $role       = Role::create(['name' => 'staff', 'guard_name' => 'web']);
-    $assignment = UserRoleContext::create([
-        'user_id' => 5, 'role_id' => $role->id,
-        'context_type' => 'App\\Models\\Store', 'context_id' => 1,
-    ]);
-
-    $component = new UserRoleManager;
-    app()->call([$component, 'mount']);
-    $component->revoke($assignment->id);
-
-    expect(UserRoleContext::find($assignment->id))->toBeNull();
-});
-
-it('UserRoleManager render returns View', function (): void {
-    $component = new UserRoleManager;
-
-    expect($component->render())->toBeInstanceOf(View::class);
+it('RemoveAssignmentModal has required structure', function (): void {
+    expect(class_exists(RemoveAssignmentModal::class))->toBeTrue();
+    expect(method_exists(RemoveAssignmentModal::class, 'confirmDelete'))->toBeTrue();
 });

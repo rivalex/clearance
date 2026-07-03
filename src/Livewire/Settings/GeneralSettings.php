@@ -31,6 +31,11 @@ class GeneralSettings extends Component
     {
         abort_unless(app(Clearance::class)->canPerform('settings'), 403);
 
+        if ($this->defaultRole && ! Role::where('name', $this->defaultRole)->exists()) {
+            $this->addError('defaultRole', __('clearance::ui.settings.bulk_role_not_found'));
+            return;
+        }
+
         ClearanceSettings::set('default_role', $this->defaultRole ?: null);
         ClearanceSettings::set('show_icons', $this->showIcons ? '1' : '0');
 

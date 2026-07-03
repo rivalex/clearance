@@ -1,15 +1,12 @@
-<div>
-    <button wire:click="$set('showModal', true)"
-            class="text-xs text-sky-600 dark:text-sky-400 hover:underline">Edit</button>
+<div class="clearance">
+    <flux:modal.trigger name="{{ $modalName }}">
+        <flux:button variant="ghost" size="xs" color="green" icon="pencil-square">{{ __('clearance::ui.common.edit') }}</flux:button>
+    </flux:modal.trigger>
 
-    <flux:modal wire:model="showModal" class="md:w-[52rem]">
-        <div class="clearance">
-            @if($showModal)
-                <livewire:clearance-role-form
-                    :roleId="$roleId"
-                    :key="'edit-role-'.$roleId"
-                />
-            @endif
-        </div>
+    <flux:modal name="{{ $modalName }}" class="md:w-[52rem]">
+        <livewire:clearance::roles.role-form
+                :roleId="$roleId"
+                :modalName="$modalName"
+                :key="$modalName" />
     </flux:modal>
 </div>

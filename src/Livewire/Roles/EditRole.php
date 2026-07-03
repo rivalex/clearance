@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Livewire\Roles;
 
 use Illuminate\View\View;
-use Livewire\Attributes\On;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
- * Thin modal wrapper — opens edit mode of RoleForm for a given role ID.
+ * Thin modal wrapper - opens edit mode of RoleForm for a given role ID.
  */
 class EditRole extends Component
 {
+    #[Locked]
     public int $roleId;
 
-    public bool $showModal = false;
+    public string $modalName = '';
 
-    #[On('role-saved')]
-    public function onRoleSaved(): void
+    public function mount(): void
     {
-        $this->showModal = false;
+        $this->modalName = 'edit-role-' . $this->roleId;
     }
 
     public function render(): View

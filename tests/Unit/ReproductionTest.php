@@ -7,7 +7,9 @@ use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
 use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Services\GuardService;
 
-uses(Tests\TestCase::class);
+beforeEach(function (): void {
+    $this->runMigrations();
+});
 
 it('reproduces the issue where adding a permission fails if it exists on another guard', function () {
     // Setup: same prefix, different guards

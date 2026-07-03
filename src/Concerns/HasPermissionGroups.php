@@ -18,8 +18,15 @@ use Illuminate\Support\Str;
  */
 trait HasPermissionGroups
 {
-    /** @var array<string> */
-    protected $appends = ['permission_group', 'group_string'];
+    /**
+     * Merges permission_group and group_string into $appends during model initialization.
+     * Uses Eloquent's initialize{TraitName}() convention to avoid property-default conflicts
+     * with Illuminate\Database\Eloquent\Model::$appends.
+     */
+    public function initializeHasPermissionGroups(): void
+    {
+        $this->appends = array_unique(array_merge($this->appends, ['permission_group', 'group_string']));
+    }
 
     /**
      * Extracts the group portion from the permission name using the configured separator.

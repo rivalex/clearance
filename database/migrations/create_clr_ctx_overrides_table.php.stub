@@ -10,7 +10,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('clearance_user_context_permission_overrides', function (Blueprint $table) {
+        if (! Schema::hasTable('roles') || ! Schema::hasTable('permissions')) {
+            throw new \RuntimeException(
+                'Clearance: the Spatie "roles"/"permissions" tables do not exist yet. Run '
+                . '"php artisan clearance:install" instead of a plain "php artisan migrate" - it publishes and runs '
+                . 'spatie/laravel-permission\'s migrations before Clearance\'s own migrations, which depend on them '
+                . 'via foreign key.'
+            );
+        }
+
+        Schema::create('clr_ctx_overrides', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id'); // no FK - user model is configurable
             $table->unsignedBigInteger('role_id');
@@ -41,6 +50,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('clearance_user_context_permission_overrides');
+        Schema::dropIfExists('clr_ctx_overrides');
     }
 };

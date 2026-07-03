@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ClearanceMeta extends Model
 {
-    protected $table = 'clearance_meta';
+    protected $table = 'clr_meta';
 
     protected $fillable = [
         'subject_type',

@@ -43,11 +43,11 @@ class GuardForm extends Component
     public function rules(): array
     {
         $unique = $this->guardId
-            ? 'unique:clearance_guards,name,' . $this->guardId
-            : 'unique:clearance_guards,name';
+            ? 'unique:clr_guards,name,' . $this->guardId
+            : 'unique:clr_guards,name';
 
         return [
-            'name'     => ['required', 'string', 'min:2', $unique],
+            'name'     => ['required', 'string', 'min:2', 'max:64', 'regex:/^[a-z0-9_\-]+$/', $unique],
             'driver'   => ['required', 'string'],
             'provider' => ['nullable', 'string'],
         ];

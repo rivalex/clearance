@@ -10,7 +10,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('clearance_user_role_contexts', function (Blueprint $table) {
+        if (! Schema::hasTable('roles')) {
+            throw new \RuntimeException(
+                'Clearance: the Spatie "roles" table does not exist yet. Run "php artisan clearance:install" '
+                . 'instead of a plain "php artisan migrate" - it publishes and runs spatie/laravel-permission\'s '
+                . 'migrations before Clearance\'s own migrations, which depend on "roles" via foreign key.'
+            );
+        }
+
+        Schema::create('clr_role_ctx', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id'); // no FK - user model is configurable
             $table->unsignedBigInteger('role_id');
@@ -31,6 +39,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('clearance_user_role_contexts');
+        Schema::dropIfExists('clr_role_ctx');
     }
 };
