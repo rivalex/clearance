@@ -1,10 +1,10 @@
-<div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800">
+<div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
     {{-- Group header row --}}
-    <div class="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 dark:border-zinc-700">
+    <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
         <div class="flex items-baseline gap-4">
             <h2 class="text-lg font-bold">{{ $labels['group'] }}</h2>
-            <span class="text-sm text-zinc-400">{{ $labels['guard'] }}</span>
-            <span class="text-xs text-zinc-400">{{ trans_choice('clearance::ui.permissions.count', count($abilities), ['count' => count($abilities)]) }}</span>
+            <span class="text-sm text-gray-400">{{ $labels['guard'] }}</span>
+            <span class="text-xs text-gray-400">{{ trans_choice('clearance::ui.permissions.count', count($abilities), ['count' => count($abilities)]) }}</span>
         </div>
         <div class="flex items-center gap-2">
             <livewire:clearance::permissions.edit-permission :prefix="$prefix" :groupKey="$groupKey" :guard="$guard" :key="'edit-'.$prefix.'-'.rand()" />

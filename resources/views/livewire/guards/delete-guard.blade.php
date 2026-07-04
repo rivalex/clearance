@@ -7,7 +7,7 @@
         <div class="space-y-4">
             <flux:heading size="lg">{{ __('clearance::ui.guards.delete.title') }}</flux:heading>
 
-            <flux:text class="text-zinc-500 dark:text-zinc-400">
+            <flux:text class="text-gray-500 dark:text-gray-400">
                 {!! __('clearance::ui.guards.delete.desc', ['name' => e($name), 'confirm' => '<b>DELETE ' . e($name) . '</b>']) !!}
             </flux:text>
 

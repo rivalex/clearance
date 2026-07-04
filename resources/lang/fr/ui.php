@@ -63,9 +63,17 @@ return [
         'remove' => 'Retirer',
         'click_to_copy' => 'Cliquer pour copier',
         'role' => 'Rôle',
+        'settings' => 'Paramètres',
         'add_group' => 'Ajouter un groupe',
         'add_role' => 'Ajouter un rôle',
         'add_guard' => 'Ajouter une garde',
+        'nav' => [
+            'dashboard' => 'Tableau de bord',
+            'permissions' => 'Permissions',
+            'roles' => 'Rôles',
+            'guards' => 'Gardes',
+            'settings' => 'Paramètres',
+        ],
     ],
     'roles' => [
         'title' => 'Rôles',
@@ -84,6 +92,7 @@ return [
             'role_name' => 'Nom du rôle',
             'role_name_placeholder' => 'ex. éditeur',
             'locked' => 'Verrouillé',
+            'advanced' => 'Paramètres avancés',
             'permissions' => 'Permissions',
             'scope'            => 'Portée',
             'scope_global'     => 'Global',
@@ -210,6 +219,7 @@ return [
         'extra_perms' => [
             'role_perms_label'  => 'Permissions du rôle (lecture seule)',
             'extra_perms_label' => 'Permissions supplémentaires',
+            'extra_perms_hint'  => 'Désactivé par défaut. Cochez une permission pour l\'épingler explicitement à ce contexte - elle reste accordée ici même si les permissions du rôle changent ensuite.',
             'save'              => 'Enregistrer',
         ],
         'no_assignments'      => 'Aucun rôle assigné.',

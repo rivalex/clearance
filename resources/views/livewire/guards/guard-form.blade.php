@@ -1,15 +1,17 @@
 <form wire:submit="save" class="space-y-6 text-start">
-    <header>
-        <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+    <div class="pb-4 border-b border-gray-200 dark:border-gray-700">
+        <flux:heading size="lg">
             {{ $guardId ? __('clearance::ui.guards.form.edit_title') : __('clearance::ui.guards.form.new_title') }}
-        </h3>
-        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        </flux:heading>
+        <flux:text class="text-gray-500 dark:text-gray-400">
             {{ __('clearance::ui.guards.form.desc') }}
-        </p>
-    </header>
+        </flux:text>
+    </div>
 
     @if($errorMessage)
-        <p class="text-sm text-red-600 dark:text-red-400">{{ $errorMessage }}</p>
+        <div class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+            {{ $errorMessage }}
+        </div>
     @endif
 
     <div class="space-y-4">
@@ -35,12 +37,12 @@
         />
     </div>
 
-    <div class="flex gap-2 justify-end">
+    <div class="flex gap-2 justify-end pt-4 mt-2 border-t border-gray-200 dark:border-gray-700">
         <flux:modal.close>
             <flux:button variant="ghost">{{ __('clearance::ui.common.cancel') }}</flux:button>
         </flux:modal.close>
 
-        <flux:button type="submit" variant="primary" color="green">
+        <flux:button type="submit" variant="primary">
             {{ $guardId ? __('clearance::ui.guards.form.update') : __('clearance::ui.guards.form.create') }}
         </flux:button>
     </div>

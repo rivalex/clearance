@@ -1,6 +1,6 @@
-<div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-6">
+<div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
     <h2 class="text-base font-semibold mb-1">{{ __('clearance::ui.settings.bulk.title') }}</h2>
-    <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{{ __('clearance::ui.settings.bulk.description') }}</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">{{ __('clearance::ui.settings.bulk.description') }}</p>
 
     <div class="flex items-center gap-4">
         <flux:button wire:click="bulkAssignDefaultRole" variant="filled" size="sm"

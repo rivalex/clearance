@@ -63,9 +63,17 @@ return [
         'remove' => 'إزالة',
         'click_to_copy' => 'انقر للنسخ',
         'role' => 'الدور',
+        'settings' => 'الإعدادات',
         'add_group' => 'إضافة مجموعة',
         'add_role' => 'إضافة دور',
         'add_guard' => 'إضافة حارس',
+        'nav' => [
+            'dashboard' => 'لوحة التحكم',
+            'permissions' => 'الصلاحيات',
+            'roles' => 'الأدوار',
+            'guards' => 'الحراس',
+            'settings' => 'الإعدادات',
+        ],
     ],
     'roles' => [
         'title' => 'الأدوار',
@@ -84,6 +92,7 @@ return [
             'role_name' => 'اسم الدور',
             'role_name_placeholder' => 'مثال: محرر',
             'locked' => 'مقفل',
+            'advanced' => 'إعدادات متقدمة',
             'permissions' => 'الصلاحيات',
             'scope'            => 'النطاق',
             'scope_global'     => 'عام',
@@ -210,6 +219,7 @@ return [
         'extra_perms' => [
             'role_perms_label'  => 'صلاحيات الدور (للقراءة فقط)',
             'extra_perms_label' => 'صلاحيات إضافية',
+            'extra_perms_hint'  => 'معطّلة افتراضيًا. حدد صلاحية لتثبيتها صراحةً لهذا السياق - تبقى ممنوحة هنا حتى لو تغيرت صلاحيات الدور لاحقًا.',
             'save'              => 'حفظ',
         ],
         'no_assignments'      => 'لم يتم تعيين أي أدوار.',

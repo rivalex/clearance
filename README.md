@@ -2,7 +2,7 @@
 
 <a href="https://rivalex.github.io/clearance-docs/" target="_blank" style="margin: 30px 0 50px !important;">
 <figure>
-<img src="resources/images/clearance-mark-horizzontale.svg" alt="Clearance" width="500" height="auto">
+<img src="resources/images/clearance-mark-horizontal.svg" alt="Clearance" width="500" height="auto">
 </figure>
 </a>
 
@@ -428,7 +428,7 @@ php artisan vendor:publish --tag=clearance-config
 | `naming_separator` | `'-'` | Separator character - `'-'` or `'_'` only. |
 | `guards` | `[]` | Override auto-detected guards from `config/auth.php`. Empty = auto-detect all. |
 | `allowed_guard_drivers` | `['session', 'token', 'jwt', 'passport', 'sanctum']` | Drivers accepted when injecting DB guards into `auth.guards`. |
-| `layout` | `null` | Blade layout for full-page components. `null` = host app's default (`config('livewire.layout')`). |
+| `layout` | `null` | Blade layout for full-page components. `null` = host app's default (`config('livewire.component_layout')`). |
 | `auto_assign_default_role` | `false` | Auto-assign the Settings-configured default role on `Registered` event. |
 | `super_admin_gate_bypass` | `false` | Opt-in: `super_admin` bypasses all Gate checks application-wide. |
 | `ui.flux_pro` | `null` | `null` = auto-detect via `Flux::pro()`. |

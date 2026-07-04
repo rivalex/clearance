@@ -12,7 +12,7 @@
 @endonce
 
 <div class="clr-logo" style="display:flex;justify-content:flex-start;margin-bottom:1rem;">
-    <img src="{{ route('clearance.assets', 'images/clearance-mark-horizzontale.svg') }}"
+    <img src="{{ route('clearance.assets', 'images/clearance-mark-horizontal.svg') }}"
          alt="Clearance"
          width="auto"
          height="32"

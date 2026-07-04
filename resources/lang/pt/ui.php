@@ -63,9 +63,17 @@ return [
         'remove' => 'Remover',
         'click_to_copy' => 'Clique para copiar',
         'role' => 'Papel',
+        'settings' => 'Configurações',
         'add_group' => 'Adicionar grupo',
         'add_role' => 'Adicionar papel',
         'add_guard' => 'Adicionar guard',
+        'nav' => [
+            'dashboard' => 'Painel',
+            'permissions' => 'Permissões',
+            'roles' => 'Funções',
+            'guards' => 'Guards',
+            'settings' => 'Configurações',
+        ],
     ],
     'roles' => [
         'title' => 'Papéis',
@@ -84,6 +92,7 @@ return [
             'role_name' => 'Nome do papel',
             'role_name_placeholder' => 'ex. editor',
             'locked' => 'Bloqueado',
+            'advanced' => 'Configurações avançadas',
             'permissions' => 'Permissões',
             'scope'            => 'Escopo',
             'scope_global'     => 'Global',
@@ -210,6 +219,7 @@ return [
         'extra_perms' => [
             'role_perms_label'  => 'Permissões do papel (somente leitura)',
             'extra_perms_label' => 'Permissões adicionais',
+            'extra_perms_hint'  => 'Desativado por padrão. Marque uma permissão para fixá-la explicitamente neste contexto - ela permanece concedida aqui mesmo que as permissões do papel mudem depois.',
             'save'              => 'Salvar',
         ],
         'no_assignments'      => 'Nenhum papel atribuído.',

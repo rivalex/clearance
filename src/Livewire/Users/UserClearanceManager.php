@@ -10,6 +10,7 @@ use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Rivalex\Clearance\Clearance;
+use Rivalex\Clearance\Concerns\HasClearanceLayout;
 
 /**
  * Top-level lazy wrapper for the user clearance management panel.
@@ -18,6 +19,8 @@ use Rivalex\Clearance\Clearance;
 #[Lazy]
 class UserClearanceManager extends Component
 {
+    use HasClearanceLayout;
+
     #[Locked]
     public int|string $userId;
 
@@ -29,18 +32,18 @@ class UserClearanceManager extends Component
 
     public function placeholder(): View
     {
-        return view('clearance::livewire.users.placeholder');
+        return $this->withClearanceLayout(view('clearance::livewire.users.placeholder'));
     }
 
     public function render(): View
     {
         $user = $this->resolveUser();
 
-        return view('clearance::livewire.users.manager', [
+        return $this->withClearanceLayout(view('clearance::livewire.users.manager', [
             'user'             => $user,
             'contextualModels' => config('clearance.contextual_models', []),
             'modulesEnabled'   => (bool) config('clearance.modules.users', false),
-        ]);
+        ]));
     }
 
     /**

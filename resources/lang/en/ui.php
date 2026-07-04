@@ -63,9 +63,17 @@ return [
         'remove' => 'Remove',
         'click_to_copy' => 'Click to copy',
         'role' => 'Role',
+        'settings' => 'Settings',
         'add_group' => 'Add group',
         'add_role' => 'Add role',
         'add_guard' => 'Add guard',
+        'nav' => [
+            'dashboard' => 'Dashboard',
+            'permissions' => 'Permissions',
+            'roles' => 'Roles',
+            'guards' => 'Guards',
+            'settings' => 'Settings',
+        ],
     ],
     'roles' => [
         'title' => 'Roles',
@@ -84,6 +92,7 @@ return [
             'role_name' => 'Role name',
             'role_name_placeholder' => 'e.g. editor',
             'locked' => 'Locked',
+            'advanced' => 'Advanced settings',
             'permissions' => 'Permissions',
             'scope'            => 'Scope',
             'scope_global'     => 'Global',
@@ -210,6 +219,7 @@ return [
         'extra_perms' => [
             'role_perms_label'  => 'Role permissions (read-only)',
             'extra_perms_label' => 'Additional permissions',
+            'extra_perms_hint'  => 'Off by default. Check a permission to pin it explicitly for this context — it stays granted here even if the role\'s own permissions change later.',
             'save'              => 'Save',
         ],
         'no_assignments'      => 'No roles assigned.',

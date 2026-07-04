@@ -11,6 +11,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rivalex\Clearance\Clearance;
+use Rivalex\Clearance\Concerns\HasClearanceLayout;
 use Rivalex\Clearance\Models\ClearanceMeta;
 use Rivalex\Clearance\Models\ClearanceSettings;
 use Rivalex\Clearance\Models\RoleMeta;
@@ -24,6 +25,7 @@ use Spatie\Permission\Models\Role;
 class RoleManager extends Component
 {
     use WithPagination;
+    use HasClearanceLayout;
 
     public string $search = '';
 
@@ -49,7 +51,7 @@ class RoleManager extends Component
 
     public function placeholder(): View
     {
-        return view('clearance::livewire.roles.placeholder');
+        return $this->withClearanceLayout(view('clearance::livewire.roles.placeholder'));
     }
 
     public function render(): View
@@ -85,6 +87,6 @@ class RoleManager extends Component
             'users_count'       => DB::table($modelHasRolesTable)->where('role_id', $role->id)->count(),
         ]);
 
-        return view('clearance::livewire.roles.role-manager', compact('roleData', 'showIcons'));
+        return $this->withClearanceLayout(view('clearance::livewire.roles.role-manager', compact('roleData', 'showIcons')));
     }
 }

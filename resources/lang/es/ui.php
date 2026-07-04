@@ -63,9 +63,17 @@ return [
         'remove' => 'Eliminar',
         'click_to_copy' => 'Haga clic para copiar',
         'role' => 'Rol',
+        'settings' => 'Ajustes',
         'add_group' => 'Añadir grupo',
         'add_role' => 'Añadir rol',
         'add_guard' => 'Añadir guardia',
+        'nav' => [
+            'dashboard' => 'Panel',
+            'permissions' => 'Permisos',
+            'roles' => 'Roles',
+            'guards' => 'Guardias',
+            'settings' => 'Ajustes',
+        ],
     ],
     'roles' => [
         'title' => 'Roles',
@@ -84,6 +92,7 @@ return [
             'role_name' => 'Nombre del rol',
             'role_name_placeholder' => 'ej. editor',
             'locked' => 'Bloqueado',
+            'advanced' => 'Configuración avanzada',
             'permissions' => 'Permisos',
             'scope'            => 'Alcance',
             'scope_global'     => 'Global',
@@ -210,6 +219,7 @@ return [
         'extra_perms' => [
             'role_perms_label'  => 'Permisos del rol (solo lectura)',
             'extra_perms_label' => 'Permisos adicionales',
+            'extra_perms_hint'  => 'Desactivado por defecto. Marca un permiso para fijarlo explícitamente en este contexto: permanece concedido aquí aunque los permisos del rol cambien después.',
             'save'              => 'Guardar',
         ],
         'no_assignments'      => 'No hay roles asignados.',

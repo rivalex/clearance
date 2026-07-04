@@ -8,20 +8,24 @@
             @if($role !== null)
                 @if($isLocked)
                     {{-- Branch 1: locked role --}}
-                    <flux:heading size="lg">{{ __('clearance::ui.roles.delete.cannot_delete') }}</flux:heading>
-                    <flux:text class="text-zinc-500 dark:text-zinc-400">
-                        {{ __('clearance::ui.roles.delete.locked_cannot_delete') }}
-                    </flux:text>
-                    <div class="flex justify-end">
+                    <div class="pb-4 border-b border-gray-200 dark:border-gray-700">
+                        <flux:heading size="lg">{{ __('clearance::ui.roles.delete.cannot_delete') }}</flux:heading>
+                        <flux:text class="text-gray-500 dark:text-gray-400">
+                            {{ __('clearance::ui.roles.delete.locked_cannot_delete') }}
+                        </flux:text>
+                    </div>
+                    <div class="flex justify-end pt-4 mt-2 border-t border-gray-200 dark:border-gray-700">
                         <flux:button x-on:click="$flux.modal('{{ $modalName }}').close()" variant="ghost">{{ __('clearance::ui.roles.delete.close') }}</flux:button>
                     </div>
 
                 @elseif($affectedGlobalCount > 0 || $affectedContextualCount > 0)
                     {{-- Branch 2: role has assigned users --}}
-                    <flux:heading size="lg">{{ __('clearance::ui.roles.delete.confirm_title') }}</flux:heading>
-                    <flux:text class="text-zinc-500 dark:text-zinc-400">
-                        {{ __('clearance::ui.roles.delete.affected_users', ['global' => $affectedGlobalCount, 'contextual' => $affectedContextualCount]) }}
-                    </flux:text>
+                    <div class="pb-4 border-b border-gray-200 dark:border-gray-700">
+                        <flux:heading size="lg">{{ __('clearance::ui.roles.delete.confirm_title') }}</flux:heading>
+                        <flux:text class="text-gray-500 dark:text-gray-400">
+                            {{ __('clearance::ui.roles.delete.affected_users', ['global' => $affectedGlobalCount, 'contextual' => $affectedContextualCount]) }}
+                        </flux:text>
+                    </div>
 
                     @if($errorMessage)
                         <div class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
@@ -30,7 +34,7 @@
                     @endif
 
                     <div class="space-y-2">
-                        <p class="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
                             {{ __('clearance::ui.roles.delete.action_label') }}
                         </p>
                         <label class="flex items-center gap-2 cursor-pointer">
@@ -45,11 +49,11 @@
 
                     @if($action === 'reassign')
                         <div class="space-y-1">
-                            <p class="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                            <p class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
                                 {{ __('clearance::ui.roles.delete.reassign_to') }}
                             </p>
                             @if($otherRoles->isEmpty())
-                                <p class="text-sm text-zinc-400">{{ __('clearance::ui.roles.delete.no_other_roles') }}</p>
+                                <p class="text-sm text-gray-400">{{ __('clearance::ui.roles.delete.no_other_roles') }}</p>
                             @else
                                 <flux:select wire:model="targetRoleId">
                                     <flux:select.option value="">{{ __('clearance::ui.common.select') }}</flux:select.option>
@@ -61,23 +65,25 @@
                         </div>
                     @endif
 
-                    <flux:text class="text-zinc-500 dark:text-zinc-400 text-sm">
+                    <flux:text class="text-gray-500 dark:text-gray-400 text-sm">
                         {{ __('clearance::ui.roles.delete.confirm_desc', ['confirm' => 'DELETE ' . $role->name]) }}
                     </flux:text>
                     <flux:input wire:model="confirmText" placeholder="DELETE {{ $role->name }}" class="font-mono" />
-                    <div class="flex items-center justify-between pt-1">
+                    <div class="flex items-center justify-between pt-4 mt-2 border-t border-gray-200 dark:border-gray-700">
                         <flux:button x-on:click="$flux.modal('{{ $modalName }}').close()" variant="ghost">{{ __('clearance::ui.common.cancel') }}</flux:button>
                         <flux:button wire:click="confirmDelete" variant="danger">{{ __('clearance::ui.roles.delete.confirm_delete') }}</flux:button>
                     </div>
 
                 @else
                     {{-- Branch 3: no assigned users, standard typed-confirm --}}
-                    <flux:heading size="lg">{{ __('clearance::ui.roles.delete.confirm_title') }}</flux:heading>
-                    <flux:text class="text-zinc-500 dark:text-zinc-400">
-                        {{ __('clearance::ui.roles.delete.confirm_desc', ['confirm' => 'DELETE ' . $role->name]) }}
-                    </flux:text>
+                    <div class="pb-4 border-b border-gray-200 dark:border-gray-700">
+                        <flux:heading size="lg">{{ __('clearance::ui.roles.delete.confirm_title') }}</flux:heading>
+                        <flux:text class="text-gray-500 dark:text-gray-400">
+                            {{ __('clearance::ui.roles.delete.confirm_desc', ['confirm' => 'DELETE ' . $role->name]) }}
+                        </flux:text>
+                    </div>
                     <flux:input wire:model="confirmText" placeholder="DELETE {{ $role->name }}" class="font-mono" />
-                    <div class="flex items-center justify-between pt-1">
+                    <div class="flex items-center justify-between pt-4 mt-2 border-t border-gray-200 dark:border-gray-700">
                         <flux:button x-on:click="$flux.modal('{{ $modalName }}').close()" variant="ghost">{{ __('clearance::ui.common.cancel') }}</flux:button>
                         <flux:button wire:click="confirmDelete" variant="danger">{{ __('clearance::ui.roles.delete.confirm_delete') }}</flux:button>
                     </div>

@@ -221,6 +221,16 @@ class RoleForm extends Component
             return;
         }
 
+        if ($this->roleId === null) {
+            // Modal is reused (static Livewire key), so the form must reset itself after a successful create.
+            $this->reset(['name', 'isLocked', 'scope', 'contextTypes', 'parentRoleId']);
+            $this->guardName = config('auth.defaults.guard', 'web');
+            $this->loadParentOptions($this->guardName);
+            $this->loadPermissions($this->guardName, []);
+            $this->resetErrorBag();
+            $this->resetValidation();
+        }
+
         Flux::modal($this->modalName)->close();
         $this->dispatch('role-saved');
     }

@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 use Rivalex\Clearance\Clearance;
+use Rivalex\Clearance\Concerns\HasClearanceLayout;
 
 /**
  * Top-level settings page - lazy wrapper that embeds focused sub-components.
@@ -15,15 +16,17 @@ use Rivalex\Clearance\Clearance;
 #[Lazy]
 class SettingsManager extends Component
 {
+    use HasClearanceLayout;
+
     public function placeholder(): View
     {
-        return view('clearance::livewire.settings.placeholder');
+        return $this->withClearanceLayout(view('clearance::livewire.settings.placeholder'));
     }
 
     public function render(): View
     {
         abort_unless(app(Clearance::class)->canAccess(), 403);
 
-        return view('clearance::livewire.settings.manager');
+        return $this->withClearanceLayout(view('clearance::livewire.settings.manager'));
     }
 }

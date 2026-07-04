@@ -9,6 +9,7 @@ use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Rivalex\Clearance\Clearance;
+use Rivalex\Clearance\Concerns\HasClearanceLayout;
 use Rivalex\Clearance\Models\ClearanceMeta;
 use Rivalex\Clearance\Models\ClearanceSettings;
 use Rivalex\Clearance\Services\GuardService;
@@ -19,6 +20,8 @@ use Rivalex\Clearance\Services\GuardService;
 #[Lazy]
 class GuardManager extends Component
 {
+    use HasClearanceLayout;
+
     public string $search = '';
 
     public function mount(): void {}
@@ -31,7 +34,7 @@ class GuardManager extends Component
 
     public function placeholder(): View
     {
-        return view('clearance::livewire.guards.placeholder');
+        return $this->withClearanceLayout(view('clearance::livewire.guards.placeholder'));
     }
 
     public function render(): View
@@ -61,6 +64,6 @@ class GuardManager extends Component
 
         $showIcons = filter_var(ClearanceSettings::get('show_icons', '1'), FILTER_VALIDATE_BOOLEAN);
 
-        return view('clearance::livewire.guards.guard-manager', compact('guards', 'guardMetas', 'showIcons'));
+        return $this->withClearanceLayout(view('clearance::livewire.guards.guard-manager', compact('guards', 'guardMetas', 'showIcons')));
     }
 }

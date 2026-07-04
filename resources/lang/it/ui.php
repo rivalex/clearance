@@ -63,9 +63,17 @@ return [
         'remove' => 'Rimuovi',
         'click_to_copy' => 'Clicca per copiare',
         'role' => 'Ruolo',
+        'settings' => 'Impostazioni',
         'add_group' => 'Aggiungi gruppo',
         'add_role' => 'Aggiungi ruolo',
         'add_guard' => 'Aggiungi guardia',
+        'nav' => [
+            'dashboard' => 'Dashboard',
+            'permissions' => 'Permessi',
+            'roles' => 'Ruoli',
+            'guards' => 'Guardie',
+            'settings' => 'Impostazioni',
+        ],
     ],
     'roles' => [
         'title' => 'Ruoli',
@@ -84,6 +92,7 @@ return [
             'role_name' => 'Nome ruolo',
             'role_name_placeholder' => 'es. editor',
             'locked' => 'Bloccato',
+            'advanced' => 'Impostazioni avanzate',
             'permissions' => 'Permessi',
             'scope'            => 'Ambito',
             'scope_global'     => 'Globale',
@@ -210,6 +219,7 @@ return [
         'extra_perms' => [
             'role_perms_label'  => 'Permessi del ruolo (sola lettura)',
             'extra_perms_label' => 'Permessi aggiuntivi',
+            'extra_perms_hint'  => 'Disattivato di default. Seleziona un permesso per fissarlo esplicitamente a questo contesto: resta concesso qui anche se i permessi del ruolo cambiano in seguito.',
             'save'              => 'Salva',
         ],
         'no_assignments'      => 'Nessun ruolo assegnato.',

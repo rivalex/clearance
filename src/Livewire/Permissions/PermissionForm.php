@@ -179,6 +179,8 @@ class PermissionForm extends Component
 			return;
 		}
 		
+		$wasCreating = $this->editingPrefix === '';
+
 		try {
 			if (app()->runningUnitTests()) {
 				// Skip Flux modal close in tests to avoid "Call to a member function dispatch() on false"
@@ -188,7 +190,16 @@ class PermissionForm extends Component
 		} catch (\Throwable $e) {
 			// Fallback for environments where Flux is not fully initialized
 		}
-		$this->dispatch($this->editingPrefix === '' ? 'permission-saved' : 'permission-saved.' . $this->groupKey);
+
+		if ($wasCreating) {
+			// Modal is reused (static Livewire key), so the form must reset itself after a successful create.
+			$this->reset(['prefix', 'crudAbilities', 'customAbilities', 'newCustomAbility']);
+			$this->guardName = config('auth.defaults.guard', 'web');
+			$this->resetErrorBag();
+			$this->resetValidation();
+		}
+
+		$this->dispatch($wasCreating ? 'permission-saved' : 'permission-saved.' . $this->groupKey);
 	}
 	
 	/**

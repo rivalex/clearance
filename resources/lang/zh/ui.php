@@ -63,9 +63,17 @@ return [
         'remove' => '移除',
         'click_to_copy' => '点击复制',
         'role' => '角色',
+        'settings' => '设置',
         'add_group' => '添加组',
         'add_role' => '添加角色',
         'add_guard' => '添加看守器',
+        'nav' => [
+            'dashboard' => '仪表盘',
+            'permissions' => '权限',
+            'roles' => '角色',
+            'guards' => '守卫',
+            'settings' => '设置',
+        ],
     ],
     'roles' => [
         'title' => '角色',
@@ -84,6 +92,7 @@ return [
             'role_name' => '角色名称',
             'role_name_placeholder' => '例如：编辑',
             'locked' => '已锁定',
+            'advanced' => '高级设置',
             'permissions' => '权限',
             'scope'            => '作用域',
             'scope_global'     => '全局',
@@ -210,6 +219,7 @@ return [
         'extra_perms' => [
             'role_perms_label'  => '角色权限（只读）',
             'extra_perms_label' => '额外权限',
+            'extra_perms_hint'  => '默认关闭。勾选某项权限即可将其显式固定到此上下文——即使角色自身的权限之后发生变化，此处仍保持授予。',
             'save'              => '保存',
         ],
         'no_assignments'      => '未分配任何角色。',

@@ -12,7 +12,7 @@
 
     {{-- Role cards --}}
     @if(count($roleCards) === 0)
-        <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-10 text-center text-sm text-zinc-400">
+        <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-10 text-center text-sm text-gray-400">
             {{ __('clearance::ui.user_clearance.no_global_roles') }}
         </div>
     @else
@@ -31,10 +31,10 @@
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="font-semibold text-sm">{{ $card['role']->name }}</span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 font-mono">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 font-mono">
                                 {{ $card['role']->guard_name }}
                             </span>
-                            <span class="text-xs text-zinc-400">
+                            <span class="text-xs text-gray-400">
                                 {{ count($rolePermIds) }} {{ __('clearance::ui.user_clearance.extra_perms.role_perms_label') }}
                             </span>
                         </div>
@@ -49,14 +49,14 @@
                     {{-- Role permissions (read-only) --}}
                     @if($rolePerms->isNotEmpty())
                         <div>
-                            <p class="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
+                            <p class="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                                 {{ __('clearance::ui.user_clearance.extra_perms.role_perms_label') }}
                             </p>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                                 @foreach($rolePerms as $perm)
                                     <label class="flex items-center gap-2 opacity-60 select-none">
                                         <input type="checkbox" checked disabled
-                                               class="rounded border-zinc-300 dark:border-zinc-600 text-sky-600">
+                                               class="rounded border-gray-300 dark:border-gray-600 text-black-500">
                                         <span class="text-xs font-mono leading-tight">{{ $perm->name }}</span>
                                     </label>
                                 @endforeach
@@ -67,7 +67,7 @@
                     {{-- Extra permissions (editable) --}}
                     @if($extraPerms->isNotEmpty())
                         <div>
-                            <p class="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
+                            <p class="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                                 {{ __('clearance::ui.user_clearance.extra_perms.extra_perms_label') }}
                             </p>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -75,7 +75,7 @@
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="checkbox"
                                                wire:model="manualPermissions.{{ $roleId }}.{{ $perm->id }}"
-                                               class="rounded border-zinc-300 dark:border-zinc-600 text-sky-600 cursor-pointer">
+                                               class="rounded border-gray-300 dark:border-gray-600 text-black-500 cursor-pointer">
                                         <span class="text-xs font-mono leading-tight">{{ $perm->name }}</span>
                                     </label>
                                 @endforeach

@@ -24,7 +24,7 @@
 				<flux:tooltip content="{{ __('clearance::ui.common.click_to_copy') }}">
 					<div class="flex">
 						<div x-cloak x-show="!copied">
-							<svg class="text-sky-600 dark:text-sky-400 {{ $size }}" xmlns="http://www.w3.org/2000/svg"
+							<svg class="text-gray-400 dark:text-gray-500 {{ $size }}" xmlns="http://www.w3.org/2000/svg"
 							     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 							     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
@@ -43,7 +43,7 @@
 			@else
 				<div class="flex">
 					<div x-cloak x-show="!copied">
-						<svg class="text-sky-600 dark:text-sky-400 {{ $size }}" xmlns="http://www.w3.org/2000/svg" width="24"
+						<svg class="text-gray-400 dark:text-gray-500 {{ $size }}" xmlns="http://www.w3.org/2000/svg" width="24"
 						     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
 						     stroke-linecap="round" stroke-linejoin="round">
 							<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>

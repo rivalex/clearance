@@ -10,6 +10,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rivalex\Clearance\Clearance;
+use Rivalex\Clearance\Concerns\HasClearanceLayout;
 use Rivalex\Clearance\Models\Permission;
 
 /**
@@ -19,6 +20,7 @@ use Rivalex\Clearance\Models\Permission;
 class PermissionManager extends Component
 {
 	use WithPagination;
+	use HasClearanceLayout;
 	
 	public string $search = '';
 	
@@ -104,8 +106,8 @@ class PermissionManager extends Component
 	{
 		abort_unless(app(Clearance::class)->canAccess(), 403);
 
-		return view('clearance::livewire.permissions.permission-manager', [
+		return $this->withClearanceLayout(view('clearance::livewire.permissions.permission-manager', [
 			'groupedPermissions' => $this->getGroupedPermissions(),
-		]);
+		]));
 	}
 }
