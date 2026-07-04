@@ -6,6 +6,7 @@ namespace Rivalex\Clearance\Listeners;
 
 use Illuminate\Auth\Events\Registered;
 use Rivalex\Clearance\Models\ClearanceSettings;
+use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -26,9 +27,11 @@ class AssignDefaultRole
             return;
         }
 
-        $role = Role::findByName($roleName);
-
-        if (! $role) {
+        // findByName() throws rather than returning null for an unknown role
+        // (e.g. the configured default_role was since deleted or renamed).
+        try {
+            $role = Role::findByName($roleName);
+        } catch (RoleDoesNotExist) {
             return;
         }
 

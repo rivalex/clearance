@@ -14,6 +14,7 @@ use Rivalex\Clearance\Models\ClearanceMeta;
 use Rivalex\Clearance\Models\ClearanceSettings;
 use Rivalex\Clearance\Services\GuardService;
 use Rivalex\Clearance\Support\SvgSanitizer;
+use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -88,9 +89,9 @@ class Settings extends Component
             return;
         }
 
-        $role = Role::findByName($this->defaultRole);
-
-        if (! $role) {
+        try {
+            $role = Role::findByName($this->defaultRole);
+        } catch (RoleDoesNotExist) {
             $this->bulkMessage = __('clearance::ui.settings.bulk_role_not_found');
             $this->bulkSuccess = false;
             return;

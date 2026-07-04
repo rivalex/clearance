@@ -21,6 +21,16 @@ A drop-in admin panel for Laravel applications built on top of [spatie/laravel-p
 
 </div>
 
+---
+
+<div align="center">
+
+## [Official Documentation](https://rivalex.github.io/clearance-docs/)
+
+</div>
+
+---
+
 ## What Clearance gives you
 
 - **Admin panel** for Permissions, Roles, Guards, Settings and a Dashboard - use the pre-built routes or embed each Livewire component individually.
@@ -37,7 +47,7 @@ A drop-in admin panel for Laravel applications built on top of [spatie/laravel-p
 - **Extensibility hooks** - `HasClearance` trait, `HasPermissionGroups` trait, `ClearanceContextable` contract, reusable Blade components.
 - **SVG sanitization** - every user-supplied icon passes through an allow-list sanitizer before storage and at render time.
 - **Security-hardened** - privilege-escalation ceilings on every permission-granting path, deny-authoritative context overrides, protected `clearance-*` namespace. See [Security](#security).
-- **269 tests, 848 assertions** - Pest suite covering commands, services, Livewire components, contextual authorization, ceiling roles, and i18n key-parity.
+- **370 tests, 1054 assertions** - Pest suite covering commands, services, Livewire components, contextual authorization, ceiling roles, and i18n key-parity.
 
 ## Requirements
 
@@ -525,7 +535,7 @@ Found a vulnerability? Please report it privately to the maintainer rather than 
 
 ## Testing
 
-269 tests, 848 assertions - covering commands, services, Livewire components, contextual authorization, ceiling roles, and i18n key-parity across all 9 bundled languages.
+370 tests, 1054 assertions - covering commands, services, Livewire components, contextual authorization, ceiling roles, and i18n key-parity across all 9 bundled languages.
 
 ```bash
 vendor/bin/pest

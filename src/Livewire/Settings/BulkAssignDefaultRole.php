@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use Livewire\Component;
 use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Models\ClearanceSettings;
+use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -33,9 +34,9 @@ class BulkAssignDefaultRole extends Component
             return;
         }
 
-        $role = Role::findByName($defaultRole);
-
-        if (! $role) {
+        try {
+            $role = Role::findByName($defaultRole);
+        } catch (RoleDoesNotExist) {
             $this->bulkMessage = __('clearance::ui.settings.bulk_role_not_found');
             $this->bulkSuccess = false;
             return;
