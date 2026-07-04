@@ -9,7 +9,8 @@ use Rivalex\Clearance\Concerns\HasClearanceLayout;
 it('applies config(clearance.layout) to the view when set', function (): void {
     config(['clearance.layout' => 'layouts.custom']);
 
-    $subject = new class {
+    $subject = new class
+    {
         use HasClearanceLayout;
 
         public function call($view)
@@ -27,7 +28,8 @@ it('applies config(clearance.layout) to the view when set', function (): void {
 it('leaves the view layout untouched when clearance.layout is null', function (): void {
     config(['clearance.layout' => null]);
 
-    $subject = new class {
+    $subject = new class
+    {
         use HasClearanceLayout;
 
         public function call($view)

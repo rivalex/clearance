@@ -129,7 +129,7 @@ class RoleService
         // clearance-* permissions on super_admin are immutable via the panel — absolute,
         // regardless of actor (even a super_admin actor cannot touch these here).
         if ($role->name === 'super_admin') {
-            $toAdd    = $desired->filter(fn ($p) => ! $current->has($p->id));
+            $toAdd = $desired->filter(fn ($p) => ! $current->has($p->id));
             $toRemove = $current->filter(fn ($p) => ! $desired->has($p->id));
 
             $blocked = $toAdd->merge($toRemove)->first(
@@ -222,7 +222,7 @@ class RoleService
      */
     public function setParent(Role $child, Role $parent): void
     {
-        $childMeta  = RoleMeta::firstOrNew(['role_id' => $child->id]);
+        $childMeta = RoleMeta::firstOrNew(['role_id' => $child->id]);
         $parentMeta = RoleMeta::where('role_id', $parent->id)->first();
 
         // I2: child cannot itself be a parent.
@@ -244,8 +244,8 @@ class RoleService
         $childMeta->save();
 
         // I1 silent trim: revoke child permissions not in the parent ceiling.
-        $ceilingIds   = $parent->permissions->pluck('id')->flip()->all();
-        $childFresh   = $child->fresh();
+        $ceilingIds = $parent->permissions->pluck('id')->flip()->all();
+        $childFresh = $child->fresh();
         foreach ($childFresh->permissions as $perm) {
             if (! isset($ceilingIds[$perm->id])) {
                 $this->permissions->revokeFromRole($childFresh, $perm);

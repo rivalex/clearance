@@ -38,14 +38,14 @@ class GuardService
         // 2. Merge with guards from DB
         try {
             $dbGuards = Guard::all()->keyBy('name')->map(fn ($g) => [
-                'id'       => $g->id,
-                'driver'   => $g->driver,
+                'id' => $g->id,
+                'driver' => $g->driver,
                 'provider' => $g->provider,
-                'is_db'    => true,
+                'is_db' => true,
             ])->toArray();
 
             $merged = array_merge($base, $dbGuards);
-            
+
             // Also ensure auth.guards is updated at runtime so Laravel knows about them
             $this->config->set('auth.guards', array_merge($authGuards, $dbGuards));
 
@@ -80,8 +80,8 @@ class GuardService
     public function create(string $name, string $driver, ?string $provider = null): Guard
     {
         return Guard::create([
-            'name'     => strtolower($name),
-            'driver'   => $driver,
+            'name' => strtolower($name),
+            'driver' => $driver,
             'provider' => $provider ?: null,
         ]);
     }
@@ -92,7 +92,7 @@ class GuardService
     public function update(Guard $guard, string $driver, ?string $provider = null): Guard
     {
         $guard->update([
-            'driver'   => $driver,
+            'driver' => $driver,
             'provider' => $provider ?: null,
         ]);
 

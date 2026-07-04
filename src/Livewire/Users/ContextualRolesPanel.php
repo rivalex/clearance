@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Livewire\Users;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
@@ -73,7 +74,7 @@ class ContextualRolesPanel extends Component
 
         /** @var class-string<Model> $contextClass */
         $contextClass = $this->contextClass;
-        $context      = $contextClass::findOrFail($contextId);
+        $context = $contextClass::findOrFail($contextId);
 
         $desiredIds = collect($this->contextualPermissions[$contextId][$roleId] ?? [])
             ->filter(fn ($checked) => (bool) $checked)
@@ -98,7 +99,7 @@ class ContextualRolesPanel extends Component
             ->get();
 
         /** @var class-string<Model> $contextClass */
-        $contextClass     = $this->contextClass;
+        $contextClass = $this->contextClass;
         $contextInstances = $contextClass::all();
 
         $allRoles = Role::orderBy('name')->get();
@@ -113,18 +114,18 @@ class ContextualRolesPanel extends Component
         $contextModelConfig = config("clearance.contextual_models.{$this->contextClass}", []);
 
         return view('clearance::livewire.users.contextual-roles-panel', [
-            'user'                 => $this->resolveUser(),
-            'contextAssignments'   => $contextAssignments,
+            'user' => $this->resolveUser(),
+            'contextAssignments' => $contextAssignments,
             'availableMasterRoles' => $availableMasterRoles,
-            'contextModelConfig'   => $contextModelConfig,
-            'contextInstances'     => $contextInstances,
+            'contextModelConfig' => $contextModelConfig,
+            'contextInstances' => $contextInstances,
         ]);
     }
 
     /**
      * Fetch a fresh user instance with roles and direct permissions loaded.
      *
-     * @return Model&\Illuminate\Contracts\Auth\Authenticatable
+     * @return Model&Authenticatable
      */
     private function resolveUser(): Model
     {
@@ -148,9 +149,9 @@ class ContextualRolesPanel extends Component
             ->get();
 
         foreach ($assignments as $assignment) {
-            $roleId    = (int) $assignment->role_id;
+            $roleId = (int) $assignment->role_id;
             $contextId = $assignment->context_id;
-            $role      = $assignment->role;
+            $role = $assignment->role;
 
             if ($role === null) {
                 continue;

@@ -44,4 +44,3 @@ it('PermissionForm has no direct Spatie write calls (V8)', function (): void {
     expect($source)->not->toContain('givePermissionTo(');
     expect($source)->not->toContain('assignRole(');
 });
-

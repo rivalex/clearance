@@ -33,7 +33,7 @@ function flattenTranslationKeys(array $array, string $prefix = ''): array
 }
 
 it('every locale exposes the exact same ui.php key set as en', function (): void {
-    $langDir = realpath(__DIR__ . '/../../resources/lang');
+    $langDir = realpath(__DIR__.'/../../resources/lang');
     $locales = array_diff(scandir($langDir), ['.', '..']);
 
     $canonical = flattenTranslationKeys(include "{$langDir}/en/ui.php");
@@ -45,7 +45,7 @@ it('every locale exposes the exact same ui.php key set as en', function (): void
 
         expect($keys)
             ->toBe($canonical, "Locale [{$locale}] key set diverges from [en]. Missing: "
-                . implode(', ', array_diff($canonical, $keys)) . '. Extra: '
-                . implode(', ', array_diff($keys, $canonical)) . '.');
+                .implode(', ', array_diff($canonical, $keys)).'. Extra: '
+                .implode(', ', array_diff($keys, $canonical)).'.');
     }
-})->skip(fn () => ! is_dir(realpath(__DIR__ . '/../../resources/lang')), 'lang directory not found');
+})->skip(fn () => ! is_dir(realpath(__DIR__.'/../../resources/lang')), 'lang directory not found');

@@ -7,6 +7,7 @@ namespace Rivalex\Clearance\Livewire\Permissions;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Services\PermissionService;
 
@@ -30,7 +31,7 @@ class DeletePermission extends Component
 
     public function mount(): void
     {
-        $this->modalName = 'delete-permission-' . $this->groupKey;
+        $this->modalName = 'delete-permission-'.$this->groupKey;
     }
 
     /**
@@ -38,20 +39,20 @@ class DeletePermission extends Component
      */
     public function confirmDelete(PermissionService $permissionService): void
     {
-        abort_unless(app(\Rivalex\Clearance\Clearance::class)->canPerform('permissions'), 403);
+        abort_unless(app(Clearance::class)->canPerform('permissions'), 403);
 
         if (str_starts_with($this->prefix, 'clearance')) {
             return;
         }
 
-        if ($this->confirmText !== 'DELETE ' . $this->prefix) {
+        if ($this->confirmText !== 'DELETE '.$this->prefix) {
             return;
         }
 
         $sep = config('clearance.naming_separator', '-');
 
         Permission::where('guard_name', $this->guard)
-            ->where('name', 'like', $this->prefix . $sep . '%')
+            ->where('name', 'like', $this->prefix.$sep.'%')
             ->get()
             ->each(fn (Permission $p) => $permissionService->delete($p));
 

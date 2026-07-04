@@ -24,7 +24,7 @@ class GuardMetaTable extends Component
     {
         abort_unless(app(Clearance::class)->canPerform('settings'), 403);
 
-        $guards     = app(GuardService::class)->all();
+        $guards = app(GuardService::class)->all();
         $guardMetas = ClearanceMeta::where('subject_type', 'guard')->get()->keyBy('subject_key');
 
         return view('clearance::livewire.settings.guard-meta-table', compact('guards', 'guardMetas'));

@@ -24,8 +24,8 @@ use Spatie\Permission\Models\Role;
 #[Lazy]
 class RoleManager extends Component
 {
-    use WithPagination;
     use HasClearanceLayout;
+    use WithPagination;
 
     public string $search = '';
 
@@ -80,11 +80,11 @@ class RoleManager extends Component
         $modelHasRolesTable = config('permission.table_names.model_has_roles', 'model_has_roles');
 
         $roleData = $roles->through(fn (Role $role) => [
-            'role'              => $role,
-            'meta'              => $metas->get($role->id),
-            'clearance_meta'    => $clearanceMetas->get($role->name),
+            'role' => $role,
+            'meta' => $metas->get($role->id),
+            'clearance_meta' => $clearanceMetas->get($role->name),
             'permissions_count' => $role->permissions()->count(),
-            'users_count'       => DB::table($modelHasRolesTable)->where('role_id', $role->id)->count(),
+            'users_count' => DB::table($modelHasRolesTable)->where('role_id', $role->id)->count(),
         ]);
 
         return $this->withClearanceLayout(view('clearance::livewire.roles.role-manager', compact('roleData', 'showIcons')));

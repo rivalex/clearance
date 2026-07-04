@@ -13,6 +13,7 @@ use Rivalex\Clearance\Models\UserContextPermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Traits\HasRoles;
 
 class UserClearanceService
 {
@@ -31,7 +32,7 @@ class UserClearanceService
             );
         }
 
-        /** @var \Spatie\Permission\Traits\HasRoles $user */
+        /** @var HasRoles $user */
         $user->assignRole($role);
     }
 
@@ -40,7 +41,7 @@ class UserClearanceService
      */
     public function removeGlobalRole(Authenticatable $user, Role $role): void
     {
-        /** @var \Spatie\Permission\Traits\HasRoles&\Illuminate\Database\Eloquent\Model $user */
+        /** @var HasRoles&Model $user */
         $directPermNames = $user->permissions
             ->where('guard_name', $role->guard_name)
             ->pluck('name')
@@ -76,10 +77,10 @@ class UserClearanceService
         }
 
         return UserRoleContext::firstOrCreate([
-            'user_id'      => $user->getAuthIdentifier(),
-            'role_id'      => $role->id,
+            'user_id' => $user->getAuthIdentifier(),
+            'role_id' => $role->id,
             'context_type' => $contextClass,
-            'context_id'   => $context->getKey(),
+            'context_id' => $context->getKey(),
         ]);
     }
 
@@ -88,10 +89,10 @@ class UserClearanceService
      */
     public function removeContextual(Authenticatable $user, Role $role, Model $context): void
     {
-        $userId      = $user->getAuthIdentifier();
-        $roleId      = (int) $role->id;
+        $userId = $user->getAuthIdentifier();
+        $roleId = (int) $role->id;
         $contextType = get_class($context);
-        $contextId   = $context->getKey();
+        $contextId = $context->getKey();
 
         UserContextPermissionOverride::forSubject($userId, $roleId, $contextType, $contextId)
             ->delete();
@@ -124,7 +125,7 @@ class UserClearanceService
         Role $role,
         array $permissionIds,
     ): void {
-        /** @var \Spatie\Permission\Traits\HasRoles&\Illuminate\Database\Eloquent\Model $user */
+        /** @var HasRoles&Model $user */
         $rolePermIds = $role->permissions->pluck('id')->map(fn ($id) => (int) $id)->toArray();
 
         $currentDirectIds = $user->permissions
@@ -136,7 +137,7 @@ class UserClearanceService
             ->toArray();
 
         $desiredIds = array_map('intval', $permissionIds);
-        $addedIds   = array_diff($desiredIds, $currentDirectIds);
+        $addedIds = array_diff($desiredIds, $currentDirectIds);
         $removedIds = array_diff($currentDirectIds, $desiredIds);
 
         $this->assertWithinCeiling($actor, $user, array_map(
@@ -218,10 +219,10 @@ class UserClearanceService
         Model $context,
         array $permissionIds,
     ): void {
-        $userId      = $user->getAuthIdentifier();
-        $roleId      = (int) $role->id;
+        $userId = $user->getAuthIdentifier();
+        $roleId = (int) $role->id;
         $contextType = get_class($context);
-        $contextId   = $context->getKey();
+        $contextId = $context->getKey();
 
         $desiredIds = array_map('intval', $permissionIds);
 
@@ -243,14 +244,13 @@ class UserClearanceService
 
         foreach ($desiredIds as $permId) {
             UserContextPermissionOverride::create([
-                'user_id'       => $userId,
-                'role_id'       => $roleId,
+                'user_id' => $userId,
+                'role_id' => $roleId,
                 'permission_id' => $permId,
-                'context_type'  => $contextType,
-                'context_id'    => $contextId,
-                'type'          => UserContextPermissionOverride::TYPE_FORCED_ON,
+                'context_type' => $contextType,
+                'context_id' => $contextId,
+                'type' => UserContextPermissionOverride::TYPE_FORCED_ON,
             ]);
         }
     }
-
 }

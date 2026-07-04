@@ -29,7 +29,7 @@ beforeEach(function (): void {
         $table->timestamps();
     });
 
-    $this->service = new ContextService();
+    $this->service = new ContextService;
 });
 
 it('forced_off denies a permission even when granted globally (V16 deny-override)', function (): void {
@@ -39,27 +39,27 @@ it('forced_off denies a permission even when granted globally (V16 deny-override
 
     // Global role grants posts-delete everywhere.
     $globalRole = Role::create(['name' => 'editor', 'guard_name' => 'web']);
-    $perm       = Permission::create(['name' => 'posts-delete', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'posts-delete', 'guard_name' => 'web']);
     $globalRole->givePermissionTo($perm);
     $user->assignRole($globalRole);
 
     // Contextual role in Project X, with an explicit forced_off for posts-delete.
     $contextualRole = Role::create(['name' => 'restricted-in-x', 'guard_name' => 'web']);
-    $context        = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 5));
+    $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 5));
 
     UserRoleContext::create([
-        'user_id'      => $user->id,
-        'role_id'      => $contextualRole->id,
+        'user_id' => $user->id,
+        'role_id' => $contextualRole->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
     UserContextPermissionOverride::create([
-        'user_id'       => $user->id,
-        'role_id'       => $contextualRole->id,
+        'user_id' => $user->id,
+        'role_id' => $contextualRole->id,
         'permission_id' => $perm->id,
-        'context_type'  => FakeContext::class,
-        'context_id'    => 5,
-        'type'          => UserContextPermissionOverride::TYPE_FORCED_OFF,
+        'context_type' => FakeContext::class,
+        'context_id' => 5,
+        'type' => UserContextPermissionOverride::TYPE_FORCED_OFF,
     ]);
 
     expect($this->service->canIn($user, 'posts-delete', $context))->toBeFalse();
@@ -72,7 +72,7 @@ it('a permission granted only globally (no override) is still visible in context
     ]);
 
     $globalRole = Role::create(['name' => 'auditor', 'guard_name' => 'web']);
-    $perm       = Permission::create(['name' => 'reports-view', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'reports-view', 'guard_name' => 'web']);
     $globalRole->givePermissionTo($perm);
     $user->assignRole($globalRole);
 
@@ -88,7 +88,7 @@ it('forced_off wins over a forced_on for the same permission in the same context
 
     $roleA = Role::create(['name' => 'grants-role', 'guard_name' => 'web']);
     $roleB = Role::create(['name' => 'denies-role', 'guard_name' => 'web']);
-    $perm  = Permission::create(['name' => 'billing-refund', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'billing-refund', 'guard_name' => 'web']);
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 9));
 
     UserRoleContext::create([

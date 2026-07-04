@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\ContextService;
 use Rivalex\Clearance\Tests\Support\FakeContext;
 use Rivalex\Clearance\Tests\Support\FakeUser;
-use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -68,7 +68,7 @@ it('does not return permissions from different user_id (V4)', function (): void 
 it('resolveFor filters roles by guard_name when guard provided', function (): void {
     $webRole = Role::create(['name' => 'staff', 'guard_name' => 'web']);
     $apiRole = Role::create(['name' => 'staff-api', 'guard_name' => 'api']);
-    $perm    = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
     $webRole->givePermissionTo($perm);
 
     UserRoleContext::create([

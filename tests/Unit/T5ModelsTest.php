@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Models\Permission as ClearancePermission;
 use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Models\UserRoleContext;
-use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {

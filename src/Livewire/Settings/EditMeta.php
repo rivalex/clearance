@@ -38,14 +38,14 @@ class EditMeta extends Component
 
     public function mount(): void
     {
-        $this->modalName = 'edit-meta-' . $this->subjectType . '-' . $this->subjectKey;
+        $this->modalName = 'edit-meta-'.$this->subjectType.'-'.$this->subjectKey;
 
         $meta = ClearanceMeta::forSubject($this->subjectType, $this->subjectKey);
 
         $this->displayName = $meta->display_name ?? '';
         $this->description = $meta->description ?? '';
-        $this->color       = $meta->color ?? '#3b82f6';
-        $this->iconSvg     = $meta->icon_svg ?? '';
+        $this->color = $meta->color ?? '#3b82f6';
+        $this->iconSvg = $meta->icon_svg ?? '';
     }
 
     public function rules(): array
@@ -53,8 +53,8 @@ class EditMeta extends Component
         return [
             'displayName' => ['nullable', 'string', 'max:120'],
             'description' => ['nullable', 'string', 'max:500'],
-            'color'       => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'iconSvg'     => ['nullable', 'string', 'max:8000'],
+            'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'iconSvg' => ['nullable', 'string', 'max:8000'],
         ];
     }
 
@@ -63,8 +63,8 @@ class EditMeta extends Component
         return [
             'displayName' => __('clearance::ui.settings.meta.display_name'),
             'description' => __('clearance::ui.settings.meta.description'),
-            'color'       => __('clearance::ui.settings.meta.color'),
-            'iconSvg'     => __('clearance::ui.settings.meta.icon_svg'),
+            'color' => __('clearance::ui.settings.meta.color'),
+            'iconSvg' => __('clearance::ui.settings.meta.icon_svg'),
         ];
     }
 
@@ -77,9 +77,9 @@ class EditMeta extends Component
 
         $metaService->update($this->subjectType, $this->subjectKey, [
             'display_name' => $this->displayName,
-            'description'  => $this->description,
-            'color'        => $this->color,
-            'icon_svg'     => $this->iconSvg,
+            'description' => $this->description,
+            'color' => $this->color,
+            'icon_svg' => $this->iconSvg,
         ]);
 
         Flux::modal($this->modalName)->close();

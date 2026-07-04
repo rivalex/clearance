@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Rivalex\Clearance\Services\ContextService;
 use Rivalex\Clearance\Services\GuardService;
+use Spatie\Permission\Models\Permission;
 
 class Clearance
 {
@@ -96,10 +97,10 @@ class Clearance
             return false;
         }
 
-        $guard       = config('auth.defaults.guard', 'web');
-        $fineGrained = 'clearance-' . $action . '-write';
+        $guard = config('auth.defaults.guard', 'web');
+        $fineGrained = 'clearance-'.$action.'-write';
 
-        $permExists = \Spatie\Permission\Models\Permission::where('name', $fineGrained)
+        $permExists = Permission::where('name', $fineGrained)
             ->where('guard_name', $guard)
             ->exists();
 

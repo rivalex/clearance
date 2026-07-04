@@ -55,7 +55,7 @@ it('EditGuard class exists', function (): void {
 
 it('EditGuard mount sets modalName from guardId', function (): void {
     $component = new EditGuard;
-    $component->guardId   = 42;
+    $component->guardId = 42;
     $component->guardName = 'api';
     app()->call([$component, 'mount']);
 
@@ -71,7 +71,7 @@ it('EditGuard view exists', function (): void {
 it('DeleteGuard mount sets modalName from guardId', function (): void {
     $component = new DeleteGuard;
     $component->guardId = 7;
-    $component->name    = 'web';
+    $component->name = 'web';
     app()->call([$component, 'mount']);
 
     expect($component->modalName)->toBe('delete-guard-7');
@@ -81,8 +81,8 @@ it('DeleteGuard confirmDelete removes guard on correct text', function (): void 
     $guard = Guard::create(['name' => 'api', 'driver' => 'token', 'provider' => null]);
 
     $component = new DeleteGuard;
-    $component->guardId     = $guard->id;
-    $component->name        = 'api';
+    $component->guardId = $guard->id;
+    $component->name = 'api';
     $component->confirmText = 'DELETE api';
     app()->call([$component, 'mount']);
     app()->call([$component, 'confirmDelete']);
@@ -94,8 +94,8 @@ it('DeleteGuard confirmDelete is no-op on wrong text', function (): void {
     $guard = Guard::create(['name' => 'api', 'driver' => 'token', 'provider' => null]);
 
     $component = new DeleteGuard;
-    $component->guardId     = $guard->id;
-    $component->name        = 'api';
+    $component->guardId = $guard->id;
+    $component->name = 'api';
     $component->confirmText = 'wrong';
     app()->call([$component, 'mount']);
     app()->call([$component, 'confirmDelete']);
@@ -133,7 +133,7 @@ it('GuardForm mount loads existing guard for edit', function (): void {
 it('GuardForm save rejects disallowed driver', function (): void {
     $component = new GuardForm;
     app()->call([$component, 'mount']);
-    $component->name   = 'myguard';
+    $component->name = 'myguard';
     $component->driver = 'foobar';
 
     app()->call([$component, 'save']);
@@ -144,7 +144,7 @@ it('GuardForm save rejects disallowed driver', function (): void {
 
 it('GuardForm rules() returns array with name/driver/provider keys', function (): void {
     $component = new GuardForm;
-    $rules     = $component->rules();
+    $rules = $component->rules();
 
     expect($rules)->toBeArray()
         ->and($rules)->toHaveKey('name')

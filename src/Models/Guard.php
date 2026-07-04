@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * ## Guard Model Class
@@ -15,8 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $driver
  * @property string|null $provider
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Guard extends Model
 {

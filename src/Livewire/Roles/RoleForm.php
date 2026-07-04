@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Livewire\Roles;
 
 use Flux\Flux;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
+use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Services\GuardService;
 use Rivalex\Clearance\Services\RoleService;
-use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -72,16 +74,16 @@ class RoleForm extends Component
             $role = Role::find($roleId);
 
             if ($role !== null) {
-                $this->name          = $role->name;
-                $this->isSuperAdmin  = $role->name === 'super_admin';
-                $this->guardName     = $role->guard_name;
+                $this->name = $role->name;
+                $this->isSuperAdmin = $role->name === 'super_admin';
+                $this->guardName = $role->guard_name;
 
                 $meta = RoleMeta::where('role_id', $role->id)->first();
 
                 if ($meta !== null) {
-                    $this->isLocked   = $this->isSuperAdmin ? true : (bool) $meta->is_locked;
-                    $this->scope      = $meta->scope ?? RoleMeta::SCOPE_GLOBAL;
-                    $this->contextTypes  = $meta->context_types ?? [];
+                    $this->isLocked = $this->isSuperAdmin ? true : (bool) $meta->is_locked;
+                    $this->scope = $meta->scope ?? RoleMeta::SCOPE_GLOBAL;
+                    $this->contextTypes = $meta->context_types ?? [];
                     $this->parentRoleId = $meta->parent_role_id;
                 }
 
@@ -100,7 +102,7 @@ class RoleForm extends Component
     public function rules(): array
     {
         return [
-            'name'      => ['required', 'string', 'min:1', 'max:255'],
+            'name' => ['required', 'string', 'min:1', 'max:255'],
             'guardName' => ['required', 'string'],
         ];
     }
@@ -108,7 +110,7 @@ class RoleForm extends Component
     public function validationAttributes(): array
     {
         return [
-            'name'      => __('clearance::ui.roles.form.role_name'),
+            'name' => __('clearance::ui.roles.form.role_name'),
             'guardName' => __('clearance::ui.common.guard'),
         ];
     }
@@ -144,12 +146,12 @@ class RoleForm extends Component
      */
     public function save(RoleService $roleService): void
     {
-        abort_unless(app(\Rivalex\Clearance\Clearance::class)->canPerform('roles'), 403);
+        abort_unless(app(Clearance::class)->canPerform('roles'), 403);
         $this->errorMessage = null;
 
         try {
             $this->validate();
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->errorMessage = $e->getMessage();
             if (app()->runningUnitTests()) {
                 return;
@@ -198,8 +200,8 @@ class RoleForm extends Component
             RoleMeta::updateOrCreate(
                 ['role_id' => $role->id],
                 [
-                    'is_locked'     => $this->isSuperAdmin ? true : $this->isLocked,
-                    'scope'         => $this->scope,
+                    'is_locked' => $this->isSuperAdmin ? true : $this->isLocked,
+                    'scope' => $this->scope,
                     'context_types' => $this->scope === RoleMeta::SCOPE_CONTEXTUAL ? $this->contextTypes : null,
                 ],
             );
@@ -286,7 +288,7 @@ class RoleForm extends Component
 
         foreach ($permissions as $p) {
             $groupKey = $p->permission_group;
-            if (!isset($groups[$groupKey])) {
+            if (! isset($groups[$groupKey])) {
                 $groups[$groupKey] = [
                     'group' => $p->group_string,
                     'abilities' => [],
@@ -296,12 +298,12 @@ class RoleForm extends Component
             $abilityName = str_replace("{$groupKey}{$separator}", '', $p->name);
 
             $groups[$groupKey]['abilities'][] = [
-                'id'            => $p->id,
-                'name'          => $p->name,
-                'ability'       => $abilityName,
-                'color'         => Permission::colorForAbility($abilityName),
-                'selected'      => in_array($p->name, $selected, true),
-                'locked'        => $isSuperAdmin && str_starts_with($p->name, 'clearance-'),
+                'id' => $p->id,
+                'name' => $p->name,
+                'ability' => $abilityName,
+                'color' => Permission::colorForAbility($abilityName),
+                'selected' => in_array($p->name, $selected, true),
+                'locked' => $isSuperAdmin && str_starts_with($p->name, 'clearance-'),
                 'out_of_ceiling' => $ceilingIds !== null && ! isset($ceilingIds[$p->id]),
             ];
         }
@@ -316,8 +318,12 @@ class RoleForm extends Component
                 if ($posA !== false && $posB !== false) {
                     return $posA <=> $posB;
                 }
-                if ($posA !== false) return -1;
-                if ($posB !== false) return 1;
+                if ($posA !== false) {
+                    return -1;
+                }
+                if ($posB !== false) {
+                    return 1;
+                }
 
                 return strcasecmp($a['ability'], $b['ability']);
             });

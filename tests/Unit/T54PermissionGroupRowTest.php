@@ -26,7 +26,7 @@ it('mount populates groupData/abilities/labels from Permission::abilities', func
     $component = Livewire::test(PermissionGroupRow::class, ['group' => 'orders', 'guard' => 'web']);
 
     $abilities = $component->get('abilities');
-    $labels    = $component->get('labels');
+    $labels = $component->get('labels');
 
     expect($abilities)->toBeArray()->not->toBeEmpty()
         ->and(collect($abilities)->pluck('name')->all())->toContain('read', 'create')
@@ -36,11 +36,11 @@ it('mount populates groupData/abilities/labels from Permission::abilities', func
 
 it('keeps explicit groupKey, prefix and sep when provided instead of deriving them', function (): void {
     Livewire::test(PermissionGroupRow::class, [
-        'group'    => 'orders',
-        'guard'    => 'web',
+        'group' => 'orders',
+        'guard' => 'web',
         'groupKey' => 'custom-key',
-        'prefix'   => 'custom-prefix',
-        'sep'      => '_',
+        'prefix' => 'custom-prefix',
+        'sep' => '_',
     ])
         ->assertSet('groupKey', 'custom-key')
         ->assertSet('prefix', 'custom-prefix')

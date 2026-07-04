@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Schema;
 use Rivalex\Clearance\Exceptions\ClearanceProtectedResourceException;
 use Rivalex\Clearance\Models\Permission;
+use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Services\PermissionService;
 use Rivalex\Clearance\Services\RoleService;
 use Rivalex\Clearance\Tests\Support\FakeEloquentUser;
@@ -15,7 +16,7 @@ beforeEach(function (): void {
     $this->roleService = new RoleService(new PermissionService(app('config')));
     $this->permService = new PermissionService(app('config'));
 
-    $this->superAdmin    = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+    $this->superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
     $this->clearancePerm = Permission::firstOrCreate(['name' => 'clearance-access', 'guard_name' => 'web']);
     $this->superAdmin->syncPermissions([$this->clearancePerm]);
 
@@ -109,7 +110,7 @@ it('allows renaming a non-clearance permission', function (): void {
 
 it('allows deleting a non-clearance permission', function (): void {
     $perm = Permission::firstOrCreate(['name' => 'orders-read', 'guard_name' => 'web']);
-    $id   = $perm->id;
+    $id = $perm->id;
 
     $this->permService->delete($perm);
 
@@ -118,7 +119,7 @@ it('allows deleting a non-clearance permission', function (): void {
 
 it('blocks renaming a locked non-super_admin role', function (): void {
     $role = Role::firstOrCreate(['name' => 'locked-role', 'guard_name' => 'web']);
-    \Rivalex\Clearance\Models\RoleMeta::updateOrCreate(
+    RoleMeta::updateOrCreate(
         ['role_id' => $role->id],
         ['is_locked' => true],
     );
@@ -131,7 +132,7 @@ it('blocks renaming a locked non-super_admin role', function (): void {
 
 it('blocks deleting a locked non-super_admin role', function (): void {
     $role = Role::firstOrCreate(['name' => 'locked-role', 'guard_name' => 'web']);
-    \Rivalex\Clearance\Models\RoleMeta::updateOrCreate(
+    RoleMeta::updateOrCreate(
         ['role_id' => $role->id],
         ['is_locked' => true],
     );

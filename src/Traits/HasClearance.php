@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Traits;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Rivalex\Clearance\Services\ContextService;
 use Spatie\Permission\Traits\HasRoles;
@@ -13,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
  * Includes Spatie's HasRoles - `use HasClearance` is the only line needed in your User model.
  * Safe to combine with an explicit `use HasRoles` - PHP deduplicates the trait automatically.
  *
- * @mixin \Illuminate\Contracts\Auth\Authenticatable
+ * @mixin Authenticatable
  */
 trait HasClearance
 {

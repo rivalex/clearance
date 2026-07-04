@@ -11,7 +11,7 @@ use Rivalex\Clearance\Services\UserClearanceService;
 
 it('UserClearanceManager exists and is lazy', function (): void {
     $reflection = new ReflectionClass(UserClearanceManager::class);
-    $lazyAttr   = array_filter(
+    $lazyAttr = array_filter(
         $reflection->getAttributes(),
         fn ($a) => str_contains($a->getName(), 'Lazy'),
     );
@@ -25,7 +25,7 @@ it('UserClearanceManager has placeholder method', function (): void {
 
 it('GlobalRolesPanel has On listeners', function (): void {
     $reflection = new ReflectionClass(GlobalRolesPanel::class);
-    $methods    = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+    $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
     $hasRefresh = array_filter($methods, fn ($m) => $m->getName() === 'refresh');
 
     expect(count($hasRefresh))->toBeGreaterThan(0);
@@ -34,7 +34,7 @@ it('GlobalRolesPanel has On listeners', function (): void {
 it('AssignRoleModal has save method with service DI', function (): void {
     $reflection = new ReflectionClass(AssignRoleModal::class);
     $saveMethod = $reflection->getMethod('save');
-    $params     = $saveMethod->getParameters();
+    $params = $saveMethod->getParameters();
 
     expect($params[0]->getType()->getName())->toBe(UserClearanceService::class);
 });
@@ -55,7 +55,7 @@ it('ClearanceContextable contract has clearanceLabel method', function (): void 
 
 it('rules() method is public on AssignRoleModal', function (): void {
     $reflection = new ReflectionClass(AssignRoleModal::class);
-    $method     = $reflection->getMethod('rules');
+    $method = $reflection->getMethod('rules');
 
     expect($method->isPublic())->toBeTrue();
 });

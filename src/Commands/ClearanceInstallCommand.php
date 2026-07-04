@@ -6,11 +6,13 @@ namespace Rivalex\Clearance\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
-use Rivalex\Clearance\Services\PermissionService;
 use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Models\RoleMeta;
+use Rivalex\Clearance\Services\PermissionService;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Traits\HasRoles;
 
 class ClearanceInstallCommand extends Command
 {
@@ -114,7 +116,7 @@ class ClearanceInstallCommand extends Command
         $this->info('Spatie Permission tables not found. Publishing and running Spatie migrations...');
 
         $this->callSilently('vendor:publish', [
-            '--tag'      => 'permission-migrations',
+            '--tag' => 'permission-migrations',
             '--provider' => 'Spatie\\Permission\\PermissionServiceProvider',
         ]);
 
@@ -166,23 +168,23 @@ class ClearanceInstallCommand extends Command
     /**
      * Finds roles with names matching common super-admin aliases (SQLite-safe: PHP-side filter).
      *
-     * @return \Illuminate\Support\Collection<int, Role>
+     * @return Collection<int, Role>
      */
-    private function detectSuperAdminCandidates(string $guard): \Illuminate\Support\Collection
+    private function detectSuperAdminCandidates(string $guard): Collection
     {
         return Role::where('guard_name', $guard)
             ->get()
-            ->filter(fn(Role $r) => $r->name !== 'super_admin'
+            ->filter(fn (Role $r) => $r->name !== 'super_admin'
                 && preg_match('/^(super[_\-\s]?admin|root|owner)$/i', $r->name) === 1);
     }
 
     /**
      * Prompts the user to select an existing candidate role or create a fresh super_admin.
      */
-    private function promptForCandidate(\Illuminate\Support\Collection $candidates, string $guard): Role
+    private function promptForCandidate(Collection $candidates, string $guard): Role
     {
         $createNew = '— create new super_admin —';
-        $options   = $candidates->pluck('name')->prepend($createNew)->values()->all();
+        $options = $candidates->pluck('name')->prepend($createNew)->values()->all();
 
         $choice = $this->choice(
             'Existing super-admin-like role(s) detected. Select one to promote, or create new:',
@@ -233,7 +235,7 @@ class ClearanceInstallCommand extends Command
             ->get();
 
         $existingNames = $role->permissions->pluck('name')->all();
-        $missing       = $clearancePermissions->reject(fn(Permission $p) => in_array($p->name, $existingNames, true));
+        $missing = $clearancePermissions->reject(fn (Permission $p) => in_array($p->name, $existingNames, true));
 
         if ($missing->isEmpty()) {
             $this->info("Role [{$role->name}] already has all clearance permissions.");
@@ -262,9 +264,9 @@ class ClearanceInstallCommand extends Command
             return;
         }
 
-        if (! in_array(\Spatie\Permission\Traits\HasRoles::class, class_uses_recursive($user))) {
-            $this->warn("User model [" . get_class($user) . "] does not use HasRoles (or Rivalex\\Clearance\\Traits\\HasClearance) - role not assigned.");
-            $this->warn("Add `use \\Rivalex\\Clearance\\Traits\\HasClearance;` (includes HasRoles) to your User model, then re-run with --force.");
+        if (! in_array(HasRoles::class, class_uses_recursive($user))) {
+            $this->warn('User model ['.get_class($user).'] does not use HasRoles (or Rivalex\\Clearance\\Traits\\HasClearance) - role not assigned.');
+            $this->warn('Add `use \\Rivalex\\Clearance\\Traits\\HasClearance;` (includes HasRoles) to your User model, then re-run with --force.');
 
             return;
         }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Tests;
 
-use Illuminate\Foundation\Application;
-use Orchestra\Testbench\TestCase as Orchestra;
-use Livewire\LivewireServiceProvider;
 use Flux\FluxServiceProvider;
+use Illuminate\Foundation\Application;
+use Livewire\LivewireServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 use Rivalex\Clearance\ClearanceServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 

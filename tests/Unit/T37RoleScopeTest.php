@@ -30,8 +30,8 @@ beforeEach(function (): void {
         $table->timestamps();
     });
 
-    $this->service        = new UserClearanceService();
-    $this->contextService = new ContextService();
+    $this->service = new UserClearanceService;
+    $this->contextService = new ContextService;
 });
 
 // --- RoleMeta helpers ---
@@ -52,7 +52,7 @@ it('RoleMeta::isContextual returns true for contextual scope', function (): void
 
 it('RoleMeta::acceptsContext returns true when FQCN is in context_types', function (): void {
     $meta = new RoleMeta([
-        'scope'         => RoleMeta::SCOPE_CONTEXTUAL,
+        'scope' => RoleMeta::SCOPE_CONTEXTUAL,
         'context_types' => [FakeContext::class],
     ]);
 
@@ -61,7 +61,7 @@ it('RoleMeta::acceptsContext returns true when FQCN is in context_types', functi
 
 it('RoleMeta::acceptsContext returns false when FQCN is not in context_types', function (): void {
     $meta = new RoleMeta([
-        'scope'         => RoleMeta::SCOPE_CONTEXTUAL,
+        'scope' => RoleMeta::SCOPE_CONTEXTUAL,
         'context_types' => ['App\\Models\\Store'],
     ]);
 
@@ -70,7 +70,7 @@ it('RoleMeta::acceptsContext returns false when FQCN is not in context_types', f
 
 it('RoleMeta::acceptsContext returns false when scope is global', function (): void {
     $meta = new RoleMeta([
-        'scope'         => RoleMeta::SCOPE_GLOBAL,
+        'scope' => RoleMeta::SCOPE_GLOBAL,
         'context_types' => [FakeContext::class],
     ]);
 
@@ -84,8 +84,8 @@ it('assignGlobalRole throws ClearanceScopeViolationException for contextual role
     $role = Role::create(['name' => 'store-manager', 'guard_name' => 'web']);
 
     RoleMeta::create([
-        'role_id'       => $role->id,
-        'scope'         => RoleMeta::SCOPE_CONTEXTUAL,
+        'role_id' => $role->id,
+        'scope' => RoleMeta::SCOPE_CONTEXTUAL,
         'context_types' => [FakeContext::class],
     ]);
 
@@ -98,7 +98,7 @@ it('assignGlobalRole throws ClearanceScopeViolationException for contextual role
 it('assignContextual throws ClearanceScopeViolationException for global role (V13)', function (): void {
     $user = FakeEloquentUser::create(['name' => 'U2', 'email' => 'u2@x.com', 'password' => 'x']);
     $role = Role::create(['name' => 'admin', 'guard_name' => 'web']);
-    $ctx  = FakeContext::create(['name' => 'Ctx A']);
+    $ctx = FakeContext::create(['name' => 'Ctx A']);
 
     RoleMeta::create(['role_id' => $role->id, 'scope' => RoleMeta::SCOPE_GLOBAL]);
 
@@ -111,11 +111,11 @@ it('assignContextual throws ClearanceScopeViolationException for global role (V1
 it('assignContextual throws ClearanceScopeViolationException for wrong context type (V13)', function (): void {
     $user = FakeEloquentUser::create(['name' => 'U3', 'email' => 'u3@x.com', 'password' => 'x']);
     $role = Role::create(['name' => 'store-manager', 'guard_name' => 'web']);
-    $ctx  = FakeContext::create(['name' => 'Ctx B']);
+    $ctx = FakeContext::create(['name' => 'Ctx B']);
 
     RoleMeta::create([
-        'role_id'       => $role->id,
-        'scope'         => RoleMeta::SCOPE_CONTEXTUAL,
+        'role_id' => $role->id,
+        'scope' => RoleMeta::SCOPE_CONTEXTUAL,
         'context_types' => ['App\\Models\\Store'],
     ]);
 
@@ -128,11 +128,11 @@ it('assignContextual throws ClearanceScopeViolationException for wrong context t
 it('assignContextual creates UserRoleContext for matching context type', function (): void {
     $user = FakeEloquentUser::create(['name' => 'U4', 'email' => 'u4@x.com', 'password' => 'x']);
     $role = Role::create(['name' => 'store-staff', 'guard_name' => 'web']);
-    $ctx  = FakeContext::create(['name' => 'Store A']);
+    $ctx = FakeContext::create(['name' => 'Store A']);
 
     RoleMeta::create([
-        'role_id'       => $role->id,
-        'scope'         => RoleMeta::SCOPE_CONTEXTUAL,
+        'role_id' => $role->id,
+        'scope' => RoleMeta::SCOPE_CONTEXTUAL,
         'context_types' => [FakeContext::class],
     ]);
 
@@ -161,7 +161,7 @@ it('canIn returns true for permission from a global role (V14)', function (): vo
     $perm = Permission::create(['name' => 'reports-read', 'guard_name' => 'web']);
     $role = Role::create(['name' => 'super-admin', 'guard_name' => 'web']);
     $role->givePermissionTo($perm);
-    $ctx  = FakeContext::create(['name' => 'Ctx C']);
+    $ctx = FakeContext::create(['name' => 'Ctx C']);
 
     RoleMeta::create(['role_id' => $role->id, 'scope' => RoleMeta::SCOPE_GLOBAL]);
     $user->assignRole($role);
@@ -172,7 +172,7 @@ it('canIn returns true for permission from a global role (V14)', function (): vo
 it('canIn returns false when global role lacks the requested permission', function (): void {
     $user = FakeEloquentUser::create(['name' => 'U7', 'email' => 'u7@x.com', 'password' => 'x']);
     $role = Role::create(['name' => 'viewer', 'guard_name' => 'web']);
-    $ctx  = FakeContext::create(['name' => 'Ctx D']);
+    $ctx = FakeContext::create(['name' => 'Ctx D']);
 
     RoleMeta::create(['role_id' => $role->id, 'scope' => RoleMeta::SCOPE_GLOBAL]);
     $user->assignRole($role);
@@ -181,24 +181,24 @@ it('canIn returns false when global role lacks the requested permission', functi
 });
 
 it('canIn isolates contextual role to its assigned context_id (V4 preserved)', function (): void {
-    $user  = FakeEloquentUser::create(['name' => 'U8', 'email' => 'u8@x.com', 'password' => 'x']);
-    $perm  = Permission::create(['name' => 'store-edit', 'guard_name' => 'web']);
-    $role  = Role::create(['name' => 'store-manager', 'guard_name' => 'web']);
+    $user = FakeEloquentUser::create(['name' => 'U8', 'email' => 'u8@x.com', 'password' => 'x']);
+    $perm = Permission::create(['name' => 'store-edit', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'store-manager', 'guard_name' => 'web']);
     $role->givePermissionTo($perm);
-    $ctxA  = FakeContext::create(['name' => 'Store A']);
-    $ctxB  = FakeContext::create(['name' => 'Store B']);
+    $ctxA = FakeContext::create(['name' => 'Store A']);
+    $ctxB = FakeContext::create(['name' => 'Store B']);
 
     RoleMeta::create([
-        'role_id'       => $role->id,
-        'scope'         => RoleMeta::SCOPE_CONTEXTUAL,
+        'role_id' => $role->id,
+        'scope' => RoleMeta::SCOPE_CONTEXTUAL,
         'context_types' => [FakeContext::class],
     ]);
 
     UserRoleContext::create([
-        'user_id'      => $user->id,
-        'role_id'      => $role->id,
+        'user_id' => $user->id,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => $ctxA->id,
+        'context_id' => $ctxA->id,
     ]);
 
     expect($this->contextService->canIn($user, 'store-edit', $ctxA))->toBeTrue();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Livewire\Users;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
@@ -83,12 +84,12 @@ class GlobalRolesPanel extends Component
     {
         $user = $this->resolveUser();
 
-        $assignedRoles   = $user->roles()->with('permissions')->orderBy('name')->get();
+        $assignedRoles = $user->roles()->with('permissions')->orderBy('name')->get();
         $assignedRoleIds = $assignedRoles->pluck('id')->toArray();
 
         $roleCards = $assignedRoles->map(fn (Role $role): array => [
-            'role'                => $role,
-            'guard_permissions'   => Permission::where('guard_name', $role->guard_name)->orderBy('name')->get(),
+            'role' => $role,
+            'guard_permissions' => Permission::where('guard_name', $role->guard_name)->orderBy('name')->get(),
             'role_permission_ids' => $role->permissions->pluck('id')->map(fn ($id) => (int) $id)->toArray(),
         ])->all();
 
@@ -102,8 +103,8 @@ class GlobalRolesPanel extends Component
             ->all();
 
         return view('clearance::livewire.users.global-roles-panel', [
-            'user'                 => $user,
-            'roleCards'            => $roleCards,
+            'user' => $user,
+            'roleCards' => $roleCards,
             'availableMasterRoles' => $availableMasterRoles,
         ]);
     }
@@ -111,7 +112,7 @@ class GlobalRolesPanel extends Component
     /**
      * Fetch a fresh user instance with roles and direct permissions loaded.
      *
-     * @return Model&\Illuminate\Contracts\Auth\Authenticatable
+     * @return Model&Authenticatable
      */
     private function resolveUser(): Model
     {
@@ -137,7 +138,7 @@ class GlobalRolesPanel extends Component
         $this->manualPermissions = [];
 
         foreach ($user->roles()->with('permissions')->get() as $role) {
-            $roleId      = (int) $role->id;
+            $roleId = (int) $role->id;
             $rolePermIds = $role->permissions->pluck('id')->map(fn ($id) => (int) $id)->toArray();
 
             $this->manualPermissions[$roleId] = [];

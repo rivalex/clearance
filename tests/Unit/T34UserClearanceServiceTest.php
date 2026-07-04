@@ -24,14 +24,14 @@ beforeEach(function (): void {
         $table->timestamps();
     });
 
-    $this->service = new UserClearanceService();
+    $this->service = new UserClearanceService;
 });
 
 // T34.1: assignGlobalRole assigns role via Spatie HasRoles
 it('assignGlobalRole assigns the role via Spatie HasRoles', function (): void {
     $user = FakeEloquentUser::create([
-        'name'     => 'Test User',
-        'email'    => 'test@example.com',
+        'name' => 'Test User',
+        'email' => 'test@example.com',
         'password' => bcrypt('password'),
     ]);
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
@@ -44,8 +44,8 @@ it('assignGlobalRole assigns the role via Spatie HasRoles', function (): void {
 // T34.2: removeGlobalRole removes role and direct perms
 it('removeGlobalRole removes role and direct guard permissions', function (): void {
     $user = FakeEloquentUser::create([
-        'name'     => 'Test User 2',
-        'email'    => 'test2@example.com',
+        'name' => 'Test User 2',
+        'email' => 'test2@example.com',
         'password' => bcrypt('password'),
     ]);
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
@@ -62,8 +62,8 @@ it('removeGlobalRole removes role and direct guard permissions', function (): vo
 // T34.3: assignContextual creates UserRoleContext row
 it('assignContextual creates a UserRoleContext row', function (): void {
     $fakeUser = new FakeUser(id: 10);
-    $role     = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $context  = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 20));
+    $role = Role::create(['name' => 'manager', 'guard_name' => 'web']);
+    $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 20));
 
     $this->service->assignContextual($fakeUser, $role, $context);
 
@@ -79,19 +79,19 @@ it('assignContextual creates a UserRoleContext row', function (): void {
 // T34.4: removeContextual cascades permission overrides
 it('removeContextual deletes UserRoleContext and cascades overrides', function (): void {
     $fakeUser = new FakeUser(id: 11);
-    $role     = Role::create(['name' => 'manager2', 'guard_name' => 'web']);
-    $perm     = Permission::create(['name' => 'stores-manage', 'guard_name' => 'web']);
-    $context  = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 21));
+    $role = Role::create(['name' => 'manager2', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'stores-manage', 'guard_name' => 'web']);
+    $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 21));
 
     $urc = $this->service->assignContextual($fakeUser, $role, $context);
 
     UserContextPermissionOverride::create([
-        'user_id'       => 11,
-        'role_id'       => $role->id,
+        'user_id' => 11,
+        'role_id' => $role->id,
         'permission_id' => $perm->id,
-        'context_type'  => FakeContext::class,
-        'context_id'    => 21,
-        'type'          => UserContextPermissionOverride::TYPE_FORCED_ON,
+        'context_type' => FakeContext::class,
+        'context_id' => 21,
+        'type' => UserContextPermissionOverride::TYPE_FORCED_ON,
     ]);
 
     $this->service->removeContextual($fakeUser, $role, $context);
@@ -101,4 +101,3 @@ it('removeContextual deletes UserRoleContext and cascades overrides', function (
         UserContextPermissionOverride::where('user_id', 11)->where('role_id', $role->id)->exists()
     )->toBeFalse();
 });
-

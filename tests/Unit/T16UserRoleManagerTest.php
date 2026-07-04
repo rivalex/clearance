@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use Rivalex\Clearance\Livewire\Users\AssignRoleModal;
-use Rivalex\Clearance\Livewire\Users\RemoveAssignmentModal;
 use Rivalex\Clearance\Livewire\Users\UserClearanceManager;
 use Rivalex\Clearance\Services\UserClearanceService;
 
@@ -16,7 +14,7 @@ it('UserClearanceManager class exists with required methods', function (): void 
 
 it('UserClearanceManager is lazy', function (): void {
     $reflection = new ReflectionClass(UserClearanceManager::class);
-    $lazyAttr   = array_filter(
+    $lazyAttr = array_filter(
         $reflection->getAttributes(),
         fn ($a) => str_contains($a->getName(), 'Lazy'),
     );

@@ -7,7 +7,6 @@ namespace Rivalex\Clearance\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserContextPermissionOverride extends Model
@@ -56,7 +55,6 @@ class UserContextPermissionOverride extends Model
      * Scope to a specific user-role-context tuple.
      *
      * @param  int|string  $userId
-     * @param  int|string  $contextId
      */
     public static function forSubject(
         mixed $userId,

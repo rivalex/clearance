@@ -24,7 +24,7 @@ class GeneralSettings extends Component
     public function mount(): void
     {
         $this->defaultRole = ClearanceSettings::get('default_role') ?? '';
-        $this->showIcons   = filter_var(ClearanceSettings::get('show_icons', '1'), FILTER_VALIDATE_BOOLEAN);
+        $this->showIcons = filter_var(ClearanceSettings::get('show_icons', '1'), FILTER_VALIDATE_BOOLEAN);
     }
 
     public function saveGeneral(): void
@@ -33,6 +33,7 @@ class GeneralSettings extends Component
 
         if ($this->defaultRole && ! Role::where('name', $this->defaultRole)->exists()) {
             $this->addError('defaultRole', __('clearance::ui.settings.bulk_role_not_found'));
+
             return;
         }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Livewire\Users;
 
 use Flux\Flux;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
@@ -46,15 +47,15 @@ class RemoveAssignmentModal extends Component
         string $contextClass = '',
         int|string $contextId = 0,
     ): void {
-        $this->userId       = $userId;
-        $this->roleId       = $roleId;
-        $this->scope        = $scope;
+        $this->userId = $userId;
+        $this->roleId = $roleId;
+        $this->scope = $scope;
         $this->contextClass = $contextClass;
-        $this->contextId    = $contextId;
+        $this->contextId = $contextId;
 
         $this->modalName = $scope === 'contextual'
-            ? 'remove-role-ctx-' . md5($contextClass) . '-' . $roleId . '-' . $contextId . '-' . $userId
-            : 'remove-role-global-' . $roleId . '-' . $userId;
+            ? 'remove-role-ctx-'.md5($contextClass).'-'.$roleId.'-'.$contextId.'-'.$userId
+            : 'remove-role-global-'.$roleId.'-'.$userId;
     }
 
     /**
@@ -66,7 +67,7 @@ class RemoveAssignmentModal extends Component
 
         $role = Role::findOrFail($this->roleId);
 
-        if ($this->confirmText !== 'DELETE ' . $role->name) {
+        if ($this->confirmText !== 'DELETE '.$role->name) {
             return;
         }
 
@@ -79,7 +80,7 @@ class RemoveAssignmentModal extends Component
             abort_unless(in_array($this->contextClass, $allowed, true), 422);
             /** @var class-string<Model> $contextClass */
             $contextClass = $this->contextClass;
-            $context      = $contextClass::findOrFail($this->contextId);
+            $context = $contextClass::findOrFail($this->contextId);
             $service->removeContextual($user, $role, $context);
         }
 
@@ -101,7 +102,7 @@ class RemoveAssignmentModal extends Component
     /**
      * Fetch a fresh user instance with roles and permissions loaded.
      *
-     * @return Model&\Illuminate\Contracts\Auth\Authenticatable
+     * @return Model&Authenticatable
      */
     private function resolveUser(): Model
     {

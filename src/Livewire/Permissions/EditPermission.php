@@ -26,7 +26,7 @@ class EditPermission extends Component
 
     public function mount(): void
     {
-        $this->modalName = 'edit-permission-' . $this->groupKey;
+        $this->modalName = 'edit-permission-'.$this->groupKey;
     }
 
     public function render(): View

@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Generic metadata store for roles and guards.
  *
- * @property int         $id
- * @property string      $subject_type  'role' | 'guard'
- * @property string      $subject_key   role name or guard name
+ * @property int $id
+ * @property string $subject_type 'role' | 'guard'
+ * @property string $subject_key role name or guard name
  * @property string|null $display_name
  * @property string|null $description
  * @property string|null $icon_svg
- * @property string|null $color         hex e.g. #3b82f6
+ * @property string|null $color hex e.g. #3b82f6
  */
 class ClearanceMeta extends Model
 {

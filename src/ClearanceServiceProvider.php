@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rivalex\Clearance;
 
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -12,16 +13,17 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Livewire\Livewire;
 use Rivalex\Clearance\Commands\ClearanceBackfillCommand;
-use Rivalex\Clearance\Concerns\HasPermissionGroups;
 use Rivalex\Clearance\Commands\ClearanceInstallCommand;
+use Rivalex\Clearance\Concerns\HasPermissionGroups;
 use Rivalex\Clearance\Exceptions\ClearanceConfigException;
 use Rivalex\Clearance\Http\Middleware\RequireClearanceAccess;
 use Rivalex\Clearance\Listeners\AssignDefaultRole;
 use Rivalex\Clearance\Models\Guard;
+use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Services\ContextService;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\Permission\PermissionRegistrar;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\Permission\PermissionRegistrar;
 
 class ClearanceServiceProvider extends PackageServiceProvider
 {
@@ -72,7 +74,7 @@ class ClearanceServiceProvider extends PackageServiceProvider
             }
 
             $path = substr($name, strlen('clearance::'));
-            $class = 'Rivalex\\Clearance\\Livewire\\' . implode('\\', array_map(
+            $class = 'Rivalex\\Clearance\\Livewire\\'.implode('\\', array_map(
                 static fn (string $segment) => str($segment)->studly(),
                 explode('.', $path)
             ));
@@ -80,7 +82,7 @@ class ClearanceServiceProvider extends PackageServiceProvider
             return class_exists($class) ? $class : null;
         });
 
-        Blade::anonymousComponentPath(__DIR__ . '/../resources/views/components', 'clearance');
+        Blade::anonymousComponentPath(__DIR__.'/../resources/views/components', 'clearance');
 
         if (config('clearance.auto_assign_default_role', false)) {
             Event::listen(Registered::class, AssignDefaultRole::class);
@@ -136,7 +138,7 @@ class ClearanceServiceProvider extends PackageServiceProvider
                 ['session', 'token', 'jwt', 'passport', 'sanctum'],
             );
 
-            /** @var \Illuminate\Contracts\Config\Repository $config */
+            /** @var Repository $config */
             $config = $this->app->make('config');
             $authGuards = $config->get('auth.guards', []);
 
@@ -145,12 +147,13 @@ class ClearanceServiceProvider extends PackageServiceProvider
                     Log::channel('single')->warning(
                         "Clearance: guard '{$guard->name}' skipped - driver '{$guard->driver}' not in allowed_guard_drivers.",
                     );
+
                     continue;
                 }
 
                 if (! isset($authGuards[$guard->name])) {
                     $authGuards[$guard->name] = [
-                        'driver'   => $guard->driver,
+                        'driver' => $guard->driver,
                         'provider' => $guard->provider,
                     ];
                 }
@@ -172,13 +175,13 @@ class ClearanceServiceProvider extends PackageServiceProvider
             $permClass = app(PermissionRegistrar::class)->getPermissionClass();
 
             if (
-                $permClass !== \Rivalex\Clearance\Models\Permission::class
+                $permClass !== Permission::class
                 && ! in_array(HasPermissionGroups::class, class_uses_recursive($permClass), true)
             ) {
                 Log::warning(
                     "Clearance: custom permission model [{$permClass}] does not use HasPermissionGroups trait. "
-                    . 'Permission group UI features (display names, colors, grouped view) may not work correctly. '
-                    . 'Add `use \\Rivalex\\Clearance\\Concerns\\HasPermissionGroups;` to your model.',
+                    .'Permission group UI features (display names, colors, grouped view) may not work correctly. '
+                    .'Add `use \\Rivalex\\Clearance\\Concerns\\HasPermissionGroups;` to your model.',
                 );
             }
         } catch (\Throwable) {

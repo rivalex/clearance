@@ -6,8 +6,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Rivalex\Clearance\Livewire\Users\UserClearanceManager;
-use Rivalex\Clearance\Tests\Support\FakeEloquentUser;
 use Rivalex\Clearance\Tests\Support\FakeContext;
+use Rivalex\Clearance\Tests\Support\FakeEloquentUser;
 
 beforeEach(function (): void {
     $this->runMigrations();

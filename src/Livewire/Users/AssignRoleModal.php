@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Livewire\Users;
 
 use Flux\Flux;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -39,13 +41,13 @@ class AssignRoleModal extends Component
 
     public function mount(int|string $userId, string $scope, string $contextClass = ''): void
     {
-        $this->userId       = $userId;
-        $this->scope        = $scope;
+        $this->userId = $userId;
+        $this->scope = $scope;
         $this->contextClass = $contextClass;
 
         $this->modalName = $scope === 'contextual'
-            ? 'assign-role-ctx-' . md5($contextClass) . '-' . $userId
-            : 'assign-role-global-' . $userId;
+            ? 'assign-role-ctx-'.md5($contextClass).'-'.$userId
+            : 'assign-role-global-'.$userId;
     }
 
     /**
@@ -56,8 +58,8 @@ class AssignRoleModal extends Component
     public function rules(): array
     {
         return [
-            'selectedRoleId'     => ['required', 'integer'],
-            'selectedContextIds'  => ['required_if:scope,contextual', 'array'],
+            'selectedRoleId' => ['required', 'integer'],
+            'selectedContextIds' => ['required_if:scope,contextual', 'array'],
         ];
     }
 
@@ -69,7 +71,7 @@ class AssignRoleModal extends Component
     public function validationAttributes(): array
     {
         return [
-            'selectedRoleId'    => __('clearance::ui.common.role'),
+            'selectedRoleId' => __('clearance::ui.common.role'),
             'selectedContextIds' => __('clearance::ui.user_clearance.assign.pick_context_instances'),
         ];
     }
@@ -86,7 +88,7 @@ class AssignRoleModal extends Component
 
         try {
             $this->validate();
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->errorMessage = $e->getMessage();
             if (app()->runningUnitTests()) {
                 return;
@@ -94,7 +96,7 @@ class AssignRoleModal extends Component
             throw $e;
         }
 
-        $role  = Role::findOrFail((int) $this->selectedRoleId);
+        $role = Role::findOrFail((int) $this->selectedRoleId);
         $actor = auth()->user();
 
         // super_admin can only be assigned by another super_admin.
@@ -143,14 +145,14 @@ class AssignRoleModal extends Component
         Flux::modal($this->modalName)->close();
         $this->dispatch('clearance:assignment-saved');
 
-        $this->selectedRoleId    = null;
+        $this->selectedRoleId = null;
         $this->selectedContextIds = [];
     }
 
     public function render(): View
     {
         if ($this->scope === 'global') {
-            $user            = $this->resolveUser();
+            $user = $this->resolveUser();
             $assignedRoleIds = $user->roles->pluck('id')->toArray();
 
             $availableRoles = Role::whereNotIn('id', $assignedRoleIds)
@@ -170,12 +172,12 @@ class AssignRoleModal extends Component
             $allowed = array_keys(config('clearance.contextual_models', []));
             abort_unless(in_array($this->contextClass, $allowed, true), 422);
             /** @var class-string<Model> $contextClass */
-            $contextClass     = $this->contextClass;
+            $contextClass = $this->contextClass;
             $contextInstances = $contextClass::all();
         }
 
         return view('clearance::livewire.users.assign-role-modal', [
-            'availableRoles'   => $availableRoles,
+            'availableRoles' => $availableRoles,
             'contextInstances' => $contextInstances,
         ]);
     }
@@ -183,7 +185,7 @@ class AssignRoleModal extends Component
     /**
      * Fetch a fresh user instance with roles and permissions loaded.
      *
-     * @return Model&\Illuminate\Contracts\Auth\Authenticatable
+     * @return Model&Authenticatable
      */
     private function resolveUser(): Model
     {

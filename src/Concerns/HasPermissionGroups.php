@@ -38,7 +38,7 @@ trait HasPermissionGroups
         }
 
         $separator = config('clearance.naming_separator', '-');
-        $pos       = strpos($this->name, $separator);
+        $pos = strpos($this->name, $separator);
 
         return $pos === false ? $this->name : substr($this->name, 0, $pos);
     }
@@ -58,7 +58,7 @@ trait HasPermissionGroups
      */
     public static function abilities(string $group, string $guard = 'web'): array
     {
-        $separator   = config('clearance.naming_separator', '-');
+        $separator = config('clearance.naming_separator', '-');
         $permissions = static::where('name', 'like', "{$group}{$separator}%")
             ->where('guard_name', $guard)
             ->get();
@@ -75,7 +75,7 @@ trait HasPermissionGroups
             return [
                 'color' => static::colorForAbility($ability),
                 'label' => Str::headline($ability),
-                'name'  => $ability,
+                'name' => $ability,
             ];
         });
 
@@ -86,22 +86,22 @@ trait HasPermissionGroups
             ->toArray();
 
         return [
-            'abilities'        => $sortedAbilities,
-            'created_at'       => $first->created_at,
-            'guard_name'       => $first->guard_name,
-            'labels'           => [
+            'abilities' => $sortedAbilities,
+            'created_at' => $first->created_at,
+            'guard_name' => $first->guard_name,
+            'labels' => [
                 'group' => Str::headline($group),
                 'guard' => Str::headline($guard),
             ],
             'permission_group' => $group,
-            'updated_at'       => $first->updated_at,
+            'updated_at' => $first->updated_at,
         ];
     }
 
     /**
      * Sorts abilities: create/read/update/delete first (CRUD order), then remaining alphabetically.
      *
-     * @param  array<string> $abilities
+     * @param  array<string>  $abilities
      * @return array<string>
      */
     public static function sortAbilities(array $abilities): array
@@ -137,8 +137,8 @@ trait HasPermissionGroups
     {
         return match ($ability) {
             'create', 'read', 'update' => 'green',
-            'delete'                   => 'red',
-            default                    => 'amber',
+            'delete' => 'red',
+            default => 'amber',
         };
     }
 

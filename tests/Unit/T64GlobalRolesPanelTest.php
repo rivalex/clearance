@@ -46,7 +46,7 @@ it('renders assigned roles with their guard permissions', function (): void {
 });
 
 it('excludes contextual-only roles from available master roles', function (): void {
-    $globalRole     = Role::create(['name' => 'staff', 'guard_name' => 'web']);
+    $globalRole = Role::create(['name' => 'staff', 'guard_name' => 'web']);
     $contextualRole = Role::create(['name' => 'store-manager', 'guard_name' => 'web']);
     RoleMeta::create(['role_id' => $contextualRole->id, 'scope' => RoleMeta::SCOPE_CONTEXTUAL, 'context_types' => []]);
 
@@ -61,7 +61,7 @@ it('excludes contextual-only roles from available master roles', function (): vo
 
 it('initializes manualPermissions for extra (non-role) guard permissions', function (): void {
     $role = Role::create(['name' => 'manager', 'guard_name' => 'web']);
-    $rolePerm  = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
+    $rolePerm = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
     $extraPerm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
     $role->givePermissionTo($rolePerm);
     $this->user->assignRole($role);

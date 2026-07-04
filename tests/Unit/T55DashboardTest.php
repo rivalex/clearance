@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
@@ -39,10 +40,10 @@ it('computes stats from roles, permissions and user contexts', function (): void
     Permission::create(['name' => 'orders-create', 'guard_name' => 'web']);
     Permission::create(['name' => 'invoices-read', 'guard_name' => 'web']);
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => 'App\Models\Store',
-        'context_id'   => 1,
+        'context_id' => 1,
     ]);
 
     Livewire::test(Dashboard::class)
@@ -60,11 +61,11 @@ it('lists top 5 roles by user count in users_per_role', function (): void {
     DB::table('users')->insert(['id' => 1]);
     DB::table('users')->insert(['id' => 2]);
     DB::table('model_has_roles')->insert([
-        'role_id' => $roleA->id, 'model_id' => 1, 'model_type' => \Illuminate\Foundation\Auth\User::class,
+        'role_id' => $roleA->id, 'model_id' => 1, 'model_type' => User::class,
     ]);
     DB::table('model_has_roles')->insert([
-        ['role_id' => $roleB->id, 'model_id' => 1, 'model_type' => \Illuminate\Foundation\Auth\User::class],
-        ['role_id' => $roleB->id, 'model_id' => 2, 'model_type' => \Illuminate\Foundation\Auth\User::class],
+        ['role_id' => $roleB->id, 'model_id' => 1, 'model_type' => User::class],
+        ['role_id' => $roleB->id, 'model_id' => 2, 'model_type' => User::class],
     ]);
 
     $usersPerRole = Livewire::test(Dashboard::class)->viewData('users_per_role');

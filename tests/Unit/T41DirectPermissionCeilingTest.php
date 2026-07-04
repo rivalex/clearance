@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use Rivalex\Clearance\Exceptions\ClearanceProtectedResourceException;
 use Rivalex\Clearance\Exceptions\ClearanceScopeViolationException;
 use Rivalex\Clearance\Models\UserRoleContext;
+use Rivalex\Clearance\Services\ContextService;
 use Rivalex\Clearance\Services\UserClearanceService;
 use Rivalex\Clearance\Tests\Support\FakeContext;
 use Rivalex\Clearance\Tests\Support\FakeEloquentUser;
@@ -30,7 +31,7 @@ beforeEach(function (): void {
         $table->timestamps();
     });
 
-    $this->service = new UserClearanceService();
+    $this->service = new UserClearanceService;
 });
 
 function makeCeilingUser(string $email): FakeEloquentUser
@@ -42,8 +43,8 @@ function makeCeilingUser(string $email): FakeEloquentUser
 
 it('forbids an actor from granting themselves a direct permission they do not hold', function (): void {
     $actor = makeCeilingUser('actor@example.com');
-    $role  = Role::create(['name' => 'editor', 'guard_name' => 'web']);
-    $perm  = Permission::create(['name' => 'posts-delete', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'posts-delete', 'guard_name' => 'web']);
     $actor->assignRole($role); // holds the role, but not this perm directly or via role
 
     expect(fn () => $this->service->syncGlobalExtraPermissions($actor, $actor, $role, [$perm->id]))
@@ -53,10 +54,10 @@ it('forbids an actor from granting themselves a direct permission they do not ho
 });
 
 it('forbids an actor from granting another user a permission the actor does not hold', function (): void {
-    $actor  = makeCeilingUser('actor2@example.com');
+    $actor = makeCeilingUser('actor2@example.com');
     $target = makeCeilingUser('target@example.com');
-    $role   = Role::create(['name' => 'editor2', 'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'posts-delete', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'editor2', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'posts-delete', 'guard_name' => 'web']);
 
     expect(fn () => $this->service->syncGlobalExtraPermissions($actor, $target, $role, [$perm->id]))
         ->toThrow(ClearanceScopeViolationException::class);
@@ -65,10 +66,10 @@ it('forbids an actor from granting another user a permission the actor does not 
 });
 
 it('allows an actor to grant another user a permission the actor already holds', function (): void {
-    $actor  = makeCeilingUser('actor3@example.com');
+    $actor = makeCeilingUser('actor3@example.com');
     $target = makeCeilingUser('target3@example.com');
-    $role   = Role::create(['name' => 'editor3', 'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'posts-edit', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'editor3', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'posts-edit', 'guard_name' => 'web']);
     $actor->givePermissionTo($perm);
 
     $this->service->syncGlobalExtraPermissions($actor, $target, $role, [$perm->id]);
@@ -77,10 +78,10 @@ it('allows an actor to grant another user a permission the actor already holds',
 });
 
 it('forbids granting a clearance-* permission directly, even to another user, even by an actor who holds it', function (): void {
-    $actor  = makeCeilingUser('actor4@example.com');
+    $actor = makeCeilingUser('actor4@example.com');
     $target = makeCeilingUser('target4@example.com');
-    $role   = Role::create(['name' => 'editor4', 'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'clearance-access', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'editor4', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'clearance-access', 'guard_name' => 'web']);
     $actor->givePermissionTo($perm);
 
     expect(fn () => $this->service->syncGlobalExtraPermissions($actor, $target, $role, [$perm->id]))
@@ -109,8 +110,8 @@ it('allows an actor to revoke their own direct permissions without holding a cei
     // AssignRoleModal, so a non-super_admin actor cannot even revoke their own via
     // this path. Verify that is enforced (fails closed).
     $actor = makeCeilingUser('actor6@example.com');
-    $role  = Role::create(['name' => 'editor6', 'guard_name' => 'web']);
-    $perm  = Permission::create(['name' => 'posts-edit', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'editor6', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'posts-edit', 'guard_name' => 'web']);
     $actor->givePermissionTo($perm);
 
     expect(fn () => $this->service->syncGlobalExtraPermissions($actor, $actor, $role, []))
@@ -120,10 +121,10 @@ it('allows an actor to revoke their own direct permissions without holding a cei
 // --- syncContextualExtraPermissions ---
 
 it('forbids an actor from force-granting a contextual permission they do not hold', function (): void {
-    $actor  = makeCeilingUser('cactor@example.com');
+    $actor = makeCeilingUser('cactor@example.com');
     $target = makeCeilingUser('ctarget@example.com');
-    $role   = Role::create(['name' => 'ctx-role', 'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'stores-manage', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'ctx-role', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'stores-manage', 'guard_name' => 'web']);
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 3));
 
     UserRoleContext::create([
@@ -136,10 +137,10 @@ it('forbids an actor from force-granting a contextual permission they do not hol
 });
 
 it('allows an actor to force-grant a contextual permission they already hold', function (): void {
-    $actor  = makeCeilingUser('cactor2@example.com');
+    $actor = makeCeilingUser('cactor2@example.com');
     $target = makeCeilingUser('ctarget2@example.com');
-    $role   = Role::create(['name' => 'ctx-role2', 'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'stores-manage', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'ctx-role2', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'stores-manage', 'guard_name' => 'web']);
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 4));
     $actor->givePermissionTo($perm);
 
@@ -151,6 +152,6 @@ it('allows an actor to force-grant a contextual permission they already hold', f
     $this->service->syncContextualExtraPermissions($actor, $target, $role, $context, [$perm->id]);
 
     expect(
-        app(\Rivalex\Clearance\Services\ContextService::class)->canIn($target, 'stores-manage', $context)
+        app(ContextService::class)->canIn($target, 'stores-manage', $context)
     )->toBeTrue();
 });

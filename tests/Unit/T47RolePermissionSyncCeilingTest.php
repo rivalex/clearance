@@ -40,7 +40,7 @@ function makeRoleSyncUser(string $email): FakeEloquentUser
 
 it('forbids an actor from adding a permission to a role they currently hold themselves', function (): void {
     $actor = makeRoleSyncUser('self-role@example.com');
-    $role  = Role::create(['name' => 'delegated-admin', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'delegated-admin', 'guard_name' => 'web']);
     $actor->assignRole($role);
 
     $newPerm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
@@ -52,7 +52,7 @@ it('forbids an actor from adding a permission to a role they currently hold them
 });
 
 it('forbids adding clearance-* to a non-super_admin role even by an actor who does not hold that role', function (): void {
-    $actor  = makeRoleSyncUser('bystander@example.com');
+    $actor = makeRoleSyncUser('bystander@example.com');
     $target = Role::create(['name' => 'some-other-role', 'guard_name' => 'web']);
     $clearancePerm = Permission::create(['name' => 'clearance-users-write', 'guard_name' => 'web']);
 
@@ -63,18 +63,18 @@ it('forbids adding clearance-* to a non-super_admin role even by an actor who do
 });
 
 it('forbids an actor from adding a permission they do not themselves hold to another role', function (): void {
-    $actor  = makeRoleSyncUser('other-role-editor@example.com');
+    $actor = makeRoleSyncUser('other-role-editor@example.com');
     $target = Role::create(['name' => 'target-role', 'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-delete', 'guard_name' => 'web']);
 
     expect(fn () => $this->service->syncPermissions($actor, $target, [$perm]))
         ->toThrow(ClearanceScopeViolationException::class);
 });
 
 it('allows an actor to add a permission they already hold to another role', function (): void {
-    $actor  = makeRoleSyncUser('legit-editor@example.com');
+    $actor = makeRoleSyncUser('legit-editor@example.com');
     $target = Role::create(['name' => 'target-role2', 'guard_name' => 'web']);
-    $perm   = Permission::create(['name' => 'orders-edit', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-edit', 'guard_name' => 'web']);
     $actor->givePermissionTo($perm);
 
     $this->service->syncPermissions($actor, $target, [$perm]);
@@ -97,8 +97,8 @@ it('allows super_admin to add any permission to any role, including one they hol
 
 it('allows an actor to remove permissions from their own role without holding a ceiling check', function (): void {
     $actor = makeRoleSyncUser('self-downgrade@example.com');
-    $role  = Role::create(['name' => 'self-role', 'guard_name' => 'web']);
-    $perm  = Permission::create(['name' => 'orders-edit', 'guard_name' => 'web']);
+    $role = Role::create(['name' => 'self-role', 'guard_name' => 'web']);
+    $perm = Permission::create(['name' => 'orders-edit', 'guard_name' => 'web']);
     $role->givePermissionTo($perm);
     $actor->assignRole($role);
 

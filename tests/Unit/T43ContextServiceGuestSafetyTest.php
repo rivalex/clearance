@@ -13,7 +13,7 @@ use Rivalex\Clearance\Tests\Support\FakeContext;
 
 beforeEach(function (): void {
     $this->runMigrations();
-    $this->service = new ContextService();
+    $this->service = new ContextService;
     $this->context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 1));
 });
 

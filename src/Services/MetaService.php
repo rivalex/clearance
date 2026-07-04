@@ -23,9 +23,9 @@ class MetaService
             ['subject_type' => $type, 'subject_key' => $key],
             [
                 'display_name' => $data['display_name'] ?: null,
-                'description'  => $data['description'] ?: null,
-                'color'        => $data['color'] ?: null,
-                'icon_svg'     => $sanitizedSvg,
+                'description' => $data['description'] ?: null,
+                'color' => $data['color'] ?: null,
+                'icon_svg' => $sanitizedSvg,
             ]
         );
     }

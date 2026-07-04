@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Key/value store for Clearance runtime settings.
  *
- * @property int         $id
- * @property string      $key
+ * @property int $id
+ * @property string $key
  * @property string|null $value
  */
 class ClearanceSettings extends Model

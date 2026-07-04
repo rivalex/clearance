@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Livewire\Settings;
 
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -31,6 +32,7 @@ class BulkAssignDefaultRole extends Component
         if (! $defaultRole) {
             $this->bulkMessage = __('clearance::ui.settings.bulk_no_role');
             $this->bulkSuccess = false;
+
             return;
         }
 
@@ -39,16 +41,18 @@ class BulkAssignDefaultRole extends Component
         } catch (RoleDoesNotExist) {
             $this->bulkMessage = __('clearance::ui.settings.bulk_role_not_found');
             $this->bulkSuccess = false;
+
             return;
         }
 
         $userModelClass = config('clearance.user_model')
-            ?? config('auth.providers.' . config('auth.defaults.guard') . '.model')
-            ?? \App\Models\User::class;
+            ?? config('auth.providers.'.config('auth.defaults.guard').'.model')
+            ?? User::class;
 
         if (! $userModelClass || ! class_exists($userModelClass)) {
             $this->bulkMessage = __('clearance::ui.settings.bulk_no_user_model');
             $this->bulkSuccess = false;
+
             return;
         }
 

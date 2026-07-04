@@ -36,17 +36,17 @@ beforeEach(function (): void {
 
 it('mount builds a global modal name', function (): void {
     Livewire::test(AssignRoleModal::class, ['userId' => $this->user->id, 'scope' => 'global'])
-        ->assertSet('modalName', 'assign-role-global-' . $this->user->id);
+        ->assertSet('modalName', 'assign-role-global-'.$this->user->id);
 });
 
 it('mount builds a contextual modal name scoped by context class hash', function (): void {
     config()->set('clearance.contextual_models', [FakeContext::class => ['label' => 'Store']]);
 
     Livewire::test(AssignRoleModal::class, [
-        'userId'       => $this->user->id,
-        'scope'        => 'contextual',
+        'userId' => $this->user->id,
+        'scope' => 'contextual',
         'contextClass' => FakeContext::class,
-    ])->assertSet('modalName', 'assign-role-ctx-' . md5(FakeContext::class) . '-' . $this->user->id);
+    ])->assertSet('modalName', 'assign-role-ctx-'.md5(FakeContext::class).'-'.$this->user->id);
 });
 
 it('fails validation and sets errorMessage when no role is selected', function (): void {
@@ -89,8 +89,8 @@ it('rejects a contextual save when the context class is not in the allowlist', f
     config()->set('clearance.contextual_models', [FakeContext::class => ['label' => 'Store']]);
 
     $component = Livewire::test(AssignRoleModal::class, [
-        'userId'       => $this->user->id,
-        'scope'        => 'contextual',
+        'userId' => $this->user->id,
+        'scope' => 'contextual',
         'contextClass' => FakeContext::class,
     ])
         ->set('selectedRoleId', $role->id)
@@ -109,8 +109,8 @@ it('assigns a contextual role to the selected context instances', function (): v
     $context = FakeContext::create(['name' => 'Store 1']);
 
     Livewire::test(AssignRoleModal::class, [
-        'userId'       => $this->user->id,
-        'scope'        => 'contextual',
+        'userId' => $this->user->id,
+        'scope' => 'contextual',
         'contextClass' => FakeContext::class,
     ])
         ->set('selectedRoleId', $role->id)
@@ -127,7 +127,7 @@ it('assigns a contextual role to the selected context instances', function (): v
 });
 
 it('renders global scope with only unassigned roles available', function (): void {
-    $assigned   = Role::create(['name' => 'assigned', 'guard_name' => 'web']);
+    $assigned = Role::create(['name' => 'assigned', 'guard_name' => 'web']);
     $unassigned = Role::create(['name' => 'unassigned', 'guard_name' => 'web']);
     $this->user->assignRole($assigned);
 

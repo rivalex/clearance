@@ -33,9 +33,9 @@ class GuardForm extends Component
     {
         if ($guardId) {
             $guard = Guard::findOrFail($guardId);
-            $this->guardId  = $guard->id;
-            $this->name     = $guard->name;
-            $this->driver   = $guard->driver;
+            $this->guardId = $guard->id;
+            $this->name = $guard->name;
+            $this->driver = $guard->driver;
             $this->provider = (string) $guard->provider;
         }
     }
@@ -43,12 +43,12 @@ class GuardForm extends Component
     public function rules(): array
     {
         $unique = $this->guardId
-            ? 'unique:clr_guards,name,' . $this->guardId
+            ? 'unique:clr_guards,name,'.$this->guardId
             : 'unique:clr_guards,name';
 
         return [
-            'name'     => ['required', 'string', 'min:2', 'max:64', 'regex:/^[a-z0-9_\-]+$/', $unique],
-            'driver'   => ['required', 'string'],
+            'name' => ['required', 'string', 'min:2', 'max:64', 'regex:/^[a-z0-9_\-]+$/', $unique],
+            'driver' => ['required', 'string'],
             'provider' => ['nullable', 'string'],
         ];
     }
@@ -56,8 +56,8 @@ class GuardForm extends Component
     public function validationAttributes(): array
     {
         return [
-            'name'     => __('clearance::ui.guards.form.guard_name'),
-            'driver'   => __('clearance::ui.guards.form.driver'),
+            'name' => __('clearance::ui.guards.form.guard_name'),
+            'driver' => __('clearance::ui.guards.form.driver'),
             'provider' => __('clearance::ui.guards.form.provider'),
         ];
     }
@@ -69,6 +69,7 @@ class GuardForm extends Component
         $allowed = config('clearance.allowed_guard_drivers', ['session', 'token', 'jwt', 'passport', 'sanctum']);
         if (! in_array($this->driver, (array) $allowed, true)) {
             $this->errorMessage = __('clearance::ui.guards.form.driver_invalid');
+
             return;
         }
 

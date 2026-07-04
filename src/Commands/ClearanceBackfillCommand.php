@@ -66,7 +66,7 @@ class ClearanceBackfillCommand extends Command
     /**
      * Parses and validates the --only option.
      *
-     * @return array<string>|null  null on invalid input
+     * @return array<string>|null null on invalid input
      */
     private function resolveSections(): ?array
     {
@@ -77,10 +77,10 @@ class ClearanceBackfillCommand extends Command
         }
 
         $requested = array_map('trim', explode(',', $raw));
-        $invalid   = array_diff($requested, self::VALID_SECTIONS);
+        $invalid = array_diff($requested, self::VALID_SECTIONS);
 
         if ($invalid !== []) {
-            $this->error('Invalid --only value(s): ' . implode(', ', $invalid) . '. Valid: ' . implode(', ', self::VALID_SECTIONS));
+            $this->error('Invalid --only value(s): '.implode(', ', $invalid).'. Valid: '.implode(', ', self::VALID_SECTIONS));
 
             return null;
         }
@@ -109,7 +109,7 @@ class ClearanceBackfillCommand extends Command
             if (! $dryRun) {
                 ClearanceMeta::create([
                     'subject_type' => 'role',
-                    'subject_key'  => $role->name,
+                    'subject_key' => $role->name,
                     'display_name' => Str::headline($role->name),
                 ]);
             }
@@ -134,8 +134,8 @@ class ClearanceBackfillCommand extends Command
 
             if (! $dryRun) {
                 RoleMeta::create([
-                    'role_id'   => $role->id,
-                    'scope'     => RoleMeta::SCOPE_GLOBAL,
+                    'role_id' => $role->id,
+                    'scope' => RoleMeta::SCOPE_GLOBAL,
                     'is_locked' => false,
                 ]);
             }
@@ -150,9 +150,9 @@ class ClearanceBackfillCommand extends Command
     private function backfillGuards(bool $dryRun): int
     {
         /** @var array<string, array<string, string>> $authGuards */
-        $authGuards     = config('auth.guards', []);
+        $authGuards = config('auth.guards', []);
         $allowedDrivers = config('clearance.allowed_guard_drivers', ['session', 'token', 'jwt', 'passport', 'sanctum']);
-        $count          = 0;
+        $count = 0;
 
         foreach ($authGuards as $name => $cfg) {
             $driver = $cfg['driver'] ?? 'session';
@@ -169,8 +169,8 @@ class ClearanceBackfillCommand extends Command
 
             if (! $dryRun) {
                 Guard::create([
-                    'name'     => $name,
-                    'driver'   => $driver,
+                    'name' => $name,
+                    'driver' => $driver,
                     'provider' => $cfg['provider'] ?? null,
                 ]);
             }

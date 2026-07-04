@@ -56,9 +56,9 @@ class SvgSanitizer
         }
 
         libxml_use_internal_errors(true);
-        $doc = new DOMDocument();
+        $doc = new DOMDocument;
         $loaded = $doc->loadHTML(
-            '<?xml encoding="utf-8" ?>' . $raw,
+            '<?xml encoding="utf-8" ?>'.$raw,
             LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD,
         );
         libxml_clear_errors();
@@ -87,6 +87,7 @@ class SvgSanitizer
             // Strip HTML comments — they cannot execute JS but may carry exfiltration payloads.
             if ($child instanceof \DOMComment) {
                 $toRemove[] = $child;
+
                 continue;
             }
 
@@ -98,6 +99,7 @@ class SvgSanitizer
 
             if (! in_array($tag, self::ALLOWED_TAGS, true)) {
                 $toRemove[] = $child;
+
                 continue;
             }
 
@@ -115,12 +117,13 @@ class SvgSanitizer
         $remove = [];
 
         foreach ($el->attributes as $attr) {
-            $name  = strtolower($attr->name);
+            $name = strtolower($attr->name);
             $value = trim($attr->value);
 
             // Block all event handlers
             if (str_starts_with($name, 'on')) {
                 $remove[] = $attr->name;
+
                 continue;
             }
 
@@ -129,18 +132,21 @@ class SvgSanitizer
                 if (! str_starts_with($value, '#')) {
                     $remove[] = $attr->name;
                 }
+
                 continue;
             }
 
             // Block any javascript: scheme in any attribute
             if (str_starts_with(strtolower($value), 'javascript:')) {
                 $remove[] = $attr->name;
+
                 continue;
             }
 
             // Block CSS-based XSS vectors in style attributes
             if ($name === 'style' && preg_match('/url\s*\(|expression\s*\(|javascript:|behavior\s*:|binding\s*:/i', $value)) {
                 $remove[] = $attr->name;
+
                 continue;
             }
 

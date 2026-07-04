@@ -14,7 +14,8 @@ use Spatie\Permission\Models\Role;
 beforeEach(function (): void {
     $this->runMigrations();
 
-    $this->user = new class(id: 1) extends FakeUser {
+    $this->user = new class(id: 1) extends FakeUser
+    {
         use HasClearance;
     };
 
@@ -33,10 +34,10 @@ it('HasClearance::canIn returns true when user has permission in context', funct
     $perm = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
     $role->givePermissionTo($perm);
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
 
     expect($this->user->canIn('orders-read', $this->context))->toBeTrue();
@@ -49,10 +50,10 @@ it('HasClearance::hasPermissionIn is alias of canIn', function (): void {
     $perm = Permission::create(['name' => 'orders-read', 'guard_name' => 'web']);
     $role->givePermissionTo($perm);
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
 
     expect($this->user->hasPermissionIn('orders-read', $this->context))->toBeTrue();
@@ -70,10 +71,10 @@ it('ContextService::hasRoleIn returns false when user has no role in context', f
 it('ContextService::hasRoleIn returns true when user has role in context', function (): void {
     $role = Role::create(['name' => 'staff', 'guard_name' => 'web']);
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
 
     $service = new ContextService;
@@ -83,10 +84,10 @@ it('ContextService::hasRoleIn returns true when user has role in context', funct
 it('ContextService::hasRoleIn filters by guard_name when provided', function (): void {
     $role = Role::create(['name' => 'staff', 'guard_name' => 'web']);
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
 
     $service = new ContextService;
@@ -97,10 +98,10 @@ it('ContextService::hasRoleIn filters by guard_name when provided', function ():
 it('ContextService::hasRoleIn returns false for wrong role name', function (): void {
     $role = Role::create(['name' => 'staff', 'guard_name' => 'web']);
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
 
     $service = new ContextService;
@@ -112,10 +113,10 @@ it('ContextService::hasRoleIn returns false for wrong role name', function (): v
 it('HasClearance::hasRoleIn returns true when user has role in context', function (): void {
     $role = Role::create(['name' => 'manager', 'guard_name' => 'web']);
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
 
     expect($this->user->hasRoleIn('manager', $this->context))->toBeTrue();
@@ -124,10 +125,10 @@ it('HasClearance::hasRoleIn returns true when user has role in context', functio
 it('HasClearance::hasRoleIn returns false for wrong role name', function (): void {
     $role = Role::create(['name' => 'manager', 'guard_name' => 'web']);
     UserRoleContext::create([
-        'user_id'      => 1,
-        'role_id'      => $role->id,
+        'user_id' => 1,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 5,
+        'context_id' => 5,
     ]);
 
     expect($this->user->hasRoleIn('admin', $this->context))->toBeFalse();

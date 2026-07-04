@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
+use Rivalex\Clearance\Models\Permission;
 
 beforeEach(function (): void {
     $this->runMigrations();
@@ -16,7 +17,7 @@ beforeEach(function (): void {
 // in both modes.
 
 it('rejects creating a new permission group under the reserved clearance prefix', function (): void {
-    $component = new PermissionForm();
+    $component = new PermissionForm;
     app()->call([$component, 'mount']);
     $component->prefix = 'clearance';
     $component->crudAbilities = ['create'];
@@ -24,13 +25,13 @@ it('rejects creating a new permission group under the reserved clearance prefix'
     app()->call([$component, 'save']);
 
     expect($component->errorMessage)->not->toBeNull();
-    expect(\Rivalex\Clearance\Models\Permission::where('name', 'like', 'clearance-create')->exists())->toBeFalse();
+    expect(Permission::where('name', 'like', 'clearance-create')->exists())->toBeFalse();
 });
 
 it('rejects editing the existing clearance group (was previously a no-op check: str_starts_with never matched the exact "clearance" prefix)', function (): void {
-    \Rivalex\Clearance\Models\Permission::create(['name' => 'clearance-access', 'guard_name' => 'web']);
+    Permission::create(['name' => 'clearance-access', 'guard_name' => 'web']);
 
-    $component = new PermissionForm();
+    $component = new PermissionForm;
     app()->call([$component, 'mount'], ['editingPrefix' => 'clearance']);
     $component->crudAbilities = [];
     $component->customAbilities = ['access', 'superhack'];
@@ -38,18 +39,18 @@ it('rejects editing the existing clearance group (was previously a no-op check: 
     app()->call([$component, 'save']);
 
     expect($component->errorMessage)->not->toBeNull();
-    expect(\Rivalex\Clearance\Models\Permission::where('name', 'clearance-superhack')->exists())->toBeFalse();
+    expect(Permission::where('name', 'clearance-superhack')->exists())->toBeFalse();
 });
 
 it('still allows editing an existing non-clearance group', function (): void {
-    \Rivalex\Clearance\Models\Permission::create(['name' => 'orders-create', 'guard_name' => 'web']);
+    Permission::create(['name' => 'orders-create', 'guard_name' => 'web']);
 
-    $component = new PermissionForm();
+    $component = new PermissionForm;
     app()->call([$component, 'mount'], ['editingPrefix' => 'orders']);
     $component->crudAbilities = ['create', 'read'];
 
     app()->call([$component, 'save']);
 
     expect($component->errorMessage)->toBeNull();
-    expect(\Rivalex\Clearance\Models\Permission::where('name', 'orders-read')->exists())->toBeTrue();
+    expect(Permission::where('name', 'orders-read')->exists())->toBeTrue();
 });

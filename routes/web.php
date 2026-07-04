@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 use Rivalex\Clearance\Livewire\Dashboard;
-use Rivalex\Clearance\Livewire\Settings\SettingsManager;
 use Rivalex\Clearance\Livewire\Guards\GuardManager;
 use Rivalex\Clearance\Livewire\Permissions\PermissionManager;
 use Rivalex\Clearance\Livewire\Roles\RoleManager;
+use Rivalex\Clearance\Livewire\Settings\SettingsManager;
 use Rivalex\Clearance\Livewire\Users\UserClearanceManager;
 
 $prefix = config('clearance.route_prefix', 'clearance');
@@ -22,16 +22,16 @@ Route::prefix($prefix)
     ->group(function (): void {
         Route::get('assets/{path}', function (string $path) {
             $roots = array_values(array_filter([
-                realpath(dirname(__DIR__) . '/src/dist'),
-                realpath(dirname(__DIR__) . '/resources'),
+                realpath(dirname(__DIR__).'/src/dist'),
+                realpath(dirname(__DIR__).'/resources'),
             ]));
 
             $file = null;
             foreach ($roots as $root) {
-                $candidate = realpath($root . DIRECTORY_SEPARATOR . $path);
+                $candidate = realpath($root.DIRECTORY_SEPARATOR.$path);
                 if (
                     $candidate !== false
-                    && str_starts_with($candidate, $root . DIRECTORY_SEPARATOR)
+                    && str_starts_with($candidate, $root.DIRECTORY_SEPARATOR)
                     && is_file($candidate)
                 ) {
                     $file = $candidate;
@@ -41,22 +41,22 @@ Route::prefix($prefix)
 
             abort_unless($file !== null, 404);
 
-            $ext         = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+            $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
             $allowedExts = ['css', 'js', 'svg', 'png', 'jpg', 'jpeg', 'webp'];
             abort_unless(in_array($ext, $allowedExts, true), 404);
 
             $mime = match ($ext) {
-                'css'         => 'text/css',
-                'js'          => 'application/javascript',
-                'svg'         => 'image/svg+xml',
-                'png'         => 'image/png',
+                'css' => 'text/css',
+                'js' => 'application/javascript',
+                'svg' => 'image/svg+xml',
+                'png' => 'image/png',
                 'jpg', 'jpeg' => 'image/jpeg',
-                'webp'        => 'image/webp',
-                default       => 'application/octet-stream',
+                'webp' => 'image/webp',
+                default => 'application/octet-stream',
             };
 
             return response()->file($file, [
-                'Content-Type'  => $mime,
+                'Content-Type' => $mime,
                 'Cache-Control' => 'public, max-age=31536000',
             ]);
         })->where('path', '[a-zA-Z0-9_\-./]+')->name('assets');

@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schema;
+use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Services\PermissionService;
 use Rivalex\Clearance\Services\RoleService;
-use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Tests\Support\FakeEloquentUser;
 use Spatie\Permission\Models\Role;
 

@@ -24,7 +24,7 @@ class RoleMetaTable extends Component
     {
         abort_unless(app(Clearance::class)->canPerform('settings'), 403);
 
-        $roles     = Role::orderBy('name')->get();
+        $roles = Role::orderBy('name')->get();
         $roleMetas = ClearanceMeta::where('subject_type', 'role')->get()->keyBy('subject_key');
 
         return view('clearance::livewire.settings.role-meta-table', compact('roles', 'roleMetas'));

@@ -44,11 +44,10 @@ class GuardManager extends Component
         $guards = app(GuardService::class)->all();
 
         if ($this->search !== '') {
-            $q      = strtolower($this->search);
+            $q = strtolower($this->search);
             $guards = array_filter(
                 $guards,
-                static fn (array $config, string $name): bool =>
-                    str_contains(strtolower($name), $q)
+                static fn (array $config, string $name): bool => str_contains(strtolower($name), $q)
                     || str_contains(strtolower($config['driver'] ?? ''), $q)
                     || str_contains(strtolower($config['provider'] ?? ''), $q),
                 ARRAY_FILTER_USE_BOTH,

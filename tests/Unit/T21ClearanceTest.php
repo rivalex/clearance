@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Facades\Clearance as ClearanceFacade;
+use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Tests\Support\FakeContext;
 use Rivalex\Clearance\Tests\Support\FakeUser;
-use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -36,7 +36,7 @@ it('Clearance::guards() returns array of guard names', function (): void {
 // --- canIn() ---
 
 it('Clearance::canIn() returns false when user has no context role', function (): void {
-    $user    = new FakeUser(id: 1);
+    $user = new FakeUser(id: 1);
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 1));
 
     expect(ClearanceFacade::canIn($user, 'orders-read', $context))->toBeFalse();
@@ -52,7 +52,7 @@ it('Clearance::canIn() returns true when user has contextual permission', functi
         'context_type' => FakeContext::class, 'context_id' => 1,
     ]);
 
-    $user    = new FakeUser(id: 1);
+    $user = new FakeUser(id: 1);
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 1));
 
     expect(ClearanceFacade::canIn($user, 'orders-read', $context))->toBeTrue();
@@ -68,7 +68,7 @@ it('Clearance::canIn() respects guard filter', function (): void {
         'context_type' => FakeContext::class, 'context_id' => 1,
     ]);
 
-    $user    = new FakeUser(id: 1);
+    $user = new FakeUser(id: 1);
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 1));
 
     expect(ClearanceFacade::canIn($user, 'orders-read', $context, 'web'))->toBeTrue()
@@ -87,14 +87,14 @@ it('Clearance::resolveFor() returns effective permission collection', function (
         'context_type' => FakeContext::class, 'context_id' => 1,
     ]);
 
-    $user    = new FakeUser(id: 1);
+    $user = new FakeUser(id: 1);
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 1));
 
     expect(ClearanceFacade::resolveFor($user, $context))->toContain('store-manage');
 });
 
 it('Clearance::resolveFor() returns empty collection when no role in context', function (): void {
-    $user    = new FakeUser(id: 1);
+    $user = new FakeUser(id: 1);
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 1));
 
     expect(ClearanceFacade::resolveFor($user, $context))->toBeEmpty();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rivalex\Clearance\Services;
 
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Support\Facades\DB;
 use Rivalex\Clearance\Exceptions\ClearanceNamingException;
 use Rivalex\Clearance\Exceptions\ClearanceProtectedResourceException;
 use Rivalex\Clearance\Models\Permission;
@@ -49,7 +50,7 @@ class PermissionService
         $this->validate($name);
 
         return Permission::create([
-            'name'       => $name,
+            'name' => $name,
             'guard_name' => $guardName,
         ]);
     }
@@ -92,8 +93,8 @@ class PermissionService
         // To be safe and fulfill requirement: "logica per rimuovere i permessi dati manualmente agli utenti"
         // we can try to detach from all models using the model_has_permissions table directly
         // to avoid crashes if the 'users' relationship is not perfectly configured in tests.
-        
-        \Illuminate\Support\Facades\DB::table(config('permission.table_names.model_has_permissions'))
+
+        DB::table(config('permission.table_names.model_has_permissions'))
             ->where('permission_id', $permission->id)
             ->delete();
 

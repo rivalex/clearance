@@ -5,11 +5,11 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\ContextService;
 use Rivalex\Clearance\Tests\Support\FakeContext;
 use Rivalex\Clearance\Tests\Support\FakeUser;
-use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -113,14 +113,14 @@ it('@canin resolves true when user has contextual permission (V4)', function ():
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 42));
 
     UserRoleContext::create([
-        'user_id'      => 99,
-        'role_id'      => $role->id,
+        'user_id' => 99,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 42,
+        'context_id' => 42,
     ]);
 
     $service = app(ContextService::class);
-    $user    = new FakeUser(id: 99);
+    $user = new FakeUser(id: 99);
 
     expect($service->hasPermissionIn($user, 'orders-read', $context))->toBeTrue();
 });
@@ -131,15 +131,15 @@ it('@canin resolves false for wrong context_id (V4)', function (): void {
     $role->givePermissionTo($perm);
 
     UserRoleContext::create([
-        'user_id'      => 99,
-        'role_id'      => $role->id,
+        'user_id' => 99,
+        'role_id' => $role->id,
         'context_type' => FakeContext::class,
-        'context_id'   => 99,
+        'context_id' => 99,
     ]);
 
     $context = tap(new FakeContext, fn ($c) => $c->setAttribute('id', 42)); // different id
     $service = app(ContextService::class);
-    $user    = new FakeUser(id: 99);
+    $user = new FakeUser(id: 99);
 
     expect($service->hasPermissionIn($user, 'orders-read', $context))->toBeFalse();
 });

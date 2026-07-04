@@ -40,20 +40,20 @@ it('mount builds a global modal name', function (): void {
     Livewire::test(RemoveAssignmentModal::class, [
         'userId' => $this->user->id,
         'roleId' => $this->role->id,
-        'scope'  => 'global',
-    ])->assertSet('modalName', 'remove-role-global-' . $this->role->id . '-' . $this->user->id);
+        'scope' => 'global',
+    ])->assertSet('modalName', 'remove-role-global-'.$this->role->id.'-'.$this->user->id);
 });
 
 it('mount builds a contextual modal name including context id', function (): void {
     Livewire::test(RemoveAssignmentModal::class, [
-        'userId'       => $this->user->id,
-        'roleId'       => $this->role->id,
-        'scope'        => 'contextual',
+        'userId' => $this->user->id,
+        'roleId' => $this->role->id,
+        'scope' => 'contextual',
         'contextClass' => FakeContext::class,
-        'contextId'    => 7,
+        'contextId' => 7,
     ])->assertSet(
         'modalName',
-        'remove-role-ctx-' . md5(FakeContext::class) . '-' . $this->role->id . '-7-' . $this->user->id
+        'remove-role-ctx-'.md5(FakeContext::class).'-'.$this->role->id.'-7-'.$this->user->id
     );
 });
 
@@ -63,7 +63,7 @@ it('does nothing when the typed confirmation text does not match', function (): 
     Livewire::test(RemoveAssignmentModal::class, [
         'userId' => $this->user->id,
         'roleId' => $this->role->id,
-        'scope'  => 'global',
+        'scope' => 'global',
     ])
         ->set('confirmText', 'wrong text')
         ->call('confirmDelete');
@@ -77,7 +77,7 @@ it('removes a global role assignment on correct typed confirmation', function ()
     Livewire::test(RemoveAssignmentModal::class, [
         'userId' => $this->user->id,
         'roleId' => $this->role->id,
-        'scope'  => 'global',
+        'scope' => 'global',
     ])
         ->set('confirmText', 'DELETE manager')
         ->call('confirmDelete')
@@ -94,11 +94,11 @@ it('removes a contextual role assignment on correct typed confirmation', functio
     (new UserClearanceService)->assignContextual($this->user, $this->role, $context);
 
     Livewire::test(RemoveAssignmentModal::class, [
-        'userId'       => $this->user->id,
-        'roleId'       => $this->role->id,
-        'scope'        => 'contextual',
+        'userId' => $this->user->id,
+        'roleId' => $this->role->id,
+        'scope' => 'contextual',
         'contextClass' => FakeContext::class,
-        'contextId'    => $context->id,
+        'contextId' => $context->id,
     ])
         ->set('confirmText', 'DELETE manager')
         ->call('confirmDelete')
@@ -115,7 +115,7 @@ it('renders the remove-assignment-modal view with the role', function (): void {
     Livewire::test(RemoveAssignmentModal::class, [
         'userId' => $this->user->id,
         'roleId' => $this->role->id,
-        'scope'  => 'global',
+        'scope' => 'global',
     ])
         ->assertViewIs('clearance::livewire.users.remove-assignment-modal')
         ->assertViewHas('role', fn ($role) => $role->id === $this->role->id);

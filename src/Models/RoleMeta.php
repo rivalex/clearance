@@ -12,6 +12,7 @@ use Spatie\Permission\Models\Role;
 class RoleMeta extends Model
 {
     public const SCOPE_GLOBAL = 'global';
+
     public const SCOPE_CONTEXTUAL = 'contextual';
 
     protected $table = 'clr_role_meta';
@@ -20,11 +21,11 @@ class RoleMeta extends Model
 
     protected $attributes = [
         'is_locked' => false,
-        'scope'     => self::SCOPE_GLOBAL,
+        'scope' => self::SCOPE_GLOBAL,
     ];
 
     protected $casts = [
-        'is_locked'     => 'boolean',
+        'is_locked' => 'boolean',
         'context_types' => 'array',
     ];
 

@@ -20,7 +20,7 @@ class EditRole extends Component
 
     public function mount(): void
     {
-        $this->modalName = 'edit-role-' . $this->roleId;
+        $this->modalName = 'edit-role-'.$this->roleId;
     }
 
     public function render(): View

@@ -2,21 +2,22 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Rivalex\Clearance\Livewire\Guards\GuardManager;
-use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
 use Rivalex\Clearance\Livewire\Permissions\DeletePermission;
 use Rivalex\Clearance\Livewire\Permissions\EditPermission;
 use Rivalex\Clearance\Livewire\Permissions\NewPermission;
+use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
 use Rivalex\Clearance\Livewire\Permissions\PermissionManager;
 use Rivalex\Clearance\Livewire\Roles\DeleteRole;
 use Rivalex\Clearance\Livewire\Roles\EditRole;
 use Rivalex\Clearance\Livewire\Roles\NewRole;
 use Rivalex\Clearance\Livewire\Roles\RoleForm;
 use Rivalex\Clearance\Livewire\Roles\RoleManager;
-use Rivalex\Clearance\Livewire\Users\UserClearanceManager;
 use Rivalex\Clearance\Livewire\Users\AssignRoleModal;
 use Rivalex\Clearance\Livewire\Users\RemoveAssignmentModal;
+use Rivalex\Clearance\Livewire\Users\UserClearanceManager;
 use Rivalex\Clearance\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -49,7 +50,6 @@ it('PermissionManager mount runs without error', function (): void {
 
     expect($component)->toBeInstanceOf(PermissionManager::class);
 });
-
 
 it('NewPermission showModal defaults to false', function (): void {
     $component = new NewPermission;
@@ -197,7 +197,7 @@ it('EditRole sets modalName in mount', function (): void {
 
 it('DeleteRole confirmDelete removes role on correct text (T25)', function (): void {
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
-    $id   = $role->id;
+    $id = $role->id;
 
     $component = new DeleteRole;
     $component->roleId = $id;
@@ -210,32 +210,32 @@ it('DeleteRole confirmDelete removes role on correct text (T25)', function (): v
 
 it('DeleteRole confirmDelete detaches users and deletes role (T25)', function (): void {
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
-    \Illuminate\Support\Facades\DB::table('model_has_roles')->insert([
+    DB::table('model_has_roles')->insert([
         'role_id' => $role->id, 'model_type' => 'App\\Models\\User', 'model_id' => 1,
     ]);
 
     $component = new DeleteRole;
-    $component->roleId    = $role->id;
-    $component->action    = 'detach';
+    $component->roleId = $role->id;
+    $component->action = 'detach';
     $component->confirmText = 'DELETE editor';
     app()->call([$component, 'mount']);
     app()->call([$component, 'confirmDelete']);
 
     // Users detached (model_has_roles cleared), role deleted
     expect(Role::find($role->id))->toBeNull();
-    expect(\Illuminate\Support\Facades\DB::table('model_has_roles')
+    expect(DB::table('model_has_roles')
         ->where('role_id', $role->id)->count())->toBe(0);
 });
 
 it('DeleteRole confirmDelete reassign blocks without targetRoleId (T25b)', function (): void {
     $role = Role::create(['name' => 'editor', 'guard_name' => 'web']);
-    \Illuminate\Support\Facades\DB::table('model_has_roles')->insert([
+    DB::table('model_has_roles')->insert([
         'role_id' => $role->id, 'model_type' => 'App\\Models\\User', 'model_id' => 1,
     ]);
 
     $component = new DeleteRole;
-    $component->roleId      = $role->id;
-    $component->action      = 'reassign';
+    $component->roleId = $role->id;
+    $component->action = 'reassign';
     $component->targetRoleId = null;
     $component->confirmText = 'DELETE editor';
     app()->call([$component, 'mount']);

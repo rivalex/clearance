@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Rivalex\Clearance\Exceptions\ClearanceNamingException;
-use Rivalex\Clearance\Services\PermissionService;
 use Rivalex\Clearance\Models\Permission;
+use Rivalex\Clearance\Services\PermissionService;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {

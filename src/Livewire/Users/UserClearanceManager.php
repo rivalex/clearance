@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Livewire\Users;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
@@ -40,16 +41,16 @@ class UserClearanceManager extends Component
         $user = $this->resolveUser();
 
         return $this->withClearanceLayout(view('clearance::livewire.users.manager', [
-            'user'             => $user,
+            'user' => $user,
             'contextualModels' => config('clearance.contextual_models', []),
-            'modulesEnabled'   => (bool) config('clearance.modules.users', false),
+            'modulesEnabled' => (bool) config('clearance.modules.users', false),
         ]));
     }
 
     /**
      * Fetch a fresh user instance with roles and direct permissions loaded.
      *
-     * @return Model&\Illuminate\Contracts\Auth\Authenticatable
+     * @return Model&Authenticatable
      */
     private function resolveUser(): Model
     {

@@ -20,7 +20,7 @@ it('forSubject creates a new unsaved instance when none exists', function (): vo
 it('forSubject retrieves an existing record for the same subject', function (): void {
     ClearanceMeta::create([
         'subject_type' => 'role',
-        'subject_key'  => 'manager',
+        'subject_key' => 'manager',
         'display_name' => 'Manager',
     ]);
 
@@ -41,11 +41,11 @@ it('forSubject distinguishes subjects by type', function (): void {
 it('is mass-assignable for all documented fillable fields', function (): void {
     $meta = ClearanceMeta::create([
         'subject_type' => 'guard',
-        'subject_key'  => 'api',
+        'subject_key' => 'api',
         'display_name' => 'API',
-        'description'  => 'API guard',
-        'icon_svg'     => '<svg></svg>',
-        'color'        => '#3b82f6',
+        'description' => 'API guard',
+        'icon_svg' => '<svg></svg>',
+        'color' => '#3b82f6',
     ]);
 
     expect($meta->fresh())

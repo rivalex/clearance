@@ -28,14 +28,14 @@ class DeleteGuard extends Component
 
     public function mount(): void
     {
-        $this->modalName = 'delete-guard-' . $this->guardId;
+        $this->modalName = 'delete-guard-'.$this->guardId;
     }
 
     public function confirmDelete(GuardService $service): void
     {
         abort_unless(app(Clearance::class)->canPerform('guards'), 403);
 
-        if ($this->confirmText !== 'DELETE ' . $this->name) {
+        if ($this->confirmText !== 'DELETE '.$this->name) {
             return;
         }
 

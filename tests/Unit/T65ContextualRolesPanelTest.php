@@ -43,9 +43,9 @@ beforeEach(function (): void {
     $this->actor->assignRole(Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']));
     $this->actor->givePermissionTo('clearance-access');
 
-    $this->user    = FakeEloquentUser::create(['name' => 'U', 'email' => 't65-user@example.com', 'password' => 'x']);
+    $this->user = FakeEloquentUser::create(['name' => 'U', 'email' => 't65-user@example.com', 'password' => 'x']);
     $this->context = FakeContext::create(['name' => 'Store 1']);
-    $this->role    = Role::create(['name' => 'store-manager', 'guard_name' => 'web']);
+    $this->role = Role::create(['name' => 'store-manager', 'guard_name' => 'web']);
     RoleMeta::create(['role_id' => $this->role->id, 'scope' => RoleMeta::SCOPE_CONTEXTUAL, 'context_types' => [FakeContext::class]]);
 });
 
@@ -61,7 +61,7 @@ it('renders assigned contextual roles and available contextual master roles', fu
     Role::create(['name' => 'staff', 'guard_name' => 'web']);
 
     Livewire::test(ContextualRolesPanel::class, [
-        'userId'       => $this->user->id,
+        'userId' => $this->user->id,
         'contextClass' => FakeContext::class,
     ])
         ->assertViewHas('contextAssignments', fn ($a) => $a->count() === 1)
@@ -77,16 +77,16 @@ it('initializes contextualPermissions from existing overrides', function (): voi
     $this->role->givePermissionTo($perm);
     (new UserClearanceService)->assignContextual($this->user, $this->role, $this->context);
     UserContextPermissionOverride::create([
-        'user_id'       => $this->user->id,
-        'role_id'       => $this->role->id,
+        'user_id' => $this->user->id,
+        'role_id' => $this->role->id,
         'permission_id' => $perm->id,
-        'context_type'  => FakeContext::class,
-        'context_id'    => $this->context->id,
-        'type'          => UserContextPermissionOverride::TYPE_FORCED_ON,
+        'context_type' => FakeContext::class,
+        'context_id' => $this->context->id,
+        'type' => UserContextPermissionOverride::TYPE_FORCED_ON,
     ]);
 
     $component = Livewire::test(ContextualRolesPanel::class, [
-        'userId'       => $this->user->id,
+        'userId' => $this->user->id,
         'contextClass' => FakeContext::class,
     ]);
 
@@ -101,7 +101,7 @@ it('saveContextualExtraPerms syncs overrides through the service', function (): 
     $this->actingAs($this->actor, 'web');
 
     Livewire::test(ContextualRolesPanel::class, [
-        'userId'       => $this->user->id,
+        'userId' => $this->user->id,
         'contextClass' => FakeContext::class,
     ])
         ->set("contextualPermissions.{$this->context->id}.{$this->role->id}.{$perm->id}", true)
@@ -116,7 +116,7 @@ it('refresh listener rebuilds contextualPermissions without error', function ():
     (new UserClearanceService)->assignContextual($this->user, $this->role, $this->context);
 
     Livewire::test(ContextualRolesPanel::class, [
-        'userId'       => $this->user->id,
+        'userId' => $this->user->id,
         'contextClass' => FakeContext::class,
     ])
         ->dispatch('clearance:assignment-saved')

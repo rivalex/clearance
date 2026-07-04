@@ -26,11 +26,11 @@ it('mount defaults fields when no meta exists yet', function (): void {
 it('mount hydrates fields from an existing meta record', function (): void {
     ClearanceMeta::create([
         'subject_type' => 'role',
-        'subject_key'  => 'manager',
+        'subject_key' => 'manager',
         'display_name' => 'Manager',
-        'description'  => 'Runs the store',
-        'color'        => '#ff0000',
-        'icon_svg'     => '<svg></svg>',
+        'description' => 'Runs the store',
+        'color' => '#ff0000',
+        'icon_svg' => '<svg></svg>',
     ]);
 
     Livewire::test(EditMeta::class, ['subjectType' => 'role', 'subjectKey' => 'manager'])

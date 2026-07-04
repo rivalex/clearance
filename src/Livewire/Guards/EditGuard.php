@@ -23,7 +23,7 @@ class EditGuard extends Component
 
     public function mount(): void
     {
-        $this->modalName = 'edit-guard-' . $this->guardId;
+        $this->modalName = 'edit-guard-'.$this->guardId;
     }
 
     public function render(): View

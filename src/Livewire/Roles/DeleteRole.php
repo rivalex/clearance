@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Rivalex\Clearance\Clearance;
 use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\RoleService;
@@ -36,12 +37,12 @@ class DeleteRole extends Component
 
     public function mount(): void
     {
-        $this->modalName = 'delete-role-' . $this->roleId;
+        $this->modalName = 'delete-role-'.$this->roleId;
     }
 
     public function confirmDelete(RoleService $roleService, UserClearanceService $userService): void
     {
-        abort_unless(app(\Rivalex\Clearance\Clearance::class)->canPerform('roles'), 403);
+        abort_unless(app(Clearance::class)->canPerform('roles'), 403);
 
         $role = Role::find($this->roleId);
 
@@ -52,24 +53,26 @@ class DeleteRole extends Component
         // Locked roles cannot be deleted
         if (RoleMeta::where('role_id', $role->id)->value('is_locked')) {
             $this->errorMessage = __('clearance::ui.roles.delete.locked_cannot_delete');
+
             return;
         }
 
         // Typed confirmation must pass before any destructive DB mutation
-        if ($this->confirmText !== 'DELETE ' . $role->name) {
+        if ($this->confirmText !== 'DELETE '.$role->name) {
             return;
         }
 
         $modelHasRolesTable = config('permission.table_names.model_has_roles', 'model_has_roles');
 
-        $globalRows     = DB::table($modelHasRolesTable)->where('role_id', $this->roleId)->get(['model_id', 'model_type']);
+        $globalRows = DB::table($modelHasRolesTable)->where('role_id', $this->roleId)->get(['model_id', 'model_type']);
         $contextualRows = UserRoleContext::where('role_id', $this->roleId)->get();
-        $hasAffected    = $globalRows->isNotEmpty() || $contextualRows->isNotEmpty();
+        $hasAffected = $globalRows->isNotEmpty() || $contextualRows->isNotEmpty();
 
         if ($hasAffected) {
             if ($this->action === 'reassign') {
                 if ($this->targetRoleId === null || $this->targetRoleId === $this->roleId) {
                     $this->errorMessage = __('clearance::ui.roles.delete.no_other_roles');
+
                     return;
                 }
 
@@ -124,7 +127,7 @@ class DeleteRole extends Component
         }
 
         $roleService->delete($role);
-        $this->confirmText  = '';
+        $this->confirmText = '';
         $this->errorMessage = null;
         $this->dispatch('role-deleted');
     }
