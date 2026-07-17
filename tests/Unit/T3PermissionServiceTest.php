@@ -22,6 +22,8 @@ it('accepts valid gruppo-azione names', function (string $name): void {
     'magazzino-update',
     'clearance-access',
     'store-orders-delete',
+    'user_profile-manage',
+    'orders-manage_settings',
 ]);
 
 it('rejects bare action without group', function (): void {
@@ -35,6 +37,15 @@ it('rejects dot separator', function (): void {
 it('rejects spaces', function (): void {
     expect(fn () => $this->service->validate('orders create'))->toThrow(ClearanceNamingException::class);
 });
+
+it('rejects other symbols', function (string $name): void {
+    expect(fn () => $this->service->validate($name))->toThrow(ClearanceNamingException::class);
+})->with([
+    'orders-cre@te',
+    'orders-cre#te',
+    'orders-cre te',
+    'orders-cre!te',
+]);
 
 it('rejects camelCase', function (): void {
     expect(fn () => $this->service->validate('OrdersCreate'))->toThrow(ClearanceNamingException::class);

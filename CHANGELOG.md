@@ -5,6 +5,14 @@ Format follows [Conventional Commits](https://conventionalcommits.org) and [Keep
 
 ---
 
+## [1.0.1] - 2026-07-17
+
+### Fixed
+
+- **Permission naming allows `_` in segments (V6)** — `PermissionService::validate()`'s `gruppo-azione` regex constrained each segment to `[a-z0-9]`, so any name containing `_` was rejected as an invalid symbol regardless of `naming_separator` config (e.g. `user_profile-manage` failed). Segments now accept `[a-z0-9_]`; the separator itself, spaces, dots, and all other symbols remain rejected. Compounding client-side bug: the custom-ability Alpine `slugify()` helper in `permission-form.blade.php` stripped `_` to `-` before the value ever reached the server, so typing an underscore into the custom-ability pill input silently became a dash even after the backend fix. Both the regex (`src/Services/PermissionService.php`) and the JS slugifier (`resources/views/livewire/permissions/permission-form.blade.php`) now preserve `_`. SPEC.md §C and V6 updated to document underscore as a valid segment character. New Pest cases in `T3PermissionServiceTest` cover accepted underscore names and rejected other-symbol names (`@`, `#`, space, `!`).
+
+---
+
 ## [1.0.0] - 2026-07-03
 
 First public release. `rivalex/clearance` is a Livewire 4 + Flux UI admin panel for managing permissions, roles, and contextual authorization on top of `spatie/laravel-permission`, installable via a single artisan command.

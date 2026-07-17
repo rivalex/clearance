@@ -33,11 +33,11 @@ class PermissionService
             '/',
         );
 
-        // Must be lowercase alphanumeric groups joined by separator, min 2 parts
-        if (! preg_match('/^[a-z][a-z0-9]*('.$sep.'[a-z][a-z0-9]*)+$/', $name)) {
+        // Must be lowercase alphanumeric (underscore allowed) groups joined by separator, min 2 parts
+        if (! preg_match('/^[a-z][a-z0-9_]*('.$sep.'[a-z][a-z0-9_]*)+$/', $name)) {
             throw new ClearanceNamingException(
                 "Permission name '{$name}' must follow format gruppo-azione: "
-                .'lowercase, no spaces or dots, at least one separator, no bare action.',
+                .'lowercase, underscores allowed, no spaces/dots/other symbols, at least one separator, no bare action.',
             );
         }
     }
