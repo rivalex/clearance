@@ -5,7 +5,7 @@ Format follows [Conventional Commits](https://conventionalcommits.org) and [Keep
 
 ---
 
-## [Unreleased]
+## [1.0.1] - 2026-07-17
 
 ### Fixed
 
@@ -17,7 +17,8 @@ Format follows [Conventional Commits](https://conventionalcommits.org) and [Keep
   - `RoleForm.php`: `permissionGroups`' PHPDoc array shape was missing the `locked`/`out_of_ceiling` keys that `loadPermissions()` has always actually set — runtime was never broken (the `?? false` silently no-op'd), but the stale annotation hid a real shape mismatch.
   - Dropped two phantom `use App\Models\User;` imports (`Settings.php`, `BulkAssignDefaultRole.php`) — package has no such class; the fallback default is now the literal FQCN string, which was always the intent.
   - `HasClearance` (a mixin trait for the *consuming* app's User model, never used inside this package) is now in `phpstan.neon.dist`'s `excludePaths` instead of silently failing `trait.unused`; the stale `ignoreErrors` entry for `Builder` (dead since none of the above patterns matched it anymore) was removed.
-  - No behavior changes anywhere in this batch — 376/376 Pest tests pass unmodified in assertions, only type annotations/guards/narrowing changed.
+  - Every `view('clearance::...')` call (~38 occurrences across every Livewire component) failed CI's PHPStan run — but never reproduced locally, even from a fresh `composer install` — as `expects view-string|null, string given`. Larastan's `view-string` type validates the literal against a real, booted `View::exists()` call; this package has no `bootstrap/app.php` for Larastan to boot on its own, and the `clearance::` view namespace is registered by `spatie/laravel-package-tools`' `hasViews()` at runtime inside `ClearanceServiceProvider::configurePackage()` — invisible to any static parse. Added `tests/phpstan-bootstrap.php` (wired via `phpstan.neon.dist`'s `bootstrapFiles`) that boots the package's own `tests/TestCase.php` before analysis, which registers the same providers the real test suite uses and resolves the namespace for real. `Orchestra\Testbench\Foundation\Application::create()` was tried first with both a `resolvingCallback` (fires before the container's `config` binding exists — "Target class [config] does not exist") and an `options: ['providers' => [...]]` array (boots clean but never calls `configurePackage()`, so the namespace still never registers) before landing on reusing `TestCase`. One more gap surfaced once the app booted: Larastan's console-command analysis of `ClearanceInstallCommand` needs `command.tinker`, a `DeferrableProvider` binding that only auto-loads via the full package manifest from a real `composer install` — registered eagerly in the bootstrap file instead.
+  - No behavior changes anywhere in this batch — 376/376 Pest tests pass unmodified in assertions, only type annotations/guards/narrowing/CI tooling changed.
 
 ---
 

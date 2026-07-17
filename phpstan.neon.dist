@@ -4,6 +4,9 @@ parameters:
 
     level: 5
 
+    bootstrapFiles:
+        - tests/phpstan-bootstrap.php
+
     # HasClearance is a mixin trait meant to be `use`d by the CONSUMING app's User model
     # (never by anything inside this package), so it has zero usages within `paths` for
     # PHPStan to analyse its body against - excluded rather than faked with a dummy usage.
