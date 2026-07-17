@@ -6,12 +6,14 @@ namespace Rivalex\Clearance\Livewire\Users;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Rivalex\Clearance\Clearance;
+use Rivalex\Clearance\Contracts\ClearanceAuthenticatable;
 use Rivalex\Clearance\Exceptions\ClearanceProtectedResourceException;
 use Rivalex\Clearance\Exceptions\ClearanceScopeViolationException;
 use Rivalex\Clearance\Models\RoleMeta;
@@ -84,7 +86,7 @@ class GlobalRolesPanel extends Component
     {
         $user = $this->resolveUser();
 
-        $assignedRoles = $user->roles()->with('permissions')->orderBy('name')->get();
+        $assignedRoles = $user->roles()->with('permissions')->orderBy('name')->get()->whereInstanceOf(Role::class);
         $assignedRoleIds = $assignedRoles->pluck('id')->toArray();
 
         $roleCards = $assignedRoles->map(fn (Role $role): array => [
@@ -112,7 +114,7 @@ class GlobalRolesPanel extends Component
     /**
      * Fetch a fresh user instance with roles and direct permissions loaded.
      *
-     * @return Model&Authenticatable
+     * @return Model&ClearanceAuthenticatable
      */
     private function resolveUser(): Model
     {
@@ -120,7 +122,17 @@ class GlobalRolesPanel extends Component
         $userModel = config('clearance.user_model')
             ?? config('auth.providers.users.model', 'App\\Models\\User');
 
-        return $userModel::with(['roles.permissions', 'permissions'])->findOrFail($this->userId);
+        $user = $userModel::with(['roles.permissions', 'permissions'])->findOrFail($this->userId);
+
+        if (! $user instanceof Authenticatable || ! method_exists($user, 'roles')) {
+            throw new \LogicException(
+                'Configured user model ['.$userModel.'] must implement Authenticatable and use '
+                .'the Spatie HasRoles trait (via HasClearance).'
+            );
+        }
+
+        /** @var Model&ClearanceAuthenticatable $user */
+        return $user;
     }
 
     /**
@@ -130,14 +142,16 @@ class GlobalRolesPanel extends Component
     {
         $user = $this->resolveUser();
 
-        $userDirectPermIds = $user->permissions
+        /** @var Collection<int, Permission> $userPermissions */
+        $userPermissions = $user->getRelation('permissions');
+        $userDirectPermIds = $userPermissions
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->toArray();
 
         $this->manualPermissions = [];
 
-        foreach ($user->roles()->with('permissions')->get() as $role) {
+        foreach ($user->roles()->with('permissions')->get()->whereInstanceOf(Role::class) as $role) {
             $roleId = (int) $role->id;
             $rolePermIds = $role->permissions->pluck('id')->map(fn ($id) => (int) $id)->toArray();
 

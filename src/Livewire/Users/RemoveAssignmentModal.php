@@ -110,6 +110,12 @@ class RemoveAssignmentModal extends Component
         $userModel = config('clearance.user_model')
             ?? config('auth.providers.users.model', 'App\\Models\\User');
 
-        return $userModel::with(['roles.permissions', 'permissions'])->findOrFail($this->userId);
+        $user = $userModel::with(['roles.permissions', 'permissions'])->findOrFail($this->userId);
+
+        if (! $user instanceof Authenticatable) {
+            throw new \LogicException('Configured user model ['.$userModel.'] must implement Authenticatable.');
+        }
+
+        return $user;
     }
 }

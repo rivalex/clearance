@@ -7,8 +7,19 @@ namespace Rivalex\Clearance\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role;
 
+/**
+ * @property int $id
+ * @property int $role_id
+ * @property bool $is_locked
+ * @property string $scope
+ * @property array<int, string>|null $context_types
+ * @property int|null $parent_role_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class RoleMeta extends Model
 {
     public const SCOPE_GLOBAL = 'global';
@@ -31,6 +42,8 @@ class RoleMeta extends Model
 
     /**
      * The Spatie role this metadata belongs to.
+     *
+     * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo
     {
@@ -39,6 +52,8 @@ class RoleMeta extends Model
 
     /**
      * The ceiling (parent) role — null when this role has no ceiling.
+     *
+     * @return BelongsTo<Role, $this>
      */
     public function parent(): BelongsTo
     {
@@ -48,6 +63,8 @@ class RoleMeta extends Model
     /**
      * RoleMeta rows whose parent_role_id equals this role's role_id.
      * Local key is role_id (not id) because parent_role_id stores the Spatie role PK.
+     *
+     * @return HasMany<RoleMeta, $this>
      */
     public function children(): HasMany
     {

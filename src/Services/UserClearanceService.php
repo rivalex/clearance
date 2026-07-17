@@ -13,7 +13,6 @@ use Rivalex\Clearance\Models\UserContextPermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Traits\HasRoles;
 
 class UserClearanceService
 {
@@ -32,7 +31,10 @@ class UserClearanceService
             );
         }
 
-        /** @var HasRoles $user */
+        if (! method_exists($user, 'assignRole')) {
+            throw new \LogicException('The user model must use the Spatie HasRoles trait (via HasClearance).');
+        }
+
         $user->assignRole($role);
     }
 
@@ -41,8 +43,11 @@ class UserClearanceService
      */
     public function removeGlobalRole(Authenticatable $user, Role $role): void
     {
-        /** @var HasRoles&Model $user */
-        $directPermNames = $user->permissions
+        if (! method_exists($user, 'permissions') || ! method_exists($user, 'removeRole') || ! method_exists($user, 'revokePermissionTo')) {
+            throw new \LogicException('The user model must use the Spatie HasRoles trait (via HasClearance).');
+        }
+
+        $directPermNames = $user->permissions()
             ->where('guard_name', $role->guard_name)
             ->pluck('name')
             ->toArray();
@@ -125,10 +130,13 @@ class UserClearanceService
         Role $role,
         array $permissionIds,
     ): void {
-        /** @var HasRoles&Model $user */
+        if (! method_exists($user, 'permissions') || ! method_exists($user, 'givePermissionTo') || ! method_exists($user, 'revokePermissionTo')) {
+            throw new \LogicException('The user model must use the Spatie HasRoles trait (via HasClearance).');
+        }
+
         $rolePermIds = $role->permissions->pluck('id')->map(fn ($id) => (int) $id)->toArray();
 
-        $currentDirectIds = $user->permissions
+        $currentDirectIds = $user->permissions()
             ->where('guard_name', $role->guard_name)
             ->pluck('id')
             ->map(fn ($id) => (int) $id)

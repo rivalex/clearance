@@ -6,8 +6,18 @@ namespace Rivalex\Clearance\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $role_id
+ * @property string $context_type
+ * @property int $context_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class UserRoleContext extends Model
 {
     protected $table = 'clr_role_ctx';
@@ -16,6 +26,8 @@ class UserRoleContext extends Model
 
     /**
      * The role assigned in this context.
+     *
+     * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo
     {

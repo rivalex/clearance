@@ -38,7 +38,7 @@ class RoleForm extends Component
     /** @var array<string, string> FQCN => label, from config('clearance.contextual_models'). */
     public array $availableContextTypes = [];
 
-    /** @var array<string, array{group: string, abilities: array<int, array{id: int, name: string, ability: string, color: string, selected: bool}>}> */
+    /** @var array<string, array{group: string, abilities: array<int, array{id: int, name: string, ability: string, color: string, selected: bool, locked: bool, out_of_ceiling: bool}>}> */
     public array $permissionGroups = [];
 
     public ?int $roleId = null;
@@ -168,7 +168,7 @@ class RoleForm extends Component
         $selectedPermissions = [];
         foreach ($this->permissionGroups as $group) {
             foreach ($group['abilities'] as $ability) {
-                if (($ability['selected'] || ($ability['locked'] ?? false)) && isset($allowedIds[$ability['id']])) {
+                if (($ability['selected'] || $ability['locked']) && isset($allowedIds[$ability['id']])) {
                     $perm = Permission::find($ability['id']);
                     if ($perm) {
                         $selectedPermissions[] = $perm;

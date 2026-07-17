@@ -10,7 +10,6 @@ use Illuminate\Support\Collection;
 use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Models\UserContextPermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
-use Spatie\Permission\Traits\HasRoles;
 
 class ContextService
 {
@@ -124,7 +123,6 @@ class ContextService
             return collect();
         }
 
-        /** @var HasRoles $user */
         $roles = $user->roles()
             ->when($guard !== null, fn ($q) => $q->where('guard_name', $guard))
             ->with('permissions')

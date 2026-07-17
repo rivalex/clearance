@@ -264,7 +264,7 @@ class ClearanceInstallCommand extends Command
             return;
         }
 
-        if (! in_array(HasRoles::class, class_uses_recursive($user))) {
+        if (! in_array(HasRoles::class, class_uses_recursive($user)) || ! method_exists($user, 'assignRole')) {
             $this->warn('User model ['.get_class($user).'] does not use HasRoles (or Rivalex\\Clearance\\Traits\\HasClearance) - role not assigned.');
             $this->warn('Add `use \\Rivalex\\Clearance\\Traits\\HasClearance;` (includes HasRoles) to your User model, then re-run with --force.');
 

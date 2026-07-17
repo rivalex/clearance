@@ -7,6 +7,7 @@ namespace Rivalex\Clearance\Livewire\Users;
 use Flux\Flux;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
@@ -153,7 +154,10 @@ class AssignRoleModal extends Component
     {
         if ($this->scope === 'global') {
             $user = $this->resolveUser();
-            $assignedRoleIds = $user->roles->pluck('id')->toArray();
+
+            /** @var Collection<int, Role> $roles */
+            $roles = $user->getRelation('roles');
+            $assignedRoleIds = $roles->pluck('id')->toArray();
 
             $availableRoles = Role::whereNotIn('id', $assignedRoleIds)
                 ->orderBy('name')
@@ -193,6 +197,12 @@ class AssignRoleModal extends Component
         $userModel = config('clearance.user_model')
             ?? config('auth.providers.users.model', 'App\\Models\\User');
 
-        return $userModel::with(['roles.permissions', 'permissions'])->findOrFail($this->userId);
+        $user = $userModel::with(['roles.permissions', 'permissions'])->findOrFail($this->userId);
+
+        if (! $user instanceof Authenticatable) {
+            throw new \LogicException('Configured user model ['.$userModel.'] must implement Authenticatable.');
+        }
+
+        return $user;
     }
 }

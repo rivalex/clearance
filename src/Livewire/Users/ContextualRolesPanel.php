@@ -18,6 +18,7 @@ use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Models\UserContextPermissionOverride;
 use Rivalex\Clearance\Models\UserRoleContext;
 use Rivalex\Clearance\Services\UserClearanceService;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -133,7 +134,13 @@ class ContextualRolesPanel extends Component
         $userModel = config('clearance.user_model')
             ?? config('auth.providers.users.model', 'App\\Models\\User');
 
-        return $userModel::with(['roles.permissions', 'permissions'])->findOrFail($this->userId);
+        $user = $userModel::with(['roles.permissions', 'permissions'])->findOrFail($this->userId);
+
+        if (! $user instanceof Authenticatable) {
+            throw new \LogicException('Configured user model ['.$userModel.'] must implement Authenticatable.');
+        }
+
+        return $user;
     }
 
     /**
@@ -170,7 +177,7 @@ class ContextualRolesPanel extends Component
 
             $this->contextualPermissions[$contextId][$roleId] = [];
 
-            foreach ($role->permissions as $perm) {
+            foreach ($role->permissions->whereInstanceOf(Permission::class) as $perm) {
                 $permId = (int) $perm->id;
                 $this->contextualPermissions[$contextId][$roleId][$permId] = in_array($permId, $overrides, true);
             }

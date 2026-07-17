@@ -5,6 +5,22 @@ Format follows [Conventional Commits](https://conventionalcommits.org) and [Keep
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **PHPStan (level 5, Larastan) is clean again** — the `phpstan` CI job was failing with ~90 errors across `src/`, none related to the permission-naming fix above; root cause was almost entirely that Spatie's `Role`/`Permission` relations resolve their related model via `config()` at runtime, so static analysis only sees the base `Illuminate\Database\Eloquent\Model` type instead of `Permission`/`Role`, cascading into "undefined property/method" everywhere those collections were touched, plus a package-boundary gap where nothing in `src/` can statically know the consuming app's `User` model composes Spatie's `HasRoles` trait. Fixed for real, no baseline/`@phpstan-ignore` dumping:
+  - `RoleMeta`, `UserRoleContext`, `UserContextPermissionOverride` gained `@property` docblocks and `@return BelongsTo<X, $this>`/`HasMany<X, $this>` generics on their relations, matching the actual migrated schema.
+  - `Collection::whereInstanceOf()` narrows Spatie relation collections (`$role->permissions`, etc.) from generic `Model` to the real `Permission`/`Role` class before they're iterated or type-hinted in closures — zero-op at runtime, every row already is one.
+  - `PermissionService::create()` / `RoleService::create()` narrow Spatie's own imprecise `@return Contract|Model` (not `static`) via a real `instanceof` check + throw, instead of trusting an unprovable cast.
+  - New `Rivalex\Clearance\Contracts\ClearanceAuthenticatable` marker interface documents the subset of `HasRoles`/`HasPermissions` this package calls on the consumer's User model; `resolveUser()` in the five `Livewire\Users\*` components verifies it at runtime (`instanceof Authenticatable` + `method_exists(..., 'roles')`) before narrowing, replacing five copies of an invalid `@var \Spatie\Permission\Traits\HasRoles $user` (PHPStan correctly rejected casting to a trait).
+  - `RoleForm.php`: `permissionGroups`' PHPDoc array shape was missing the `locked`/`out_of_ceiling` keys that `loadPermissions()` has always actually set — runtime was never broken (the `?? false` silently no-op'd), but the stale annotation hid a real shape mismatch.
+  - Dropped two phantom `use App\Models\User;` imports (`Settings.php`, `BulkAssignDefaultRole.php`) — package has no such class; the fallback default is now the literal FQCN string, which was always the intent.
+  - `HasClearance` (a mixin trait for the *consuming* app's User model, never used inside this package) is now in `phpstan.neon.dist`'s `excludePaths` instead of silently failing `trait.unused`; the stale `ignoreErrors` entry for `Builder` (dead since none of the above patterns matched it anymore) was removed.
+  - No behavior changes anywhere in this batch — 376/376 Pest tests pass unmodified in assertions, only type annotations/guards/narrowing changed.
+
+---
+
 ## [1.0.1] - 2026-07-17
 
 ### Fixed

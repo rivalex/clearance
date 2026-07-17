@@ -11,6 +11,7 @@ use Rivalex\Clearance\Exceptions\ClearanceScopeViolationException;
 use Rivalex\Clearance\Models\Permission;
 use Rivalex\Clearance\Models\RoleMeta;
 use Rivalex\Clearance\Models\UserRoleContext;
+use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Permission\Models\Role;
 
 class RoleService
@@ -24,10 +25,16 @@ class RoleService
      */
     public function create(string $name, string $guardName): Role
     {
-        return Role::create([
+        $role = Role::create([
             'name' => $name,
             'guard_name' => $guardName,
         ]);
+
+        if (! $role instanceof Role) {
+            throw new \LogicException('Expected instance of '.Role::class.'.');
+        }
+
+        return $role;
     }
 
     /**
@@ -123,17 +130,21 @@ class RoleService
             }
         }
 
-        $current = $role->permissions->keyBy('id');
+        // Spatie's permissions() relation resolves its related model from config() at
+        // runtime, so static analysis only knows the base Eloquent Model type - narrow it
+        // to the real Spatie Permission contract via whereInstanceOf (zero-op at runtime,
+        // every row already is one).
+        $current = $role->permissions->keyBy('id')->whereInstanceOf(SpatiePermission::class);
         $desired = collect($permissions)->keyBy('id');
 
         // clearance-* permissions on super_admin are immutable via the panel — absolute,
         // regardless of actor (even a super_admin actor cannot touch these here).
         if ($role->name === 'super_admin') {
-            $toAdd = $desired->filter(fn ($p) => ! $current->has($p->id));
-            $toRemove = $current->filter(fn ($p) => ! $desired->has($p->id));
+            $toAdd = $desired->filter(fn (Permission $p) => ! $current->has($p->id));
+            $toRemove = $current->filter(fn (SpatiePermission $p) => ! $desired->has($p->id));
 
             $blocked = $toAdd->merge($toRemove)->first(
-                fn ($p) => str_starts_with($p->name, 'clearance-')
+                fn (SpatiePermission $p) => str_starts_with($p->name, 'clearance-')
             );
 
             if ($blocked !== null) {
@@ -246,7 +257,7 @@ class RoleService
         // I1 silent trim: revoke child permissions not in the parent ceiling.
         $ceilingIds = $parent->permissions->pluck('id')->flip()->all();
         $childFresh = $child->fresh();
-        foreach ($childFresh->permissions as $perm) {
+        foreach ($childFresh->permissions->whereInstanceOf(SpatiePermission::class) as $perm) {
             if (! isset($ceilingIds[$perm->id])) {
                 $this->permissions->revokeFromRole($childFresh, $perm);
             }
@@ -264,7 +275,7 @@ class RoleService
     /**
      * Removes the given permissions from every child role of this parent (automatic cascade).
      *
-     * @param  array<int, Permission>  $removedPermissions
+     * @param  array<int, SpatiePermission>  $removedPermissions
      */
     private function cascadeToChildren(Role $parent, array $removedPermissions): void
     {
@@ -280,7 +291,7 @@ class RoleService
             if ($childRole === null) {
                 continue;
             }
-            foreach ($childRole->permissions as $perm) {
+            foreach ($childRole->permissions->whereInstanceOf(SpatiePermission::class) as $perm) {
                 if (isset($removedIds[$perm->id])) {
                     $this->permissions->revokeFromRole($childRole, $perm);
                 }

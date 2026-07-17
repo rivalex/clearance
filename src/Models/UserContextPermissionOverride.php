@@ -7,8 +7,20 @@ namespace Rivalex\Clearance\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $role_id
+ * @property int $permission_id
+ * @property string $context_type
+ * @property int $context_id
+ * @property string $type
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class UserContextPermissionOverride extends Model
 {
     public const TYPE_FORCED_ON = 'forced_on';
@@ -21,6 +33,8 @@ class UserContextPermissionOverride extends Model
 
     /**
      * The role this override belongs to.
+     *
+     * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo
     {
@@ -29,6 +43,8 @@ class UserContextPermissionOverride extends Model
 
     /**
      * The permission being overridden.
+     *
+     * @return BelongsTo<Permission, $this>
      */
     public function permission(): BelongsTo
     {
@@ -55,6 +71,7 @@ class UserContextPermissionOverride extends Model
      * Scope to a specific user-role-context tuple.
      *
      * @param  int|string  $userId
+     * @return Builder<static>
      */
     public static function forSubject(
         mixed $userId,

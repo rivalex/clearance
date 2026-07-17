@@ -49,10 +49,16 @@ class PermissionService
     {
         $this->validate($name);
 
-        return Permission::create([
+        $permission = Permission::create([
             'name' => $name,
             'guard_name' => $guardName,
         ]);
+
+        if (! $permission instanceof Permission) {
+            throw new \LogicException('Expected instance of '.Permission::class.'.');
+        }
+
+        return $permission;
     }
 
     /**

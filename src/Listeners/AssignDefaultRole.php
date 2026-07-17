@@ -37,7 +37,7 @@ class AssignDefaultRole
 
         $user = $event->user;
 
-        if (! method_exists($user, 'hasRole') || $user->hasRole($role)) {
+        if (! method_exists($user, 'hasRole') || ! method_exists($user, 'assignRole') || $user->hasRole($role)) {
             return;
         }
 

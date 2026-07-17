@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rivalex\Clearance\Livewire;
 
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
@@ -109,7 +108,7 @@ class Settings extends Component
 
         $userModelClass = config('clearance.user_model')
             ?? config('auth.providers.'.config('auth.defaults.guard').'.model')
-            ?? User::class;
+            ?? 'App\\Models\\User';
 
         if (! $userModelClass || ! class_exists($userModelClass)) {
             $this->bulkMessage = __('clearance::ui.settings.bulk_no_user_model');
