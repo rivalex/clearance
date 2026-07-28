@@ -14,7 +14,7 @@
 [![PHP Version](https://img.shields.io/badge/PHP-8.3%2B-blue)](https://php.net)
 [![Laravel Version](https://img.shields.io/badge/Laravel-12--13-orange)](https://laravel.com)
 [![License](https://img.shields.io/github/license/rivalex/clearance)](LICENSE.md)
-[![codecov](https://codecov.io/github/rivalex/clearance/graph/badge.svg?token=ogc9M1neEf)](https://codecov.io/github/rivalex/clearance)
+[![codecov](https://codecov.io/github/rivalex/clearance/branch/master/graph/badge.svg?token=ogc9M1neEf)](https://codecov.io/github/rivalex/clearance)
 [![Tests](https://github.com/rivalex/clearance/actions/workflows/run-tests.yml/badge.svg)](https://github.com/rivalex/clearance/actions/workflows/run-tests.yml)
 
 A drop-in admin panel for Laravel applications built on top of [spatie/laravel-permission](https://github.com/spatie/laravel-permission). Adds a Livewire 4 + Flux UI panel with contextual authorization and role ceilings - installable with one artisan command, without altering any Spatie table.
