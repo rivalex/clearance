@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     <flux:modal name="{{ $modalName }}" class="max-w-sm min-w-96 md:min-w-xl md:max-w-xl">
         <div class="space-y-4">
             <div class="pb-4 border-b border-gray-200 dark:border-gray-700">
@@ -35,4 +35,4 @@
             </div>
         </div>
     </flux:modal>
-</div>
+</x-clearance::dark-scope>

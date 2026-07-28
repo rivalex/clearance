@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
 	<x-clearance::branding />
 	<div class="mb-6">
 		<h1 class="text-xl font-semibold">{{ __('clearance::ui.dashboard.title') }}</h1>
@@ -116,7 +116,7 @@
 			</div>
 		</flux:card>
 	</div>
-</div>
+</x-clearance::dark-scope>
 
 @assets
 @once

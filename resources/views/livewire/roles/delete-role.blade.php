@@ -4,7 +4,7 @@
     </flux:modal.trigger>
 
     <flux:modal name="{{ $modalName }}" class="md:w-[36rem]">
-        <div class="clearance space-y-4">
+        <x-clearance::dark-scope class="space-y-4">
             @if($role !== null)
                 @if($isLocked)
                     {{-- Branch 1: locked role --}}
@@ -89,6 +89,6 @@
                     </div>
                 @endif
             @endif
-        </div>
+        </x-clearance::dark-scope>
     </flux:modal>
 </div>

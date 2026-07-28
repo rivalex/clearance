@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     <x-clearance::branding />
 
     <div class="mb-6">
@@ -34,7 +34,7 @@
             </div>
         @endforeach
     @endif
-</div>
+</x-clearance::dark-scope>
 
 @assets
 @once

@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     <x-clearance::branding />
     {{-- Header --}}
     <div class="mb-6 flex items-center justify-between">
@@ -96,7 +96,7 @@
             {{ $roleData->links() }}
         </div>
     @endif
-</div>
+</x-clearance::dark-scope>
 
 @assets
 @once

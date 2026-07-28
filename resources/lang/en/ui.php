@@ -242,6 +242,14 @@ return [
             'save' => 'Save Settings',
             'saved' => 'Settings saved.',
         ],
+        'appearance' => [
+            'title' => 'Appearance',
+            'description' => 'Control how Clearance renders its own theme inside the host application.',
+            'force_dark_mode' => 'Force dark mode',
+            'force_dark_mode_hint' => 'Always render Clearance\'s dark theme, regardless of the host app or OS color scheme. Useful if the host has no class-based dark toggle.',
+            'save' => 'Save Settings',
+            'saved' => 'Settings saved.',
+        ],
         'bulk' => [
             'title' => 'Bulk Assign Default Role',
             'description' => 'Assign the default role to all existing users who do not already have it. This operation is non-destructive and will never remove existing roles.',

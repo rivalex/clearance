@@ -1,4 +1,4 @@
-<div class="clearance space-y-3">
+<x-clearance::dark-scope class="space-y-3">
     <x-clearance::branding />
     <div class="mb-6">
         <h1 class="text-xl font-semibold">{{ __('clearance::ui.common.settings') }}</h1>
@@ -8,10 +8,11 @@
     <x-clearance::nav active="settings" />
 
     <livewire:clearance::settings.general-settings />
+    <livewire:clearance::settings.appearance-settings />
     <livewire:clearance::settings.bulk-assign-default-role />
     <livewire:clearance::settings.role-meta-table />
     <livewire:clearance::settings.guard-meta-table />
-</div>
+</x-clearance::dark-scope>
 
 @assets
 @once

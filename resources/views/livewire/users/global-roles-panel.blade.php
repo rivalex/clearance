@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     {{-- Panel header --}}
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 class="text-base font-semibold">{{ __('clearance::ui.user_clearance.tabs.global') }}</h2>
@@ -104,4 +104,4 @@
         :userId="$user->getKey()"
         scope="global"
         :key="'arm-global-' . $user->getKey()" />
-</div>
+</x-clearance::dark-scope>

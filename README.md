@@ -442,6 +442,22 @@ php artisan vendor:publish --tag=clearance-config
 | `auto_assign_default_role` | `false` | Auto-assign the Settings-configured default role on `Registered` event. |
 | `super_admin_gate_bypass` | `false` | Opt-in: `super_admin` bypasses all Gate checks application-wide. |
 | `ui.flux_pro` | `null` | `null` = auto-detect via `Flux::pro()`. |
+| `dark_mode.force` | `env('CLEARANCE_FORCE_DARK_MODE', false)` | Always render Clearance's dark theme regardless of the host app or OS color scheme. Overridable live from the Settings UI (Appearance card), which takes precedence over this default. |
+
+---
+
+## Appearance
+
+Clearance's own CSS uses a class-based `dark:` variant (`&:where(.dark, .dark *)`), so it normally follows the host app's `<html class="dark">` ancestor - the same convention as Tailwind's default class strategy. If your host app has no class-based dark toggle (or its state doesn't match the real OS/browser preference), Clearance's own styling can render unstyled even though the rest of the page looks fine.
+
+```php
+// config/clearance.php
+'dark_mode' => [
+    'force' => env('CLEARANCE_FORCE_DARK_MODE', false),
+],
+```
+
+Set `force` to `true` (or `CLEARANCE_FORCE_DARK_MODE=true`) to always render Clearance's dark theme, regardless of the host app or OS color scheme - useful when embedding Clearance in a host with no dark-mode toggle, or while developing locally on a light-mode system. Can also be toggled live from the Appearance card in `/clearance/settings`, which takes precedence over this config default.
 
 ---
 

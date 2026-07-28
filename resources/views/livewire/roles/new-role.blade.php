@@ -9,11 +9,11 @@
     </flux:modal.trigger>
 
     <flux:modal name="new-role-modal" class="md:w-[52rem]! md:max-w-[52rem]!">
-        <div class="clearance">
+        <x-clearance::dark-scope>
             <livewire:clearance::roles.role-form
                 :roleId="null"
                 :modalName="'new-role-modal'"
                 :key="'new-role-modal'" />
-        </div>
+        </x-clearance::dark-scope>
     </flux:modal>
 </div>

@@ -242,6 +242,14 @@ return [
             'save' => 'Salva Impostazioni',
             'saved' => 'Impostazioni salvate.',
         ],
+        'appearance' => [
+            'title' => 'Aspetto',
+            'description' => 'Controlla come Clearance visualizza il proprio tema all\'interno dell\'applicazione host.',
+            'force_dark_mode' => 'Forza modalità scura',
+            'force_dark_mode_hint' => 'Visualizza sempre il tema scuro di Clearance, indipendentemente dall\'app host o dallo schema colori del sistema operativo. Utile se l\'host non ha un interruttore per la modalità scura basato su classi.',
+            'save' => 'Salva Impostazioni',
+            'saved' => 'Impostazioni salvate.',
+        ],
         'bulk' => [
             'title' => 'Assegnazione Massiva Ruolo Predefinito',
             'description' => 'Assegna il ruolo predefinito a tutti gli utenti esistenti che non lo hanno già. L\'operazione è non distruttiva e non rimuoverà mai i ruoli esistenti.',

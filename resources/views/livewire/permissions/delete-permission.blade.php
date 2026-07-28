@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     <flux:modal.trigger name="{{ $modalName }}">
         <flux:button variant="ghost" size="xs" color="red" icon="trash">{{ __('clearance::ui.common.delete') }}</flux:button>
     </flux:modal.trigger>
@@ -21,4 +21,4 @@
             </div>
         </div>
     </flux:modal>
-</div>
+</x-clearance::dark-scope>

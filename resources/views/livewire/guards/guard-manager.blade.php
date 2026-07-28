@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     <x-clearance::branding />
     <div class="mb-6 flex items-center justify-between">
         <div>
@@ -69,7 +69,7 @@
             </tbody>
         </table>
     </div>
-</div>
+</x-clearance::dark-scope>
 
 @assets
 @once

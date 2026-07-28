@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     <x-clearance::branding />
     <div class="mb-6">
         <flux:skeleton class="h-8 w-48 mb-2" />
@@ -54,4 +54,4 @@
             </div>
         </flux:card>
     </div>
-</div>
+</x-clearance::dark-scope>

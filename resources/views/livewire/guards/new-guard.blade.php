@@ -9,10 +9,10 @@
     </flux:modal.trigger>
 
     <flux:modal name="new-guard-modal" class="md:w-[32rem]">
-        <div class="clearance">
+        <x-clearance::dark-scope>
             <livewire:clearance::guards.guard-form
                     :modalName="'new-guard-modal'"
                     :key="'new-guard-modal'" />
-        </div>
+        </x-clearance::dark-scope>
     </flux:modal>
 </div>

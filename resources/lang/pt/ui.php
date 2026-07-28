@@ -242,6 +242,14 @@ return [
             'save' => 'Guardar Configurações',
             'saved' => 'Configurações guardadas.',
         ],
+        'appearance' => [
+            'title' => 'Aparência',
+            'description' => 'Controle como o Clearance apresenta o seu próprio tema dentro da aplicação anfitriã.',
+            'force_dark_mode' => 'Forçar modo escuro',
+            'force_dark_mode_hint' => 'Apresenta sempre o tema escuro do Clearance, independentemente da aplicação anfitriã ou do esquema de cores do sistema operativo. Útil se a aplicação anfitriã não tiver um alternador de modo escuro baseado em classes.',
+            'save' => 'Guardar Configurações',
+            'saved' => 'Configurações guardadas.',
+        ],
         'bulk' => [
             'title' => 'Atribuição em Massa da Função Padrão',
             'description' => 'Atribui a função padrão a todos os utilizadores existentes que ainda não a têm. Esta operação não é destrutiva e nunca removerá funções existentes.',

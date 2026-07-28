@@ -242,6 +242,14 @@ return [
             'save' => '保存设置',
             'saved' => '设置已保存。',
         ],
+        'appearance' => [
+            'title' => '外观',
+            'description' => '控制 Clearance 如何在宿主应用程序中渲染自己的主题。',
+            'force_dark_mode' => '强制深色模式',
+            'force_dark_mode_hint' => '始终渲染 Clearance 的深色主题，无论宿主应用程序或操作系统的配色方案如何。如果宿主没有基于类的深色切换开关，此选项非常有用。',
+            'save' => '保存设置',
+            'saved' => '设置已保存。',
+        ],
         'bulk' => [
             'title' => '批量分配默认角色',
             'description' => '将默认角色分配给所有尚未拥有该角色的现有用户。此操作是非破坏性的，永远不会删除现有角色。',

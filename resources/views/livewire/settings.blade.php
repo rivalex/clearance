@@ -1,4 +1,4 @@
-<div class="clearance space-y-8">
+<x-clearance::dark-scope class="space-y-8">
 
     {{-- ================================================================
          SEZIONE 1 - Impostazioni generali
@@ -271,7 +271,7 @@
         </div>
     </flux:modal>
 
-</div>
+</x-clearance::dark-scope>
 
 @assets
 @once

@@ -1,6 +1,6 @@
 {
     "name": "rivalex/clearance",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A complete admin panel (Livewire 4 + Flux UI) for managing permissions, roles, role ceilings and contextual authorization on top of spatie/laravel-permission - installable via a single artisan command, fully opt-in and configurable for exposure to admins or managers.",
     "keywords": [
         "laravel",

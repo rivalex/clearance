@@ -136,4 +136,26 @@ return [
     'ui' => [
         'flux_pro' => null, // null = auto-detect via Flux::pro()
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dark Mode
+    |--------------------------------------------------------------------------
+    | Clearance's own CSS build uses a class-based `dark:` variant
+    | (&:where(.dark, .dark *)), so it normally follows the host app's
+    | <html class="dark"> ancestor — same convention as Tailwind's default
+    | class strategy. If your host app has no class-based dark toggle (or
+    | its state doesn't match the real OS/browser preference), Clearance's
+    | own styling can end up unstyled even though the rest of the page renders
+    | fine.
+    |
+    | Set 'force' to true to make Clearance always render its dark theme,
+    | regardless of the host app or OS color scheme. Useful when embedding
+    | Clearance in a host that doesn't support dark mode, or while developing
+    | locally with a light-mode OS. Overridable live via the Settings UI
+    | (Appearance card), which takes precedence over this config default.
+    */
+    'dark_mode' => [
+        'force' => env('CLEARANCE_FORCE_DARK_MODE', false),
+    ],
 ];

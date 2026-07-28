@@ -5,6 +5,19 @@ Format follows [Conventional Commits](https://conventionalcommits.org) and [Keep
 
 ---
 
+## [1.0.2] - 2026-07-28
+
+### Added
+
+- **Force dark mode config + Settings toggle** — mirrors the same feature just shipped in `rivalex/lingua`. Clearance's own CSS uses a class-based `dark:` variant that follows the host app's `<html class="dark">` ancestor; hosts with no class-based dark toggle (or whose real OS/browser scheme doesn't match a deliberately-dark host layout) previously rendered Clearance unstyled/illegible even though the rest of the page was fine. `config('clearance.dark_mode.force')` (env `CLEARANCE_FORCE_DARK_MODE`) sets the default; a new "Appearance" card in `/clearance/settings` (`Livewire\Settings\AppearanceSettings`, DB-backed via `ClearanceSettings::get/set('dark_mode.force', ...)`) overrides it live, same DB-over-config precedence as Lingua. New anonymous component `<x-clearance::dark-scope>` (`resources/views/components/dark-scope.blade.php`) wraps the resolved value in an optional `.dark` ancestor div around the existing `.clearance` scope div; every one of the 25 Blade views that previously opened with a bare `<div class="clearance ...">` now opens with `<x-clearance::dark-scope ...>` instead (content and any extra utility classes on the wrapper preserved 1:1).
+
+### Fixed
+
+- **`dark:` variant was OS-preference-based, not class-based** — `resources/css/clearance.css` imported `tailwindcss` without ever declaring `@custom-variant dark (&:where(.dark, .dark *));` (present in Lingua's CSS entry, missing here), so every `dark:` utility Clearance itself authors compiled under Tailwind v4's *default* strategy — `@media (prefers-color-scheme: dark)` — completely ignoring any `.dark` class on `<html>`. Confirmed live against `rivalex.test/clearance`: with `<html class="dark">` already present (this host's layout is deliberately dark-only), borders/nav pills/muted text using Clearance's own `dark:` classes still rendered in their light-mode colors, because the compiled CSS gated them on the OS color-scheme media query instead. Added the same `@custom-variant dark` declaration Lingua uses; rebuilt `src/dist/css/clearance.min.css` now contains zero `prefers-color-scheme` rules and the expected `:where(.dark, .dark *)` selectors, verified against the live page (border/nav theming now correct with `force`/`.dark` set, independent of OS scheme).
+- **Dashboard `<flux:card>` stat tiles rendered an unstyled white background with invisible (white-on-white) numbers**, even after the `@custom-variant dark` fix above. Root cause is narrower and unrelated to the OS-vs-class issue: Flux's own component markup (`vendor/livewire/flux/stubs/resources/views/flux/card/index.blade.php`) uses a compound utility, `dark:[:where(&)]:bg-white/10` (a custom `dark:` variant stacked on an arbitrary `[:where(&)]:` bracket variant). Confirmed both `livewire/flux` (v2.15.0) and `tailwindcss`/`@tailwindcss/vite` (v4.3.3) are already latest, so this isn't a version-lag issue — verified directly against the compiled CSS that sibling utilities from the *same* Flux template line compile fine individually (`[:where(&)]:bg-white`, `[:where(&)]:p-6`, `[:where(&)]:rounded-xl`, plain-stacked `dark:border-white/10`), but the doubly-stacked `dark:[:where(&)]:bg-white/10` never gets generated at all — a genuine Tailwind v4 limitation combining a `@custom-variant`-defined variant with an arbitrary bracket variant on the same utility. Worked around in `resources/css/clearance.css` with a plain (non-arbitrary) `[data-flux-card] { @apply dark:bg-white/10; }` override, keyed off the stable `data-flux-card` attribute Flux's card root div already carries — compiles correctly (`:where(.dark, .dark *) .clearance [data-flux-card]`) and doesn't touch light mode. Verified live: all four dashboard stat tiles now show correct numbers and translucent-dark backgrounds.
+
+---
+
 ## [1.0.1] - 2026-07-17
 
 ### Fixed

@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     <x-clearance::branding />
     <flux:skeleton.group animate="pulse">
         <div class="mb-6 flex items-center justify-between">
@@ -11,4 +11,4 @@
 
         <x-clearance::table-placeholder :columns="5" :rows="5" />
     </flux:skeleton.group>
-</div>
+</x-clearance::dark-scope>

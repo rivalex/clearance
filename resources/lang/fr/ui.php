@@ -242,6 +242,14 @@ return [
             'save' => 'Enregistrer les Paramètres',
             'saved' => 'Paramètres enregistrés.',
         ],
+        'appearance' => [
+            'title' => 'Apparence',
+            'description' => 'Contrôlez comment Clearance affiche son propre thème au sein de l\'application hôte.',
+            'force_dark_mode' => 'Forcer le mode sombre',
+            'force_dark_mode_hint' => 'Affiche toujours le thème sombre de Clearance, quel que soit l\'application hôte ou le schéma de couleurs du système d\'exploitation. Utile si l\'hôte n\'a pas de bascule de mode sombre basée sur des classes.',
+            'save' => 'Enregistrer les Paramètres',
+            'saved' => 'Paramètres enregistrés.',
+        ],
         'bulk' => [
             'title' => 'Attribution Massive du Rôle par Défaut',
             'description' => 'Attribue le rôle par défaut à tous les utilisateurs existants qui ne l\'ont pas encore. Cette opération est non destructive et ne supprimera jamais les rôles existants.',

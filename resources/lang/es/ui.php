@@ -242,6 +242,14 @@ return [
             'save' => 'Guardar Configuración',
             'saved' => 'Configuración guardada.',
         ],
+        'appearance' => [
+            'title' => 'Apariencia',
+            'description' => 'Controla cómo Clearance renderiza su propio tema dentro de la aplicación anfitriona.',
+            'force_dark_mode' => 'Forzar modo oscuro',
+            'force_dark_mode_hint' => 'Renderiza siempre el tema oscuro de Clearance, independientemente de la aplicación anfitriona o el esquema de color del sistema operativo. Útil si la aplicación anfitriona no tiene un interruptor de modo oscuro basado en clases.',
+            'save' => 'Guardar Configuración',
+            'saved' => 'Configuración guardada.',
+        ],
         'bulk' => [
             'title' => 'Asignación Masiva de Rol Predeterminado',
             'description' => 'Asigna el rol predeterminado a todos los usuarios existentes que aún no lo tienen. Esta operación no es destructiva y nunca eliminará los roles existentes.',

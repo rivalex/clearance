@@ -1,4 +1,4 @@
-<div class="clearance">
+<x-clearance::dark-scope>
     {{-- Panel header --}}
     @php
         $panelLabel      = $contextModelConfig['label'] ?? class_basename($contextClass ?? '');
@@ -130,4 +130,4 @@
         scope="contextual"
         :contextClass="$contextClass ?? ''"
         :key="'arm-ctx-' . $ctxMd5 . '-' . $user->getKey()" />
-</div>
+</x-clearance::dark-scope>
