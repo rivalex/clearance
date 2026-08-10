@@ -176,6 +176,7 @@ class ClearanceServiceProvider extends PackageServiceProvider
 
             if (
                 $permClass !== Permission::class
+                && $permClass !== \Spatie\Permission\Models\Permission::class
                 && ! in_array(HasPermissionGroups::class, class_uses_recursive($permClass), true)
             ) {
                 Log::warning(
