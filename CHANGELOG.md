@@ -6,9 +6,11 @@ Format follows [Conventional Commits](https://conventionalcommits.org) and [Keep
 
 ---
 
-## [Unreleased]
+## Clearance 1.0.3 - 2026-08-10
 
-### Fixed
+### [1.0.3] - 2026-08-10
+
+#### Fixed
 
 - **False-positive "custom permission model" warning on every boot** — `ClearanceServiceProvider::warnIfPermissionModelMissingTrait()` compared the app's configured `permission.models.permission` class against Clearance's own `Rivalex\Clearance\Models\Permission` only. Apps that never opt into Clearance's model — the default, common case, using Spatie's stock `Spatie\Permission\Models\Permission` unmodified — were misreported as running a "custom" model missing `HasPermissionGroups`, logging `Log::warning` on every request. Added an explicit exemption for Spatie's default model alongside Clearance's own. New `tests/Unit/T68PermissionModelWarnTest.php` covers: default Spatie model (no warning), Clearance's own model (no warning), genuine custom model without the trait (warns). See SPEC.md §B3.
 
