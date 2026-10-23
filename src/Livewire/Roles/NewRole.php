@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Rivalex\Clearance\Livewire\Roles;
+
+use Illuminate\View\View;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Rivalex\Clearance\Clearance;
+
+/**
+ * Thin modal wrapper - opens create mode of RoleForm in a Flux modal.
+ *
+ * Renders for anyone with the access permission; the trigger and the modal are shown only
+ * to users who may perform the roles section write actions.
+ */
+class NewRole extends Component
+{
+    public bool $showModal = false;
+
+    #[On('role-saved')]
+    public function onRoleSaved(): void
+    {
+        $this->showModal = false;
+    }
+
+    public function render(): View
+    {
+        abort_unless(app(Clearance::class)->canAccess(), 403);
+
+        return view('clearance::livewire.roles.new-role', [
+            'canCreate' => app(Clearance::class)->canPerform('roles'),
+        ]);
+    }
+}
