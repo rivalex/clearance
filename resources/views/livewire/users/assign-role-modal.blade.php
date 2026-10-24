@@ -1,12 +1,12 @@
-<x-clearance::dark-scope>
-    <flux:modal name="{{ $modalName }}" class="min-w-96 md:min-w-xl">
+<div>
+    <flux:modal name="{{ $modalName }}" class="w-full md:w-[32rem]">
         <div class="space-y-4">
-            <div class="pb-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="pb-4 border-b border-zinc-200 dark:border-zinc-700">
                 <flux:heading size="lg">{{ __('clearance::ui.user_clearance.assign.title') }}</flux:heading>
             </div>
 
             @if($errorMessage)
-                <div class="rounded-md bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+                <div role="alert" class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
                     {{ $errorMessage }}
                 </div>
             @endif
@@ -32,7 +32,7 @@
                                 <input type="checkbox"
                                        wire:model="selectedContextIds"
                                        value="{{ $instance->getKey() }}"
-                                       class="rounded border-gray-300 dark:border-gray-600 text-black-500 cursor-pointer">
+                                       class="rounded border-zinc-300 dark:border-zinc-600 text-accent-content cursor-pointer">
                                 <span class="text-sm">{{ $instance->name ?? '#' . $instance->getKey() }}</span>
                             </label>
                         @endforeach
@@ -40,7 +40,7 @@
                 </flux:field>
             @endif
 
-            <div class="flex items-center justify-between pt-4 mt-2 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between pt-4 mt-2 border-t border-zinc-200 dark:border-zinc-700">
                 <flux:button x-on:click="$flux.modal({{ \Illuminate\Support\Js::from($modalName) }}).close()" variant="ghost">
                     {{ __('clearance::ui.common.cancel') }}
                 </flux:button>
@@ -50,4 +50,4 @@
             </div>
         </div>
     </flux:modal>
-</x-clearance::dark-scope>
+</div>

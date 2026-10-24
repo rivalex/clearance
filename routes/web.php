@@ -21,13 +21,10 @@ Route::prefix($prefix)
     ->name('clearance.')
     ->group(function (): void {
         Route::get('assets/{path}', function (string $path) {
-            $roots = array_values(array_filter([
-                realpath(dirname(__DIR__).'/src/dist'),
-                realpath(dirname(__DIR__).'/resources'),
-            ]));
+            $root = realpath(dirname(__DIR__).'/resources');
 
             $file = null;
-            foreach ($roots as $root) {
+            if ($root !== false) {
                 $candidate = realpath($root.DIRECTORY_SEPARATOR.$path);
                 if (
                     $candidate !== false
@@ -35,19 +32,16 @@ Route::prefix($prefix)
                     && is_file($candidate)
                 ) {
                     $file = $candidate;
-                    break;
                 }
             }
 
             abort_unless($file !== null, 404);
 
             $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-            $allowedExts = ['css', 'js', 'svg', 'png', 'jpg', 'jpeg', 'webp'];
+            $allowedExts = ['svg', 'png', 'jpg', 'jpeg', 'webp'];
             abort_unless(in_array($ext, $allowedExts, true), 404);
 
             $mime = match ($ext) {
-                'css' => 'text/css',
-                'js' => 'application/javascript',
                 'svg' => 'image/svg+xml',
                 'png' => 'image/png',
                 'jpg', 'jpeg' => 'image/jpeg',

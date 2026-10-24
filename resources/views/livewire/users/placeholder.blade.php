@@ -1,4 +1,4 @@
-<x-clearance::dark-scope>
+<div>
     <flux:skeleton.group animate="pulse">
         <div class="mb-4">
             <flux:skeleton class="h-6 w-40 mb-2" />
@@ -9,4 +9,4 @@
             <flux:skeleton class="h-32 w-full rounded-lg" />
         </div>
     </flux:skeleton.group>
-</x-clearance::dark-scope>
+</div>

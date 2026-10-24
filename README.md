@@ -48,7 +48,7 @@ A drop-in admin panel for Laravel applications built on top of [spatie/laravel-p
 - **Extensibility hooks** - `HasClearance` trait, `HasPermissionGroups` trait, `ClearanceContextable` contract, reusable Blade components.
 - **SVG sanitization** - every user-supplied icon passes through an allow-list sanitizer before storage and at render time; `class` and `id` attributes are dropped from the icon.
 - **Security-hardened** - privilege-escalation ceilings on every permission-granting path, deny-authoritative context overrides, protected `clearance-*` namespace. See [Security](#security).
-- **946 tests, 2902 assertions** - Pest suite covering commands, services, Livewire components, contextual authorization, ceiling roles, and i18n key-parity.
+- **953 tests, 2940 assertions** - Pest suite covering commands, services, Livewire components, contextual authorization, ceiling roles, and i18n key-parity.
 
 ## Requirements
 
@@ -59,6 +59,7 @@ A drop-in admin panel for Laravel applications built on top of [spatie/laravel-p
 | spatie/laravel-permission | ^6.0 \| ^7.0 \| ^8.0 |
 | livewire/livewire | ^3.0 \| ^4.0 |
 | livewire/flux | ^2.14 |
+| Tailwind CSS | v4, with Flux configured in the host (`@import` of `flux.css`) |
 
 ## Installation
 
@@ -88,15 +89,38 @@ What the installer does:
 2. Publishes Clearance's migrations.
 3. Detects Spatie Permission tables - if the `roles` table is absent, publishes and runs Spatie's migrations automatically first.
 4. Runs only the Spatie permission migration (when the roles table is missing) and Clearance's own published migrations. Other pending migrations of your application stay pending: run `php artisan migrate` yourself afterwards when you need them.
-5. Creates `clearance-access` and all 5 fine-grained capability permissions: `clearance-permissions-write`, `clearance-roles-write`, `clearance-guards-write`, `clearance-settings-write`, `clearance-users-write`.
-6. Creates the `super_admin` role with all `clearance-*` permissions assigned (additive - never removes existing permissions on re-run).
-7. Writes `storage/.clearance-installed` as an idempotency marker.
+5. Offers to add the Tailwind `@source` line for the Clearance views to `resources/css/app.css` (asks first; a non-interactive run or a missing file changes nothing and prints the line to add, see [Styling](#styling)).
+6. Creates `clearance-access` and all 5 fine-grained capability permissions: `clearance-permissions-write`, `clearance-roles-write`, `clearance-guards-write`, `clearance-settings-write`, `clearance-users-write`.
+7. Creates the `super_admin` role with all `clearance-*` permissions assigned (additive - never removes existing permissions on re-run).
+8. Writes `storage/.clearance-installed` as an idempotency marker.
 
 > **In the production environment the installer asks for confirmation** before it publishes, migrates or seeds anything (on an existing install, the conversion of a legacy default role runs first, see the note below), and exits with a failure when the answer is no (a non-interactive run counts as no). `--force` skips the question. The new indexes on `role_id` (`clr_role_ctx`, `clr_ctx_overrides`) and `permission_id` (`clr_ctx_overrides`) exist only on new installs: an existing install can add them in its own migration, for example `CREATE INDEX clr_role_ctx_role_id_index ON clr_role_ctx (role_id);`.
 >
 > **Upgrading an existing install?** Re-run `php artisan clearance:install` (no `--force` needed): it converts the legacy default role name to the role id, before the production confirmation and the installed-marker check. Until then no default role is assigned to new users.
 
 > **Migrating from an existing Spatie install?** Use `php artisan clearance:backfill` (see [Migrating from an existing Spatie install](#migrating-from-an-existing-spatie-install)) and read [docs/migration-from-spatie.md](docs/migration-from-spatie.md) first - important notes on `super_admin` collision, custom model subclasses, and guard import.
+
+### Styling
+
+Clearance ships no CSS. The host compiles the classes written in the panel views, so add this line to `resources/css/app.css`, next to the Flux import it already has, and rebuild the assets:
+
+```css
+@source '../../vendor/rivalex/clearance/resources/views';
+```
+
+```bash
+npm run build
+```
+
+`php artisan clearance:install` can add the line for you. After the migrations it looks for `resources/css/app.css` and, when the file does not already contain `vendor/rivalex/clearance/resources/views`, asks for confirmation and appends the line after the last `@source` line (or after the last `@import` line when there is no `@source`). It changes nothing and only prints the line to add when:
+
+- it runs with `--no-interaction`;
+- the file is missing;
+- you decline the confirmation;
+- the file has no `@source` or `@import` line to anchor on (comments are ignored);
+- the last `@source` (or `@import`) line does not end its statement with `;` (a multi-line statement): the installer does not fall back to `@import`.
+
+An already installed host (one with `storage/.clearance-installed`) is not touched: `clearance:install` stops at the marker unless you run it with `--force`. Add the line by hand there, see [UPGRADE.md](UPGRADE.md).
 
 ---
 
@@ -540,22 +564,12 @@ php artisan vendor:publish --tag=clearance-config
 | `auto_assign_default_role` | `false` | Auto-assign the Settings-configured default role on `Registered` event. The default role must be global, never `super_admin` and never system-assigned only; other roles are skipped. |
 | `super_admin_gate_bypass` | `false` | Opt-in: `super_admin` bypasses all Gate checks application-wide. |
 | `ui.flux_pro` | `null` | `null` = auto-detect via `Flux::pro()`. |
-| `dark_mode.force` | `env('CLEARANCE_FORCE_DARK_MODE', false)` | Always render Clearance's dark theme regardless of the host app or OS color scheme. Overridable live from the Settings UI (Appearance card), which takes precedence over this default. |
 
 ---
 
-## Appearance
+## Theme
 
-Clearance's own CSS uses a class-based `dark:` variant (`&:where(.dark, .dark *)`), so it normally follows the host app's `<html class="dark">` ancestor - the same convention as Tailwind's default class strategy. If your host app has no class-based dark toggle (or its state doesn't match the real OS/browser preference), Clearance's own styling can render unstyled even though the rest of the page looks fine.
-
-```php
-// config/clearance.php
-'dark_mode' => [
-    'force' => env('CLEARANCE_FORCE_DARK_MODE', false),
-],
-```
-
-Set `force` to `true` (or `CLEARANCE_FORCE_DARK_MODE=true`) to always render Clearance's dark theme, regardless of the host app or OS color scheme - useful when embedding Clearance in a host with no dark-mode toggle, or while developing locally on a light-mode system. Can also be toggled live from the Appearance card in `/clearance/settings`, which takes precedence over this config default.
+The panel ships no CSS and has no theme of its own: it uses the host application's fonts, colours and dark mode, compiled by the host's Tailwind (see [Styling](#styling)). There is no Clearance setting for the colour scheme: dark mode follows whatever the host does.
 
 ---
 
@@ -708,7 +722,7 @@ php artisan clearance:delete-role bulk --reassign=member --actor=1
 
 ## Testing
 
-946 tests, 2902 assertions - covering commands, services, Livewire components, contextual authorization, ceiling roles, and i18n key-parity across all 9 bundled languages.
+953 tests, 2940 assertions - covering commands, services, Livewire components, contextual authorization, ceiling roles, and i18n key-parity across all 9 bundled languages.
 
 ```bash
 vendor/bin/pest

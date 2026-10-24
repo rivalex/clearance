@@ -1,11 +1,11 @@
 @php use Illuminate\Support\Str; @endphp
-<x-clearance::dark-scope>
+<div>
 	<x-clearance::branding/>
 	{{-- Header --}}
-	<div class="mb-6 flex items-center justify-between">
-		<div class="flex flex-col">
+	<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+		<div class="min-w-0">
 			<h1 class="text-xl font-semibold">{{ __('clearance::ui.permissions.title') }}</h1>
-			<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('clearance::ui.permissions.description') }}</p>
+			<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.permissions.description') }}</p>
 		</div>
 		<livewire:clearance::permissions.new-permission wire:key="new-permission"/>
 	</div>
@@ -42,7 +42,7 @@
 					lazy
 			/>
 		@empty
-			<div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-8 text-center text-sm text-gray-400">
+			<div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
 				@if($search !== '')
 					{{ __('clearance::ui.permissions.no_match', ['search' => $search]) }}
 				@else
@@ -58,10 +58,9 @@
 			{{ $groupedPermissions->links() }}
 		</div>
 	@endif
-</x-clearance::dark-scope>
+</div>
 
 @assets
 @once
-	<link rel="stylesheet" href="{{ \Rivalex\Clearance\Support\Asset::url('css/clearance.min.css') }}">
 @endonce
 @endassets

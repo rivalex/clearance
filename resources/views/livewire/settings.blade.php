@@ -1,11 +1,11 @@
-<x-clearance::dark-scope class="space-y-8">
+<div class="space-y-8">
 
     {{-- ================================================================
          SEZIONE 1 - Impostazioni generali
     ================================================================ --}}
-    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+    <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-6">
         <h2 class="text-base font-semibold mb-1">{{ __('clearance::ui.settings.general.title') }}</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">{{ __('clearance::ui.settings.general.description') }}</p>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{{ __('clearance::ui.settings.general.description') }}</p>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {{-- Default role --}}
@@ -19,7 +19,7 @@
                         <option value="{{ $role->id }}">{{ $role->name }} ({{ $role->guard_name }})</option>
                     @endforeach
                 </flux:select>
-                <p class="mt-1 text-xs text-gray-400">{{ __('clearance::ui.settings.general.default_role_hint') }}</p>
+                <p class="mt-1 text-xs text-zinc-400">{{ __('clearance::ui.settings.general.default_role_hint') }}</p>
             </div>
 
             {{-- Show icons toggle --}}
@@ -28,7 +28,7 @@
                     wire:model="showIcons"
                     label="{{ __('clearance::ui.settings.general.show_icons') }}"
                 />
-                <p class="mt-1 text-xs text-gray-400 ml-6">{{ __('clearance::ui.settings.general.show_icons_hint') }}</p>
+                <p class="mt-1 text-xs text-zinc-400 ml-6">{{ __('clearance::ui.settings.general.show_icons_hint') }}</p>
             </div>
         </div>
 
@@ -46,9 +46,9 @@
     {{-- ================================================================
          SEZIONE 2 - Bulk assign ruolo di default
     ================================================================ --}}
-    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+    <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-6">
         <h2 class="text-base font-semibold mb-1">{{ __('clearance::ui.settings.bulk.title') }}</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">{{ __('clearance::ui.settings.bulk.description') }}</p>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{{ __('clearance::ui.settings.bulk.description') }}</p>
 
         <div class="flex items-center gap-4">
             <flux:button wire:click="bulkAssignDefaultRole" variant="filled" size="sm" wire:confirm="{{ __('clearance::ui.settings.bulk.confirm') }}">
@@ -66,50 +66,52 @@
     {{-- ================================================================
          SEZIONE 3 - Meta ruoli (icona, colore, display_name, description)
     ================================================================ --}}
-    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+    <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-6">
         <h2 class="text-base font-semibold mb-1">{{ __('clearance::ui.settings.roles_meta.title') }}</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('clearance::ui.settings.roles_meta.description') }}</p>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">{{ __('clearance::ui.settings.roles_meta.description') }}</p>
 
-        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-                <thead class="bg-gray-50 dark:bg-gray-900">
+        <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700 text-sm">
+                <thead class="bg-zinc-50 dark:bg-zinc-900">
                     <tr>
-                        <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.common.role') }}</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.settings.meta.display_name') }}</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.settings.meta.icon') }}</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.settings.meta.color') }}</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.common.actions') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.common.role') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.display_name') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.icon') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.color') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.common.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
                     @forelse($roles as $role)
                         @php $meta = $roleMetas->get($role->name); @endphp
-                        <tr>
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
                             <td class="px-4 py-3 font-mono text-xs font-medium">
-                                {{ $role->name }}
-                                <span class="ml-1 text-gray-400">({{ $role->guard_name }})</span>
+                                <div class="max-w-xs truncate" title="{{ $role->name }} ({{ $role->guard_name }})">
+                                    {{ $role->name }}
+                                    <span class="ml-1 text-zinc-500 dark:text-zinc-400">({{ $role->guard_name }})</span>
+                                </div>
                             </td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-gray-300">
-                                {{ $meta?->display_name ?? '-' }}
+                            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                                <div class="max-w-xs truncate" title="{{ $meta?->display_name ?? '-' }}">{{ $meta?->display_name ?? '-' }}</div>
                             </td>
                             <td class="px-4 py-3">
                                 @if($meta?->icon_svg)
                                     <span class="inline-flex items-center justify-center w-6 h-6" style="{{ $meta->color ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) : '' }}">{!! \Rivalex\Clearance\Support\SvgSanitizer::sanitize($meta->icon_svg) !!}</span>
                                 @else
-                                    <span class="text-gray-300 dark:text-gray-600">-</span>
+                                    <span class="text-zinc-300 dark:text-zinc-600">-</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
                                 @if($meta?->color)
                                     <span class="inline-flex items-center gap-2">
-                                        <span class="inline-block w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600" style="background:{{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) }}"></span>
-                                        <span class="font-mono text-xs text-gray-500">{{ $meta->color }}</span>
+                                        <span class="inline-block w-4 h-4 rounded-full border border-zinc-200 dark:border-zinc-600" style="background:{{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) }}"></span>
+                                        <span class="font-mono text-xs text-zinc-500">{{ $meta->color }}</span>
                                     </span>
                                 @else
-                                    <span class="text-gray-300 dark:text-gray-600">-</span>
+                                    <span class="text-zinc-300 dark:text-zinc-600">-</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-right">
+                            <td class="whitespace-nowrap px-4 py-3 text-right">
                                 <flux:button size="xs" wire:click="openMetaModal({{ \Illuminate\Support\Js::from('role') }}, {{ \Illuminate\Support\Js::from($role->name) }})">
                                     {{ __('clearance::ui.settings.meta.edit') }}
                                 </flux:button>
@@ -117,7 +119,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-6 text-center text-gray-400">{{ __('clearance::ui.settings.roles_meta.empty') }}</td>
+                            <td colspan="5" class="px-4 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.roles_meta.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -128,47 +130,49 @@
     {{-- ================================================================
          SEZIONE 4 - Meta guardie
     ================================================================ --}}
-    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+    <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-6">
         <h2 class="text-base font-semibold mb-1">{{ __('clearance::ui.settings.guards_meta.title') }}</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('clearance::ui.settings.guards_meta.description') }}</p>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">{{ __('clearance::ui.settings.guards_meta.description') }}</p>
 
-        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-                <thead class="bg-gray-50 dark:bg-gray-900">
+        <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700 text-sm">
+                <thead class="bg-zinc-50 dark:bg-zinc-900">
                     <tr>
-                        <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.common.guard') }}</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.settings.meta.display_name') }}</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.settings.meta.icon') }}</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.settings.meta.color') }}</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-xs">{{ __('clearance::ui.common.actions') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.common.guard') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.display_name') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.icon') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.color') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.common.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
                     @forelse($guards as $guardName => $guardConfig)
                         @php $meta = $guardMetas->get($guardName); @endphp
-                        <tr>
-                            <td class="px-4 py-3 font-mono text-xs font-medium">{{ $guardName }}</td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-gray-300">
-                                {{ $meta?->display_name ?? '-' }}
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
+                            <td class="px-4 py-3 font-mono text-xs font-medium">
+                                <div class="max-w-xs truncate" title="{{ $guardName }}">{{ $guardName }}</div>
+                            </td>
+                            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                                <div class="max-w-xs truncate" title="{{ $meta?->display_name ?? '-' }}">{{ $meta?->display_name ?? '-' }}</div>
                             </td>
                             <td class="px-4 py-3">
                                 @if($meta?->icon_svg)
                                     <span class="inline-flex items-center justify-center w-6 h-6" style="{{ $meta->color ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) : '' }}">{!! \Rivalex\Clearance\Support\SvgSanitizer::sanitize($meta->icon_svg) !!}</span>
                                 @else
-                                    <span class="text-gray-300 dark:text-gray-600">-</span>
+                                    <span class="text-zinc-300 dark:text-zinc-600">-</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
                                 @if($meta?->color)
                                     <span class="inline-flex items-center gap-2">
-                                        <span class="inline-block w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600" style="background:{{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) }}"></span>
-                                        <span class="font-mono text-xs text-gray-500">{{ $meta->color }}</span>
+                                        <span class="inline-block w-4 h-4 rounded-full border border-zinc-200 dark:border-zinc-600" style="background:{{ \Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($meta->color) }}"></span>
+                                        <span class="font-mono text-xs text-zinc-500">{{ $meta->color }}</span>
                                     </span>
                                 @else
-                                    <span class="text-gray-300 dark:text-gray-600">-</span>
+                                    <span class="text-zinc-300 dark:text-zinc-600">-</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-right">
+                            <td class="whitespace-nowrap px-4 py-3 text-right">
                                 <flux:button size="xs" wire:click="openMetaModal({{ \Illuminate\Support\Js::from('guard') }}, {{ \Illuminate\Support\Js::from($guardName) }})">
                                     {{ __('clearance::ui.settings.meta.edit') }}
                                 </flux:button>
@@ -176,7 +180,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-6 text-center text-gray-400">{{ __('clearance::ui.settings.guards_meta.empty') }}</td>
+                            <td colspan="5" class="px-4 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.guards_meta.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -187,14 +191,14 @@
     {{-- ================================================================
          MODAL - Modifica meta (icona SVG, colore, display_name, description)
     ================================================================ --}}
-    <flux:modal wire:model="metaModalOpen" class="w-full max-w-lg">
+    <flux:modal wire:model="metaModalOpen" class="w-full md:w-[32rem]">
         <div class="space-y-5 p-1">
-            <div>
+            <div class="pb-4 border-b border-zinc-200 dark:border-zinc-700">
                 <flux:heading size="lg">
                     {{ __('clearance::ui.settings.meta.modal_title') }}
-                    <span class="font-mono text-sm font-normal text-gray-500 ml-1">{{ $metaSubjectKey }}</span>
+                    <span class="font-mono text-sm font-normal text-zinc-500 dark:text-zinc-400 ms-1">{{ $metaSubjectKey }}</span>
                 </flux:heading>
-                <flux:text class="text-gray-500 dark:text-gray-400">
+                <flux:text class="text-zinc-500 dark:text-zinc-400">
                     {{ __('clearance::ui.settings.meta.modal_desc') }}
                 </flux:text>
             </div>
@@ -203,6 +207,7 @@
                 wire:model="metaDisplayName"
                 label="{{ __('clearance::ui.settings.meta.display_name') }}"
                 placeholder="{{ __('clearance::ui.settings.meta.display_name_placeholder') }}"
+                autofocus
             />
 
             <flux:textarea
@@ -213,46 +218,44 @@
             />
 
             {{-- Color hex picker --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('clearance::ui.settings.meta.color') }}
-                </label>
-                <div class="flex items-center gap-3">
+            <flux:field>
+                <flux:label>{{ __('clearance::ui.settings.meta.color') }}</flux:label>
+                <div class="flex flex-wrap items-center gap-3">
                     <input
                         type="color"
                         wire:model="metaColor"
-                        class="h-9 w-14 cursor-pointer rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-0.5"
+                        class="h-9 w-14 cursor-pointer rounded border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 p-0.5"
                     />
                     <flux:input
                         wire:model="metaColor"
                         placeholder="#3b82f6"
                         class="font-mono w-32"
                     />
-                    <button
+                    <flux:button
                         type="button"
                         wire:click="$set('metaColor', '')"
-                        class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                    >{{ __('clearance::ui.settings.meta.clear_color') }}</button>
+                        variant="ghost"
+                        size="xs"
+                    >{{ __('clearance::ui.settings.meta.clear_color') }}</flux:button>
                 </div>
-                @error('metaColor')
-                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                @enderror
-            </div>
+                <flux:error name="metaColor" />
+            </flux:field>
 
             {{-- SVG icon textarea --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('clearance::ui.settings.meta.icon_svg') }}
-                </label>
+            <flux:field>
+                <flux:label>{{ __('clearance::ui.settings.meta.icon_svg') }}</flux:label>
                 @if($metaIconSvg)
                     <div class="mb-2 flex items-center gap-3">
-                        <span class="inline-flex items-center justify-center w-8 h-8 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900" style="{{ $metaColor ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($metaColor) : '' }}">{!! $metaIconSvgPreview !!}</span>
-                        <span class="text-xs text-gray-400">{{ __('clearance::ui.settings.meta.icon_preview') }}</span>
-                        <button
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded border border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-900" style="{{ $metaColor ? 'color:'.\Rivalex\Clearance\Support\SvgSanitizer::safeCssColor($metaColor) : '' }}">{!! $metaIconSvgPreview !!}</span>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.icon_preview') }}</span>
+                        <flux:button
                             type="button"
                             wire:click="$set('metaIconSvg', '')"
-                            class="text-xs text-red-400 hover:text-red-600"
-                        >{{ __('clearance::ui.settings.meta.clear_icon') }}</button>
+                            variant="ghost"
+                            size="xs"
+                            color="red"
+                            icon="trash"
+                        >{{ __('clearance::ui.settings.meta.clear_icon') }}</flux:button>
                     </div>
                 @endif
                 <flux:textarea
@@ -261,20 +264,19 @@
                     rows="4"
                     class="font-mono text-xs"
                 />
-                <p class="mt-1 text-xs text-gray-400">{{ __('clearance::ui.settings.meta.icon_svg_hint') }}</p>
-            </div>
+                <flux:description>{{ __('clearance::ui.settings.meta.icon_svg_hint') }}</flux:description>
+            </flux:field>
 
-            <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center justify-between pt-4 mt-2 border-t border-zinc-200 dark:border-zinc-700">
                 <flux:button wire:click="closeMetaModal" variant="ghost">{{ __('clearance::ui.common.cancel') }}</flux:button>
                 <flux:button wire:click="saveMeta" variant="primary">{{ __('clearance::ui.common.save') }}</flux:button>
             </div>
         </div>
     </flux:modal>
 
-</x-clearance::dark-scope>
+</div>
 
 @assets
 @once
-    <link rel="stylesheet" href="{{ \Rivalex\Clearance\Support\Asset::url('css/clearance.min.css') }}">
 @endonce
 @endassets

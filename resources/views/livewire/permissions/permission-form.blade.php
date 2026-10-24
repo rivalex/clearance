@@ -1,19 +1,19 @@
 <div class="space-y-4 clearance"
      x-data="permissionForm($wire.entangle('customAbilities'), @js($existingCustomAbilities), @js($standardAbilities), $wire.entangle('crudAbilities'), @js($availableGuards))">
-	<div class="pb-4 border-b border-gray-200 dark:border-gray-700">
+	<div class="pb-4 border-b border-zinc-200 dark:border-zinc-700">
 		<flux:heading size="xl">
 			{!! $editingPrefix !== ''
 				? __('clearance::ui.permissions.form.edit_title', ['group' => '<b>' . e($editingPrefix) . '</b>'])
 				: __('clearance::ui.permissions.form.new_title')
 			!!}
 		</flux:heading>
-		<flux:text class="text-gray-500 dark:text-gray-400">
+		<flux:text class="text-zinc-500 dark:text-zinc-400">
 			{{ $editingPrefix !== '' ? __('clearance::ui.permissions.form.edit_desc') : __('clearance::ui.permissions.form.new_desc') }}
 		</flux:text>
 	</div>
 	
 	@if($errorMessage)
-		<div class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+		<div role="alert" class="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
 			{{ $errorMessage }}
 		</div>
 	@endif
@@ -29,6 +29,7 @@
 					:readonly="$editingPrefix !== ''"
 					:disabled="$editingPrefix !== ''"
 					:invalid="$errors->has('prefix')"
+					:autofocus="$editingPrefix === ''"
 			/>
 		</div>
 		
@@ -58,13 +59,13 @@
 		<div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
 			<template x-for="ability in standardAbilities" :key="ability">
 				<div class="w-full place-items-center">
-					<label class="crud-pills w-full flex items-center justify-center gap-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black-500 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-gray-900"
-					       :class="ability === 'delete' ? 'red' : 'green'"
+					<label class="font-light cursor-pointer select-none w-full flex items-center justify-center gap-2 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-zinc-900"
+					       :class="ability === 'delete' ? 'font-light select-none hover:text-red-700 hover:border-red-200 hover:bg-red-50 data-checked:bg-red-600 data-checked:text-white data-checked:border-red-600 data-checked:hover:bg-red-700 data-checked:hover:border-red-700' : 'font-light select-none hover:text-green-700 hover:border-green-200 hover:bg-green-50 data-checked:bg-green-600 data-checked:text-white data-checked:border-green-600 data-checked:hover:bg-green-700 data-checked:hover:border-green-700'"
 					       :data-checked="crudAbilities.includes(ability)">
 						<input type="checkbox" :value="ability" x-model="crudAbilities" class="sr-only">
 						<div class="flex gap-2 items-center">
 							<span x-html="getIcon(ability)"></span>
-							<div class="h-4 w-px bg-gray-200 dark:border-gray-700/50"></div>
+							<div class="h-4 w-px bg-zinc-200 dark:border-zinc-700/50"></div>
 							<p class="pe-1 text-sm font-medium" x-text="headline(ability)"></p>
 							<svg x-show="crudAbilities.includes(ability)" x-cloak class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/></svg>
 						</div>
@@ -97,6 +98,7 @@
 			<flux:input
 					x-model="newAbility"
 					list="clearance-ability-suggestions"
+					aria-label="{{ __('clearance::ui.permissions.form.custom_abilities') }}"
 					placeholder="{{ __('clearance::ui.permissions.form.custom_ability_placeholder') }}"
 					class="font-mono w-56"
 			/>
@@ -105,7 +107,7 @@
 			</flux:button>
 		</div>
 		
-		<div class="flex items-center justify-between pt-4 mt-2 border-t border-gray-200 dark:border-gray-700">
+		<div class="flex items-center justify-between pt-4 mt-2 border-t border-zinc-200 dark:border-zinc-700">
 			<flux:button x-on:click="$flux.modal({{ \Illuminate\Support\Js::from($modalName) }}).close()" variant="ghost">{{ __('clearance::ui.common.cancel') }}</flux:button>
 			<flux:button wire:click="save" variant="primary">
 				{{ __('clearance::ui.common.save') }}

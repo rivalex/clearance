@@ -1,18 +1,20 @@
-<x-clearance::dark-scope>
+<div>
     <x-clearance::branding />
 
-    <div class="mb-6">
-        <h1 class="text-xl font-semibold">{{ __('clearance::ui.user_clearance.title') }}</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {{ __('clearance::ui.user_clearance.subtitle', [
-                'user' => $user->name ?? $user->email ?? '#' . $user->getKey(),
-            ]) }}
-        </p>
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div class="min-w-0">
+            <h1 class="text-xl font-semibold">{{ __('clearance::ui.user_clearance.title') }}</h1>
+            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                {{ __('clearance::ui.user_clearance.subtitle', [
+                    'user' => $user->name ?? $user->email ?? '#' . $user->getKey(),
+                ]) }}
+            </p>
+        </div>
     </div>
 
     @if(! $modulesEnabled)
         <flux:card>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">
                 {{ __('clearance::ui.user_clearance.module_disabled') }}
             </p>
         </flux:card>
@@ -36,10 +38,9 @@
             </div>
         @endforeach
     @endif
-</x-clearance::dark-scope>
+</div>
 
 @assets
 @once
-    <link rel="stylesheet" href="{{ \Rivalex\Clearance\Support\Asset::url('css/clearance.min.css') }}">
 @endonce
 @endassets

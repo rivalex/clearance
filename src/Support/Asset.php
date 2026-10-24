@@ -16,7 +16,7 @@ final class Asset
     private static array $versions = [];
 
     /**
-     * The asset URL for a path relative to `src/dist` or `resources`, with a `?v=` content hash.
+     * The asset URL for a path relative to `resources`, with a `?v=` content hash.
      */
     public static function url(string $path): string
     {
@@ -32,19 +32,15 @@ final class Asset
      */
     private static function hash(string $path): string
     {
-        $base = dirname(__DIR__, 2);
+        $root = realpath(dirname(__DIR__, 2).'/resources');
+        $candidate = $root === false ? false : realpath($root.DIRECTORY_SEPARATOR.$path);
 
-        foreach ([$base.'/src/dist', $base.'/resources'] as $root) {
-            $root = realpath($root);
-            $candidate = $root === false ? false : realpath($root.DIRECTORY_SEPARATOR.$path);
-
-            if ($candidate !== false && str_starts_with($candidate, $root.DIRECTORY_SEPARATOR) && is_file($candidate)) {
-                $hash = hash_file('xxh128', $candidate);
-
-                return $hash === false ? '' : substr($hash, 0, 10);
-            }
+        if ($candidate === false || ! str_starts_with($candidate, $root.DIRECTORY_SEPARATOR) || ! is_file($candidate)) {
+            return '';
         }
 
-        return '';
+        $hash = hash_file('xxh128', $candidate);
+
+        return $hash === false ? '' : substr($hash, 0, 10);
     }
 }

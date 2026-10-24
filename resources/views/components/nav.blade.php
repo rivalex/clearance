@@ -57,4 +57,4 @@
     @endforeach
 </div>
 
-<flux:separator class="my-2" />
+<flux:separator class="my-4" />

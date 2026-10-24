@@ -1,4 +1,4 @@
-<x-clearance::dark-scope>
+<div>
     {{-- Panel header --}}
     @php
         $panelLabel      = $contextModelConfig['label'] ?? class_basename($contextClass ?? '');
@@ -11,7 +11,7 @@
         <div>
             <h2 class="text-base font-semibold">
                 {{ __('clearance::ui.user_clearance.tabs.contextual') }}
-                <span class="ml-1 text-sm font-normal text-gray-400">({{ $panelLabel }})</span>
+                <span class="ml-1 text-sm font-normal text-zinc-400">({{ $panelLabel }})</span>
             </h2>
         </div>
 
@@ -24,7 +24,7 @@
 
     {{-- Contextual assignment rows --}}
     @if($contextAssignments->isEmpty())
-        <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-10 text-center text-sm text-gray-400">
+        <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-10 text-center text-sm text-zinc-400">
             {{ __('clearance::ui.user_clearance.no_contextual_roles') }}
         </div>
     @else
@@ -47,20 +47,20 @@
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="font-semibold text-sm">{{ $role?->name ?? '-' }}</span>
                             @if($role)
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 font-mono">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 font-mono">
                                     {{ $role->guard_name }}
                                 </span>
                             @endif
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
                                 {{ $panelLabel }}: {{ $ctxLabel }}
                             </span>
-                            <span class="text-xs text-gray-400">
+                            <span class="text-xs text-zinc-400">
                                 {{ count($rolePermIds) }} {{ __('clearance::ui.user_clearance.extra_perms.role_perms_label') }}
                             </span>
                         </div>
 
                         <flux:modal.trigger name="{{ $removeModalName }}">
-                            <flux:button variant="danger" size="sm" icon="trash">
+                            <flux:button variant="ghost" size="xs" color="red" icon="trash">
                                 {{ __('clearance::ui.user_clearance.remove_role') }}
                             </flux:button>
                         </flux:modal.trigger>
@@ -69,14 +69,14 @@
                     {{-- Role permissions (read-only) --}}
                     @if($role && $role->permissions->isNotEmpty())
                         <div>
-                            <p class="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                            <p class="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
                                 {{ __('clearance::ui.user_clearance.extra_perms.role_perms_label') }}
                             </p>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                                 @foreach($role->permissions as $perm)
                                     <label class="flex items-center gap-2 opacity-60 select-none">
                                         <input type="checkbox" checked disabled
-                                               class="rounded border-gray-300 dark:border-gray-600 text-black-500">
+                                               class="rounded border-zinc-300 dark:border-zinc-600 text-accent-content">
                                         <span class="text-xs font-mono leading-tight">{{ $perm->name }}</span>
                                     </label>
                                 @endforeach
@@ -87,10 +87,10 @@
                     {{-- Contextual extra permissions: explicit per-context pin, independent of the role's own set --}}
                     @if($role && $role->permissions->isNotEmpty())
                         <div>
-                            <p class="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                            <p class="mb-1 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
                                 {{ __('clearance::ui.user_clearance.extra_perms.extra_perms_label') }}
                             </p>
-                            <p class="mb-2 text-xs text-gray-400">
+                            <p class="mb-2 text-xs text-zinc-400">
                                 {{ __('clearance::ui.user_clearance.extra_perms.extra_perms_hint') }}
                             </p>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -99,7 +99,7 @@
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="checkbox"
                                                wire:model="contextualPermissions.{{ $contextId }}.{{ $roleId }}.{{ $permId }}"
-                                               class="rounded border-gray-300 dark:border-gray-600 text-black-500 cursor-pointer">
+                                               class="rounded border-zinc-300 dark:border-zinc-600 text-accent-content cursor-pointer">
                                         <span class="text-xs font-mono leading-tight">{{ $perm->name }}</span>
                                     </label>
                                 @endforeach
@@ -131,4 +131,4 @@
         scope="contextual"
         :contextClass="$contextClass ?? ''"
         :key="'arm-ctx-' . $ctxMd5 . '-' . $user->getKey()" />
-</x-clearance::dark-scope>
+</div>

@@ -17,7 +17,6 @@ use Rivalex\Clearance\Livewire\Roles\EditRole;
 use Rivalex\Clearance\Livewire\Roles\NewRole;
 use Rivalex\Clearance\Livewire\Roles\RoleForm;
 use Rivalex\Clearance\Livewire\Roles\RoleManager;
-use Rivalex\Clearance\Livewire\Settings\AppearanceSettings;
 use Rivalex\Clearance\Livewire\Settings\BulkAssignDefaultRole;
 use Rivalex\Clearance\Livewire\Settings\EditMeta;
 use Rivalex\Clearance\Livewire\Settings\GeneralSettings;
@@ -105,7 +104,6 @@ it('aborts 403 when a child component renders without the access permission', fu
     PermissionForm::class,
     EditMeta::class,
     GeneralSettings::class,
-    AppearanceSettings::class,
     BulkAssignDefaultRole::class,
     NewRole::class,
     NewPermission::class,

@@ -15,7 +15,6 @@ use Rivalex\Clearance\Livewire\Permissions\PermissionForm;
 use Rivalex\Clearance\Livewire\Roles\DeleteRole;
 use Rivalex\Clearance\Livewire\Roles\NewRole;
 use Rivalex\Clearance\Livewire\Roles\RoleForm;
-use Rivalex\Clearance\Livewire\Settings\AppearanceSettings;
 use Rivalex\Clearance\Livewire\Settings\BulkAssignDefaultRole;
 use Rivalex\Clearance\Livewire\Settings\EditMeta;
 use Rivalex\Clearance\Livewire\Settings\GeneralSettings;
@@ -146,13 +145,6 @@ function t110Rows(): array
             static fn (): array => [],
             static fn ($component) => $component->set('showIcons', false)->call('saveGeneral'),
             static fn (): bool => ClearanceSettings::get('show_icons') === '0',
-        ],
-        'AppearanceSettings' => [
-            AppearanceSettings::class,
-            'clearance-settings-write',
-            static fn (): array => [],
-            static fn ($component) => $component->set('forceDarkMode', true)->call('saveAppearance'),
-            static fn (): bool => ClearanceSettings::get('dark_mode.force') === '1',
         ],
         'BulkAssignDefaultRole' => [
             BulkAssignDefaultRole::class,

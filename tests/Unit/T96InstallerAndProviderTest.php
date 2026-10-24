@@ -130,9 +130,10 @@ it('skips candidate detection when a super_admin already exists', function (): v
 // --- Asset route ---
 
 it('serves an asset without a session cookie, with nosniff and an immutable cache', function (): void {
-    $response = $this->get('/clearance/assets/css/clearance.min.css');
+    $response = $this->get('/clearance/assets/images/clearance-mark.svg');
 
     $response->assertOk()
+        ->assertHeader('Content-Type', 'image/svg+xml')
         ->assertHeaderMissing('Set-Cookie')
         ->assertHeader('X-Content-Type-Options', 'nosniff');
 
@@ -146,10 +147,14 @@ it('returns 404 for a traversal path and for a disallowed extension', function (
 });
 
 it('appends a content hash to the asset url', function (): void {
-    $url = Asset::url('css/clearance.min.css');
+    $url = Asset::url('images/clearance-mark.svg');
 
-    expect($url)->toContain('/clearance/assets/css/clearance.min.css?v=')
-        ->and(Asset::url('css/clearance.min.css'))->toBe($url);
+    expect($url)->toContain('/clearance/assets/images/clearance-mark.svg?v=')
+        ->and(Asset::url('images/clearance-mark.svg'))->toBe($url);
+});
+
+it('no longer serves the removed stylesheet', function (): void {
+    $this->get('/clearance/assets/css/clearance.min.css')->assertNotFound();
 });
 
 // --- Provider ---

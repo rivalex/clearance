@@ -35,6 +35,15 @@ class ClearanceInstallCommand extends Command
         'clr_ctx_overrides',
     ];
 
+    /** Host stylesheet, relative to the host base path, that receives the Tailwind `@source` line. */
+    private const HOST_STYLESHEET = 'resources/css/app.css';
+
+    /** Path fragment that marks a host stylesheet which already scans the Clearance views. */
+    private const VIEWS_SOURCE_PATH = 'vendor/rivalex/clearance/resources/views';
+
+    /** The line the host stylesheet needs so Tailwind compiles the classes written in the Clearance views. */
+    private const SOURCE_LINE = "@source '../../vendor/rivalex/clearance/resources/views';";
+
     /** File name suffixes of the Clearance migrations published into the host. */
     private const MIGRATION_SUFFIXES = [
         '_create_clr_role_meta_table.php',
@@ -134,6 +143,8 @@ class ClearanceInstallCommand extends Command
             return self::FAILURE;
         }
 
+        $this->configureTailwind();
+
         $this->convertLegacyDefaultRole();
 
         $permissionName = config('clearance.access_permission', 'clearance-access');
@@ -172,6 +183,79 @@ class ClearanceInstallCommand extends Command
         $this->info('Clearance installed successfully.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Adds the Tailwind `@source` line for the Clearance views to the host stylesheet (the panel uses the host theme only).
+     *
+     * Only `resources/css/app.css` is ever written, and only after an interactive confirmation. A missing file, a
+     * file with no `@source` or `@import` line to anchor on, or a non-interactive run changes nothing and prints
+     * the line to add. A stylesheet that already names the Clearance views is left alone. Comments are ignored when
+     * looking for an anchor, and a last anchor line that does not end its statement with `;` (a multi-line `@import`
+     * or `@source`) means nothing is written.
+     */
+    private function configureTailwind(): void
+    {
+        $this->info('Configuring Tailwind...');
+
+        $path = base_path(self::HOST_STYLESHEET);
+        $contents = is_file($path) ? file_get_contents($path) : false;
+
+        if ($contents !== false && str_contains($contents, self::VIEWS_SOURCE_PATH)) {
+            $this->info('The host stylesheet already scans the Clearance views.');
+
+            return;
+        }
+
+        $updated = $contents === false ? null : $this->withSourceLine($contents);
+
+        if ($updated !== null && $this->input->isInteractive()
+            && $this->confirm('Add the Clearance @source line to '.self::HOST_STYLESHEET.'?', true)) {
+            file_put_contents($path, $updated);
+            $this->info('Added to '.self::HOST_STYLESHEET.': '.self::SOURCE_LINE);
+            $this->warn('Rebuild the host assets so the panel is styled (npm run build).');
+
+            return;
+        }
+
+        $this->warn('Add this line to '.self::HOST_STYLESHEET.' (next to your Flux import), then rebuild the host assets (npm run build):');
+        $this->line('  '.self::SOURCE_LINE);
+        $this->line('See the "Styling" section of the README (#styling).');
+    }
+
+    /**
+     * The stylesheet with the Clearance `@source` line after its last `@source` line, or after its last `@import`
+     * line when it has no `@source`. Null when it has neither line to anchor on, or when the last anchor line does
+     * not end with `;` (a multi-line statement). Comments are ignored when looking for an anchor.
+     */
+    private function withSourceLine(string $css): ?string
+    {
+        // Comments are blanked out with the same byte length, so offsets on $scan are valid on $css.
+        $scan = preg_replace_callback('#/\*.*?\*/#s', static fn (array $m): string => (string) preg_replace('/[^\r\n]/', ' ', $m[0]), $css);
+
+        if ($scan === null) {
+            return null;
+        }
+
+        foreach (['source', 'import'] as $directive) {
+            if (preg_match_all('/^[ \t]*@'.$directive.'\b[^\r\n]*(\r?\n|\z)/m', $scan, $matches, PREG_OFFSET_CAPTURE) < 1) {
+                continue;
+            }
+
+            $last = end($matches[0]);
+
+            if (! str_ends_with(rtrim($last[0]), ';')) {
+                return null;
+            }
+
+            $eol = str_contains($css, "\r\n") ? "\r\n" : "\n";
+            $end = $last[1] + strlen($last[0]);
+            $glue = $matches[1][count($matches[1]) - 1][0] === '' ? $eol : '';
+
+            return substr($css, 0, $end).$glue.self::SOURCE_LINE.$eol.substr($css, $end);
+        }
+
+        return null;
     }
 
     /**
