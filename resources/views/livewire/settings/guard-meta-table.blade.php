@@ -10,13 +10,13 @@
                     <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.display_name') }}</th>
                     <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.icon') }}</th>
                     <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.settings.meta.color') }}</th>
-                    <th scope="col" class="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.common.actions') }}</th>
+                    <th scope="col" class="sticky right-0 whitespace-nowrap bg-zinc-50 px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">{{ __('clearance::ui.common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
                 @forelse($guards as $guardName => $guardConfig)
                     @php $meta = $guardMetas->get($guardName); @endphp
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
+                    <tr class="group hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
                         <td class="px-4 py-3 font-mono text-xs font-medium">
                             <div class="max-w-xs truncate" title="{{ $guardName }}">{{ $guardName }}</div>
                         </td>
@@ -40,7 +40,7 @@
                                 <span class="text-zinc-300 dark:text-zinc-600">-</span>
                             @endif
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3">
+                        <td class="sticky right-0 bg-white group-hover:bg-zinc-50 dark:bg-zinc-800 dark:group-hover:bg-[color-mix(in_oklab,var(--color-zinc-700)_50%,var(--color-zinc-800))] whitespace-nowrap px-4 py-3">
                             <div class="flex justify-end">
                                 <livewire:clearance::settings.edit-meta
                                     subjectType="guard"

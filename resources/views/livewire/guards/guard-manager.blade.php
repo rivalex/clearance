@@ -25,12 +25,12 @@
                     <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.guards.driver') }}</th>
                     <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.guards.provider') }}</th>
                     <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.common.source') }}</th>
-                    <th scope="col" class="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{{ __('clearance::ui.common.actions') }}</th>
+                    <th scope="col" class="sticky right-0 whitespace-nowrap bg-zinc-50 px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">{{ __('clearance::ui.common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
                 @forelse($guards as $name => $config)
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
+                    <tr class="group hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
                         <td class="px-4 py-3 font-medium">
                             <div class="flex items-center gap-2">
                                 @if($showIcons && !empty($guardMetas->get($name)?->icon_svg))
@@ -51,7 +51,7 @@
                                 <flux:badge size="sm" color="zinc">{{ __('clearance::ui.guards.type_config') }}</flux:badge>
                             @endif
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3">
+                        <td class="sticky right-0 bg-white group-hover:bg-zinc-50 dark:bg-zinc-800 dark:group-hover:bg-[color-mix(in_oklab,var(--color-zinc-700)_50%,var(--color-zinc-800))] whitespace-nowrap px-4 py-3">
                             @if(isset($config['is_db']))
                                 <div class="flex items-center justify-end gap-1">
                                     <livewire:clearance::guards.edit-guard :guardId="$config['id']" :guardName="$name" :key="'edit-'.$name" />
